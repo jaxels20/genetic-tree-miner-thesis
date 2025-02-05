@@ -1,7 +1,10 @@
 from enum import Enum
 from typing import List, Optional, Tuple
+import os
 import pm4py
 from pm4py.objects.process_tree.obj import ProcessTree as PM4PyProcessTree, Operator as PM4PyOperator
+from pm4py.objects.process_tree.exporter.variants import ptml as PM4PyExporter
+from pm4py.objects.process_tree.importer.variants import ptml as PM4PyImporter
 
 import pm4py.visualization.process_tree.visualizer as vis_process_tree
 import pm4py.objects.conversion.process_tree.converter as tree_converter
@@ -73,22 +76,56 @@ class ProcessTree:
         
         return f"{self.operator}({children_str})"
     
-    def load(self, filename: str):
-        raise NotImplementedError
+    @staticmethod
+    def load(filename: str):
+        pm4py_tree = PM4PyImporter.apply(filename)
+        return ProcessTree.from_pm4py(pm4py_tree)
     
-    def save(self, filename: str, format: str = None):
+    def save(self, filename: str, format: str = "ptml"):
         pm4py_tree = self.to_pm4py()
-        
-        raise NotImplementedError
+        if format == "ptml":
+            PM4PyExporter.apply(pm4py_tree, filename)
+        elif format == "png":
+            gviz = vis_process_tree.apply(pm4py_tree)
+            vis_process_tree.save(gviz, filename + ".png")
+        else:
+            raise ValueError("Invalid format")
     
     def visualize(self):
         pm4py_tree = self.to_pm4py()
         gviz = vis_process_tree.apply(pm4py_tree)
         vis_process_tree.view(gviz) 
     
-    # TODO: Create a function to check if the tree is valid
     def is_valid(self):
-        raise NotImplementedError
+        """
+        Checks if a process tree is valid according to the definition of a process tree.
+
+        Args:
+            tree (ProcessTree): The root of the process tree.
+
+        Returns:
+            bool: True if the tree is valid, False otherwise.
+        """
+        def validate_node(node):
+            # Check that activity nodes have no children
+            if node.operator is None:  # Leaf node
+                return len(node.children) == 0  # Leaf nodes should not have children
+            
+            # Check that internal nodes are operators
+            if not isinstance(node.operator, Operator):
+                return False  # Internal nodes must have a valid operator
+            
+            child_count = len(node.children)
+            
+            # Validate based on operator type
+            if node.operator in [Operator.SEQUENCE, Operator.XOR, Operator.PARALLEL] and child_count < 1:
+                return False   # SEQUENCE, XOR, and PARALLEL nodes must have at least 1 child to be a valid tree
+            elif node.operator in [Operator.OR, Operator.LOOP] and child_count < 2:
+                return False   # OR and LOOP nodes must have at least 2 children to be a valid tree
+            
+            return all(validate_node(child) for child in node.children)
+
+        return validate_node(self)
 
     def to_pm4py_pn(self): #-> Tuple[pm4py.objects.petri, pm4py.objects.petri.common.final_marking, pm4py.objects.petri.common.initial_marking]:
         pm4py_tree = self.to_pm4py()
@@ -121,11 +158,9 @@ if __name__ == "__main__":
     tree.children[0].add_child(ProcessTree(operator=None, label="B"))
     tree.children[1].add_child(ProcessTree(operator=None, label="C"))
     
-    pm4py_tree = tree.to_pm4py()
-    print(pm4py_tree)
-    gviz = vis_process_tree.apply(pm4py_tree)
-    #vis_process_tree.view(gviz)
-    
-
-    tree = ProcessTree.from_pm4py(pm4py_tree)
-    print(tree)
+    tree.visualize()
+    print(tree.is_valid())
+    tree.save("test.ptml")
+    new_tree = ProcessTree.load("test.ptml")
+    new_tree.visualize()
+    print(new_tree.is_valid())
