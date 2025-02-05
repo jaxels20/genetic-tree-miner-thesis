@@ -54,11 +54,19 @@ class BottomUpBinaryTreeGenerator(RandomTreeGeneratorBase):
         """
         Generates n random binary process trees using the given unique activities.
         """
-        return [self._generate_naive_binary_tree(unique_activities) for _ in range(n)]
-
-
+        population = []
+        while len(population) < n:
+            tree = self._generate_naive_binary_tree(unique_activities)
+            if tree.is_valid():
+                population.append(tree)
+            else:
+                print("Invalid tree generated. Trying again...")
+                continue
+        return population
+    
+    
 if __name__ == "__main__":
-    unique_activities = ["A", "B", "C", "D", "E", "F", "G"]
+    unique_activities = ["A", "B", "C"]
     generator = BottomUpBinaryTreeGenerator()
-    tree = generator.generate_population(unique_activities, 1)[0]
-    tree.visualize()
+    tree = generator.generate_population(unique_activities, 100)[0]
+    print(tree)

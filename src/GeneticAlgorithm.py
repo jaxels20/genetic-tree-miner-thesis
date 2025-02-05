@@ -14,11 +14,10 @@ class GeneticAlgorithm:
         pass
     
     
-    def run(self):
+    def run(self, eventlog: EventLog) -> ProcessTree:
         num_generations = 100
         population_size = 100
         survival_rate = 0.5
-        eventlog = EventLog.from_trace_list(["AB", "AC"])
         
         # Initialize the population
         generator = BottomUpBinaryTreeGenerator()
@@ -48,6 +47,7 @@ class GeneticAlgorithm:
         return best_tree
     
 if __name__ == "__main__":
+    eventlog = EventLog.from_trace_list(["AB", "AC"])
     ga = GeneticAlgorithm()
-    best_tree = ga.run()
+    best_tree = ga.run(eventlog=eventlog)
     print(best_tree)

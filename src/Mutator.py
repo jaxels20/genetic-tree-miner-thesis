@@ -3,6 +3,7 @@ from typing import List
 from ProcessTree import ProcessTree, Operator
 from RandomTreeGenerator import BottomUpBinaryTreeGenerator
 from EventLog import EventLog
+from copy import deepcopy
 
 class MutatorBase:
     def __init__(self, EventLog: EventLog):
@@ -68,7 +69,6 @@ class Mutator(MutatorBase):
             
             node = random.choice(nodes)
             if node.parent:
-                print(node.parent.children)   
                 node.parent.children.remove(node)
             return tree
         
@@ -83,13 +83,19 @@ class Mutator(MutatorBase):
             return tree
 
         mutation_type = random.choice(['node_mutation', 'subtree_removal', 'node_addition'])
-        #mutation_type = random.choice(['node_mutation', 'node_addition'])    
+
         if mutation_type == 'node_mutation':
             new_tree = node_mutation(process_tree)
+            if not new_tree.is_valid():
+                raise ValueError("Invalid tree (node_mutation)") 
         elif mutation_type == 'subtree_removal':
             new_tree = subtree_removal(process_tree)
+            if not new_tree.is_valid():
+                raise ValueError("Invalid tree(subtree_removal)")
         elif mutation_type == 'node_addition':
             new_tree = node_addition(process_tree)
+            if not new_tree.is_valid():
+                raise ValueError("Invalid tree(node_addition)")
         
         return new_tree
     

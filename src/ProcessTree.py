@@ -120,26 +120,24 @@ class ProcessTree:
         Returns:
             bool: True if the tree is valid, False otherwise.
         """
-        def validate_node(node):
-            # Check that activity nodes have no children
-            if node.operator is None:  # Leaf node
-                return len(node.children) == 0  # Leaf nodes should not have children
-            
-            # Check that internal nodes are operators
-            if not isinstance(node.operator, Operator):
-                return False  # Internal nodes must have a valid operator
-            
-            child_count = len(node.children)
-            
-            # Validate based on operator type
-            if node.operator in [Operator.SEQUENCE, Operator.XOR, Operator.PARALLEL] and child_count < 1:
-                return False   # SEQUENCE, XOR, and PARALLEL nodes must have at least 1 child to be a valid tree
-            elif node.operator in [Operator.OR, Operator.LOOP] and child_count < 2:
-                return False   # OR and LOOP nodes must have at least 2 children to be a valid tree
-            
-            return all(validate_node(child) for child in node.children)
+        # Check that activity nodes have no children
+        if self.operator is None:  # Leaf node
+            return len(self.children) == 0  # Leaf nodes should not have children
+        
+        # Check that internal nodes are operators
+        if not isinstance(self.operator, Operator):
+            return False  # Internal nodes must have a valid operator
+        
+        child_count = len(self.children)
+        
+        # Validate based on operator type
+        if self.operator in [Operator.SEQUENCE, Operator.XOR] and child_count < 1:
+            return False   # SEQUENCE, XOR, and PARALLEL nodes must have at least 1 child to be a valid tree
+        elif self.operator in [Operator.OR, Operator.LOOP, Operator.PARALLEL] and child_count < 2:
+            return False   # OR and LOOP nodes must have at least 2 children to be a valid tree
+        
+        return all(child.is_valid() for child in self.children)
 
-        return validate_node(self)
 
     def to_pm4py_pn(self): #-> Tuple[pm4py.objects.petri, pm4py.objects.petri.common.final_marking, pm4py.objects.petri.common.initial_marking]:
         pm4py_tree = self.to_pm4py()
@@ -173,14 +171,10 @@ if __name__ == "__main__":
     # Example usage
     tree = ProcessTree(operator=Operator.SEQUENCE, label=None)
     tree.add_child(ProcessTree(operator=Operator.XOR, label=None))
-    tree.add_child(ProcessTree(operator=Operator.PARALLEL, label=None))
+    tree.add_child(ProcessTree(operator=Operator.LOOP, label=None))
     tree.children[0].add_child(ProcessTree(operator=None, label="A"))
     tree.children[0].add_child(ProcessTree(operator=None, label="B"))
     tree.children[1].add_child(ProcessTree(operator=None, label="C"))
     
-    tree.visualize()
     print(tree.is_valid())
-    tree.save("test.ptml")
-    new_tree = ProcessTree.load("test.ptml")
-    new_tree.visualize()
-    print(new_tree.is_valid())
+    tree.visualize()
