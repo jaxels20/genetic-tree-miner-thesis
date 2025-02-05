@@ -4,6 +4,11 @@ from ProcessTree import ProcessTree
 from EventLog import EventLog
 from Mutator import Mutator
 
+# Remove all prints from the pm4py library
+import logging
+logging.getLogger('pm4py').setLevel(logging.CRITICAL)
+
+
 class GeneticAlgorithm:
     def __init__(self):
         pass
@@ -12,8 +17,8 @@ class GeneticAlgorithm:
     def run(self):
         num_generations = 100
         population_size = 100
-        survival_rate = 0.1
-        eventlog = EventLog.from_trace_list(["ABBC", "ABBBC", "ABBBBC"])
+        survival_rate = 0.5
+        eventlog = EventLog.from_trace_list(["ABC", "ABC"])
         
         # Initialize the population
         generator = RandomTreeGenerator()
