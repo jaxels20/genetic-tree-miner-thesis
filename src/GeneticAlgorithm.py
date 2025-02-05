@@ -1,5 +1,5 @@
-from Objective import Objective
-from RandomTreeGenerator import RandomTreeGenerator
+from Objective import SimpleWeightedAverage
+from RandomTreeGenerator import BottomUpBinaryTreeGenerator
 from ProcessTree import ProcessTree
 from EventLog import EventLog
 from Mutator import Mutator
@@ -21,13 +21,13 @@ class GeneticAlgorithm:
         eventlog = EventLog.from_trace_list(["ABC", "ABC"])
         
         # Initialize the population
-        generator = RandomTreeGenerator()
-        population = generator.generate_naive_binary_trees(eventlog.unique_activities(), population_size)
+        generator = BottomUpBinaryTreeGenerator()
+        population = generator.generate_population(eventlog.unique_activities(), population_size)
         
         for i in range(num_generations):
             # Evaluate the fitness of each tree
             for tree in population:
-                obj = Objective(tree, eventlog)
+                obj = SimpleWeightedAverage(tree, eventlog)
                 fitness = obj.fitness()
                 tree.set_fitness(fitness)
             
@@ -41,7 +41,7 @@ class GeneticAlgorithm:
 
         # Return the best tree from the final generation
         for tree in population:
-            obj = Objective(tree, eventlog)
+            obj = SimpleWeightedAverage(tree, eventlog)
             fitness = obj.fitness()
             tree.set_fitness(fitness)
         best_tree = max(population)        

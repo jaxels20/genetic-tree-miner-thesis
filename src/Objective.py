@@ -6,16 +6,13 @@ from pm4py.algo.evaluation.precision.variants.etconformance_token import apply a
 from pm4py.algo.evaluation.generalization.variants.token_based import apply as generalization
 from pm4py.algo.evaluation.simplicity.variants.arc_degree import apply as simplicity
 
-
-class Objective:
+class ObjectiveBaseClass:
     def __init__(self, process_tree: ProcessTree, event_log: EventLog):
         self.process_tree = process_tree
         self.pm4py_pn, self.inital_marking, self.final_marking = process_tree.to_pm4py_pn()
         self.eventlog = event_log
         self.event_log_pm4py = event_log.to_pm4py()
-    
-    # Some function that can calculate a score for a tree based on some criteria
-    
+
     def simplicity(self):
         simplicity_value = simplicity(self.pm4py_pn)
         return simplicity_value
@@ -27,10 +24,18 @@ class Objective:
     def replay_fitness(self):
         fitness = replay_fitness(self.event_log_pm4py, self.pm4py_pn, self.inital_marking, self.final_marking)
         return fitness['average_trace_fitness']
-    
+
     def precision(self):
         precision_value = precision(self.event_log_pm4py, self.pm4py_pn, self.inital_marking, self.final_marking)
         return precision_value
+    
+    def fitness(self) -> float:
+        raise NotImplementedError
+
+
+class SimpleWeightedAverage(ObjectiveBaseClass):
+    def __init__(self, process_tree: ProcessTree, event_log: EventLog):
+        super().__init__(process_tree, event_log)
     
     def weighted_average(self, scores: dict[str, float], weights: dict[str, float] = None) -> float:
         # Only works if the scores and weights have the same keys 
@@ -53,6 +58,8 @@ class Objective:
             "precision": self.precision(),
         }
         return self.weighted_average(scores)
+
+
 
 if __name__ == "__main__":
     process_tree = ProcessTree(
