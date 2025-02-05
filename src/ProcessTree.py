@@ -117,9 +117,6 @@ class ProcessTree:
         """
         Checks if a process tree is valid according to the definition of a process tree.
 
-        Args:
-            tree (ProcessTree): The root of the process tree.
-
         Returns:
             bool: True if the tree is valid, False otherwise.
         """
