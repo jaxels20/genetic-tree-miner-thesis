@@ -1,62 +1,137 @@
 import random
 from typing import List
-from ProcessTree import ProcessTree
+from ProcessTree import ProcessTree, Operator
+from RandomTreeGenerator import BottomUpBinaryTreeGenerator
+from EventLog import EventLog
 
 class MutatorBase:
-    def __init__(self):
-        pass
+    def __init__(self, EventLog: EventLog):
+        self.EventLog = EventLog
 
     def generate_new_population(self, old_population: List[ProcessTree], new_population_size: int) -> List[ProcessTree]:
-        pass
+        raise NotImplementedError
 
 class Mutator(MutatorBase):
-    def __init__(self):
-        pass
+    def __init__(self, EventLog: EventLog):
+        super().__init__(EventLog)
+        
+    def random_creation(self, num_new_trees: int):
+        generator = BottomUpBinaryTreeGenerator()
+        new_trees = generator.generate_population(self.EventLog.unique_activities(), num_new_trees)
+        return new_trees
+    
+    def crossover(self, parent1: ProcessTree, parent2: ProcessTree) -> ProcessTree:
+                """
+                Performs subtree crossover between two process trees.
+                - Randomly selects a subtree in parent1 and replaces it with a subtree from parent2.
+                - If either tree is too small, returns a shallow copy of parent1 or parent2.
+                """
+                # Base case: If one of the parents is a leaf node, return a copy of it
+                if not parent1.children or not parent2.children:
+                    return ProcessTree(operator=parent1.operator, label=parent1.label)
 
-    @staticmethod
-    def generate_new_population(selected_trees: List[ProcessTree], new_population_size: int) -> List[ProcessTree]:
+                # Randomly select crossover points (subtrees)
+                subtree1 = random.choice(parent1.children)
+                subtree2 = random.choice(parent2.children)
+
+                # Create copies of the parents
+                new_parent1 = ProcessTree(operator=parent1.operator, label=parent1.label, children=[c for c in parent1.children])
+                new_parent2 = ProcessTree(operator=parent2.operator, label=parent2.label, children=[c for c in parent2.children])
+
+                # Perform subtree swap
+                idx1 = new_parent1.children.index(subtree1)
+                idx2 = new_parent2.children.index(subtree2)
+                new_parent1.children[idx1] = subtree2
+                new_parent2.children[idx2] = subtree1
+
+                return new_parent1 if random.random() < 0.5 else new_parent2
+    
+    def mutation(self, process_tree: ProcessTree) -> ProcessTree:
+        
+        def node_mutation(tree):
+            nodes = tree.get_all_nodes()
+            if not nodes:
+                raise ValueError("Tree has no nodes")
+            
+            node = random.choice(nodes)
+            if node.operator:
+                node.operator = random.choice(list(Operator))
+                random.shuffle(node.children)
+            elif node.label:
+                node.label = random.choice(list(self.EventLog.unique_activities()))
+            return tree
+                  
+        def subtree_removal(tree):
+            nodes = tree.get_all_nodes()
+            if len(nodes) <= 1:
+                return tree
+            
+            node = random.choice(nodes)
+            if node.parent:
+                print(node.parent.children)   
+                node.parent.children.remove(node)
+            return tree
+        
+        def node_addition(tree):
+            operator_nodes = [node for node in tree.get_all_nodes() if node.operator]
+            if not operator_nodes:
+                raise ValueError("Tree has no operator nodes")
+            
+            parent = random.choice(operator_nodes)
+            new_leaf = ProcessTree(label=random.choice(list(self.EventLog.unique_activities())))
+            parent.add_child(new_leaf)
+            return tree
+
+        mutation_type = random.choice(['node_mutation', 'subtree_removal', 'node_addition'])
+        #mutation_type = random.choice(['node_mutation', 'node_addition'])    
+        if mutation_type == 'node_mutation':
+            new_tree = node_mutation(process_tree)
+        elif mutation_type == 'subtree_removal':
+            new_tree = subtree_removal(process_tree)
+        elif mutation_type == 'node_addition':
+            new_tree = node_addition(process_tree)
+        
+        return new_tree
+    
+    def generate_new_population(self, old_population: List[ProcessTree], new_population_size: int) -> List[ProcessTree]:
         """
-        Given a list of selected process trees, generates a new population of size new_population_size using crossover.
+        Given a list of process trees, generates a new population of size new_population_size using crossover.
         - selected_trees: List of best trees from the previous generation.
         - X: Desired size of the new population.
         - Returns a new list of process trees.
         """
-        
-        def crossover(parent1: ProcessTree, parent2: ProcessTree) -> ProcessTree:
-            """
-            Performs subtree crossover between two process trees.
-            - Randomly selects a subtree in parent1 and replaces it with a subtree from parent2.
-            - If either tree is too small, returns a shallow copy of parent1 or parent2.
-            """
-            # Base case: If one of the parents is a leaf node, return a copy of it
-            if not parent1.children or not parent2.children:
-                return ProcessTree(operator=parent1.operator, label=parent1.label)
-
-            # Randomly select crossover points (subtrees)
-            subtree1 = random.choice(parent1.children)
-            subtree2 = random.choice(parent2.children)
-
-            # Create copies of the parents
-            new_parent1 = ProcessTree(operator=parent1.operator, label=parent1.label, children=[c for c in parent1.children])
-            new_parent2 = ProcessTree(operator=parent2.operator, label=parent2.label, children=[c for c in parent2.children])
-
-            # Perform subtree swap
-            idx1 = new_parent1.children.index(subtree1)
-            idx2 = new_parent2.children.index(subtree2)
-            new_parent1.children[idx1] = subtree2
-            new_parent2.children[idx2] = subtree1
-
-            return new_parent1 if random.random() < 0.5 else new_parent2
-        
         new_population = []
-        while len(new_population) < new_population_size:
-            # Randomly select two parents from the existing population
-            parent1, parent2 = random.sample(selected_trees, 2)
-
-            # Perform crossover and add offspring to the new population
-            offspring = crossover(parent1, parent2)
-            new_population.append(offspring)
-
+        random_creation_rate = 0.3
+        crossover_rate = 0.3
+        mutation_rate = 0.3
+        elite_rate = 0.1        
+        
+        # order the old population by fitness
+        old_population = sorted(old_population, key=lambda tree: tree.fitness, reverse=True)
+        
+        # Keep the elite trees
+        new_population.extend(old_population[:int(new_population_size * elite_rate)])
+        
+        # Do random creation for a portion of the new population
+        new_population.extend(self.random_creation(int(new_population_size * random_creation_rate)))
+        
+        # Remove the worst trees
+        old_population = old_population[:int(new_population_size * random_creation_rate)]
+        
+        # Do crossover for a portion of the new population
+        num_trees_to_crossover = int(new_population_size * crossover_rate)
+        for i in range(num_trees_to_crossover):
+            parent1 = random.choice(old_population)
+            parent2 = random.choice(old_population)
+            child = self.crossover(parent1, parent2)
+            new_population.append(child) 
+             
+        # Do mutation for a portion of the new population
+        num_trees_to_mutate = int(new_population_size * mutation_rate)
+        for i in range(num_trees_to_mutate):
+            tree = random.choice(old_population)
+            new_population.append(self.mutation(tree))
+            
         return new_population
 
 

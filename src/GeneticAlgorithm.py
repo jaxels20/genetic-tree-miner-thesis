@@ -18,7 +18,7 @@ class GeneticAlgorithm:
         num_generations = 100
         population_size = 100
         survival_rate = 0.5
-        eventlog = EventLog.from_trace_list(["ABC", "ABC"])
+        eventlog = EventLog.from_trace_list(["AB", "AC"])
         
         # Initialize the population
         generator = BottomUpBinaryTreeGenerator()
@@ -36,7 +36,7 @@ class GeneticAlgorithm:
             selected_trees = sorted(population, key=lambda tree: tree.get_fitness(), reverse=True)[:num_survivors]
             
             # Generate a new population
-            mutator = Mutator()
+            mutator = Mutator(eventlog)
             population = mutator.generate_new_population(selected_trees, population_size)
 
         # Return the best tree from the final generation

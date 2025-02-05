@@ -9,7 +9,7 @@ import pm4py.objects.conversion.process_tree.converter as tree_converter
 class Operator(Enum):
     SEQUENCE = 'SEQ'
     XOR = 'XOR'
-    PARALLEL = 'PAR'
+    PARALLEL = 'AND'
     LOOP = 'O'
     OR = 'OR'
     INTERLEAVING = "<>"
@@ -129,6 +129,12 @@ class ProcessTree:
     def __ge__(self, other):
         return self.fitness >= other.fitness
 
+    def get_all_nodes(self) -> List['ProcessTree']:
+        nodes = [self]
+        for child in self.children:
+            nodes.extend(child.get_all_nodes())
+        return nodes
+    
 if __name__ == "__main__":
     # Example usage
     tree = ProcessTree(operator=Operator.SEQUENCE, label=None)
