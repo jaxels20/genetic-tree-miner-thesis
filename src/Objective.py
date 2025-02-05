@@ -45,6 +45,14 @@ class Objective:
             }
         return sum(scores[key] * weights[key] for key in scores.keys())
 
+    def fitness(self):
+        scores = {
+            "simplicity": self.simplicity(),
+            "generalization": self.generalization(),
+            "replay_fitness": self.replay_fitness(),
+            "precision": self.precision(),
+        }
+        return self.weighted_average(scores)
 
 if __name__ == "__main__":
     process_tree = ProcessTree(

@@ -26,6 +26,9 @@ class ProcessTree:
         self.label = label
         self.parent = parent
         self.children = children if children is not None else []
+        
+        # Used for Genetic Algorithm
+        self.fitness = None
 
     def add_child(self, child: 'ProcessTree'):
         child.parent = self
@@ -90,6 +93,24 @@ class ProcessTree:
     def to_pm4py_pn(self): #-> Tuple[pm4py.objects.petri, pm4py.objects.petri.common.final_marking, pm4py.objects.petri.common.initial_marking]:
         pm4py_tree = self.to_pm4py()
         return tree_converter.apply(pm4py_tree)
+
+    def set_fitness(self, fitness):
+        self.fitness = fitness
+    
+    def get_fitness(self):
+        return self.fitness
+
+    def __lt__(self, other):
+        return self.fitness < other.fitness
+    
+    def __le__(self, other):
+        return self.fitness <= other.fitness
+    
+    def __gt__(self, other):
+        return self.fitness > other.fitness
+    
+    def __ge__(self, other):
+        return self.fitness >= other.fitness
 
 if __name__ == "__main__":
     # Example usage

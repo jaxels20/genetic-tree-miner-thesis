@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<ptml>
+  <processTree name="7786f4ff-5e8c-463d-810c-ee1b1cb82bf6" root="e256b6f2-db38-48cd-bb8a-13971ad17572" id="2db27a06-f47e-4bf8-9da0-c9b42a29c3bf">
+    <sequence name="" id="e256b6f2-db38-48cd-bb8a-13971ad17572"/>
+    <manualTask name="A" id="fbc87f18-058b-4e4f-b2f3-1db630c6aff9"/>
+    <xorLoop name="" id="42f586a8-ee09-4308-b19e-2b9a45568daa"/>
+    <manualTask name="D" id="adae1028-f4f3-4ab1-a315-dd6d5686f9ed"/>
+    <automaticTask name="" id="786442cd-c9bf-4f9b-9fb3-61ef37a23860"/>
+    <sequence name="" id="40ba95e4-d63f-41ec-b40c-57e8388b2b2f"/>
+    <automaticTask name="" id="35ca185c-91ca-42d9-9905-18604d4f24c1"/>
+    <manualTask name="B" id="c0929340-aff6-4d38-a2a1-b705a534ec32"/>
+    <manualTask name="C" id="6ba1b1e3-3dbd-451d-9783-010b32876aaa"/>
+    <parentsNode id="b2f0263b-54cd-44c1-942d-055ca7cf4585" sourceId="e256b6f2-db38-48cd-bb8a-13971ad17572" targetId="fbc87f18-058b-4e4f-b2f3-1db630c6aff9"/>
+    <parentsNode id="c9912e32-c8be-4d5f-8b40-7e9e710718f5" sourceId="e256b6f2-db38-48cd-bb8a-13971ad17572" targetId="42f586a8-ee09-4308-b19e-2b9a45568daa"/>
+    <parentsNode id="45058cc1-b5bf-4e82-ae6d-6c25412bd09f" sourceId="e256b6f2-db38-48cd-bb8a-13971ad17572" targetId="adae1028-f4f3-4ab1-a315-dd6d5686f9ed"/>
+    <parentsNode id="9eaa5406-f1d9-4cff-92b1-b20b7c2579b6" sourceId="42f586a8-ee09-4308-b19e-2b9a45568daa" targetId="786442cd-c9bf-4f9b-9fb3-61ef37a23860"/>
+    <parentsNode id="33dfb4a8-8510-4ece-a130-76d3a832dc51" sourceId="42f586a8-ee09-4308-b19e-2b9a45568daa" targetId="40ba95e4-d63f-41ec-b40c-57e8388b2b2f"/>
+    <parentsNode id="276d552d-83cc-4a26-b218-5855e4112fe2" sourceId="42f586a8-ee09-4308-b19e-2b9a45568daa" targetId="35ca185c-91ca-42d9-9905-18604d4f24c1"/>
+    <parentsNode id="d1a2dfd9-d398-4131-a28f-64e9892348ef" sourceId="40ba95e4-d63f-41ec-b40c-57e8388b2b2f" targetId="c0929340-aff6-4d38-a2a1-b705a534ec32"/>
+    <parentsNode id="42991a53-6469-4949-8ccc-727aaccaf58f" sourceId="40ba95e4-d63f-41ec-b40c-57e8388b2b2f" targetId="6ba1b1e3-3dbd-451d-9783-010b32876aaa"/>
+  </processTree>
+</ptml>

@@ -363,5 +363,13 @@ class EventLog:
                             return True
         return False
     
-
+    def unique_activities(self):
+        """
+        Get the set of unique activities in the event log.
+        """
+        activities = set()
+        for trace in self.traces:
+            for event in trace.events:
+                activities.add(event.activity)
+        return activities
         
