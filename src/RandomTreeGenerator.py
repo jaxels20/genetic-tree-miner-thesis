@@ -5,7 +5,15 @@ from ProcessTree import ProcessTree, Operator
 
 # TODO: MAKE SURE THAT THE RANDOM TREES ARE VALID (E.G. NO OR OPERATOR WITH ONLY ONE CHILD)
 
-class RandomTreeGenerator:
+class RandomTreeGeneratorBase:
+    def __init__(self):
+        pass
+    
+    def generate_population(self, unique_activities: List[str], n: int) -> List[ProcessTree]:
+        raise NotImplementedError
+
+
+class BottomUpBinaryTreeGenerator(RandomTreeGeneratorBase):
     def __init__(self):
         pass
     
@@ -42,16 +50,15 @@ class RandomTreeGenerator:
         
         return nodes[0]  # Root of the tree
 
-    def generate_naive_binary_trees(self, unique_activities: List[str], n: int) -> List[ProcessTree]:
+    def generate_population(self, unique_activities: List[str], n: int) -> List[ProcessTree]:
         """
         Generates n random binary process trees using the given unique activities.
         """
         return [self._generate_naive_binary_tree(unique_activities) for _ in range(n)]
 
 
-
 if __name__ == "__main__":
     unique_activities = ["A", "B", "C", "D", "E", "F", "G"]
-    generator = RandomTreeGenerator()
-    tree = generator.generate_naive_binary_trees(unique_activities, 1)[0]
-    print(tree)
+    generator = BottomUpBinaryTreeGenerator()
+    tree = generator.generate_population(unique_activities, 1)[0]
+    tree.visualize()

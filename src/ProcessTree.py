@@ -10,13 +10,13 @@ import pm4py.visualization.process_tree.visualizer as vis_process_tree
 import pm4py.objects.conversion.process_tree.converter as tree_converter
 
 class Operator(Enum):
-    SEQUENCE = '->'
-    XOR = 'X'
-    PARALLEL = '+'
-    LOOP = '*'
-    OR = 'O'
+    SEQUENCE = 'SEQ'
+    XOR = 'XOR'
+    PARALLEL = 'PAR'
+    LOOP = 'O'
+    OR = 'OR'
     INTERLEAVING = "<>"
-
+        
     def __str__(self):
         return self.value
 
@@ -46,9 +46,19 @@ class ProcessTree:
         return pm4py_node
 
     def _to_pm4py_operator(self):
+        
+        map = {
+            Operator.SEQUENCE: PM4PyOperator.SEQUENCE,
+            Operator.XOR: PM4PyOperator.XOR,
+            Operator.PARALLEL: PM4PyOperator.PARALLEL,
+            Operator.LOOP: PM4PyOperator.LOOP,
+            Operator.OR: PM4PyOperator.OR,
+            Operator.INTERLEAVING: PM4PyOperator.INTERLEAVING
+        }
+        
         if self.operator is None:
             return None
-        return getattr(PM4PyOperator, self.operator.name, None)
+        return map[self.operator]
 
     @staticmethod
     def from_pm4py(pm4py_tree: PM4PyProcessTree) -> 'ProcessTree':
@@ -61,12 +71,19 @@ class ProcessTree:
 
     @staticmethod
     def _from_pm4py_operator(pm4py_operator):
+        
+        map = {
+            PM4PyOperator.SEQUENCE: Operator.SEQUENCE,
+            PM4PyOperator.XOR: Operator.XOR,
+            PM4PyOperator.PARALLEL: Operator.PARALLEL,
+            PM4PyOperator.LOOP: Operator.LOOP,
+            PM4PyOperator.OR: Operator.OR,
+            PM4PyOperator.INTERLEAVING: Operator.INTERLEAVING
+        }
+        
         if pm4py_operator is None:
             return None
-        for op in Operator:
-            if op.value == pm4py_operator.value:
-                return op
-        return None
+        return map[pm4py_operator]
 
     def __str__(self):
         children_str = ",".join(str(child) for child in self.children) if self.children else ""

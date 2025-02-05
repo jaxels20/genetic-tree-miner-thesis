@@ -2,15 +2,21 @@ import random
 from typing import List
 from ProcessTree import ProcessTree
 
-class Mutator:
+class MutatorBase:
     def __init__(self):
         pass
 
+    def generate_new_population(self, old_population: List[ProcessTree], new_population_size: int) -> List[ProcessTree]:
+        pass
+
+class Mutator(MutatorBase):
+    def __init__(self):
+        pass
 
     @staticmethod
-    def generate_new_population(selected_trees: List[ProcessTree], X: int) -> List[ProcessTree]:
+    def generate_new_population(selected_trees: List[ProcessTree], new_population_size: int) -> List[ProcessTree]:
         """
-        Given a list of selected process trees, generates a new population of size X using crossover.
+        Given a list of selected process trees, generates a new population of size new_population_size using crossover.
         - selected_trees: List of best trees from the previous generation.
         - X: Desired size of the new population.
         - Returns a new list of process trees.
@@ -43,7 +49,7 @@ class Mutator:
             return new_parent1 if random.random() < 0.5 else new_parent2
         
         new_population = []
-        while len(new_population) < X:
+        while len(new_population) < new_population_size:
             # Randomly select two parents from the existing population
             parent1, parent2 = random.sample(selected_trees, 2)
 
