@@ -5,7 +5,7 @@ from pm4py.algo.evaluation.replay_fitness.variants.token_replay import apply as 
 from pm4py.algo.evaluation.precision.variants.etconformance_token import apply as precision
 from pm4py.algo.evaluation.generalization.variants.token_based import apply as generalization
 from pm4py.algo.evaluation.simplicity.variants.arc_degree import apply as simplicity
-
+from SupressPrints import SuppressPrints
 class ObjectiveBaseClass:
     def __init__(self, process_tree: ProcessTree, event_log: EventLog):
         self.process_tree = process_tree
@@ -14,19 +14,23 @@ class ObjectiveBaseClass:
         self.event_log_pm4py = event_log.to_pm4py()
 
     def simplicity(self):
-        simplicity_value = simplicity(self.pm4py_pn)
+        with SuppressPrints():
+            simplicity_value = simplicity(self.pm4py_pn)
         return simplicity_value
     
     def generalization(self):
-        generalization_value = generalization(self.event_log_pm4py, self.pm4py_pn, self.inital_marking, self.final_marking)
+        with SuppressPrints():
+            generalization_value = generalization(self.event_log_pm4py, self.pm4py_pn, self.inital_marking, self.final_marking)
         return generalization_value
     
     def replay_fitness(self):
-        fitness = replay_fitness(self.event_log_pm4py, self.pm4py_pn, self.inital_marking, self.final_marking)
+        with SuppressPrints():
+            fitness = replay_fitness(self.event_log_pm4py, self.pm4py_pn, self.inital_marking, self.final_marking)
         return fitness['average_trace_fitness']
 
     def precision(self):
-        precision_value = precision(self.event_log_pm4py, self.pm4py_pn, self.inital_marking, self.final_marking)
+        with SuppressPrints():
+            precision_value = precision(self.event_log_pm4py, self.pm4py_pn, self.inital_marking, self.final_marking)
         return precision_value
     
     def fitness(self) -> float:
@@ -43,10 +47,10 @@ class SimpleWeightedAverage(ObjectiveBaseClass):
         
         if weights is None:
             weights = {
-                "simplicity": 0.25,
-                "generalization": 0.25,
-                "replay_fitness": 0.25,
-                "precision": 0.25
+                "simplicity": 0.05,
+                "generalization": 0.05,
+                "replay_fitness": 0.85,
+                "precision": 0.05
             }
         return sum(scores[key] * weights[key] for key in scores.keys())
 
@@ -68,11 +72,12 @@ if __name__ == "__main__":
             ProcessTree(label="a"),
         ]
     )
-    event_log = EventLog.from_trace_list(["a"])
-    objective = Objective(process_tree, event_log)
+    event_log = EventLog.from_trace_list(["a", "a", "B"])
+    objective = SimpleWeightedAverage(process_tree, event_log)
     data = {
         "simplicity": objective.simplicity(),
         "generalization": objective.generalization(),
         "replay_fitness": objective.replay_fitness(),
         "precision": objective.precision(),
     }
+    print(data)

@@ -4,6 +4,7 @@ from ProcessTree import ProcessTree, Operator
 from RandomTreeGenerator import BottomUpBinaryTreeGenerator
 from EventLog import EventLog
 from copy import deepcopy
+from Population import Population
 
 class MutatorBase:
     def __init__(self, EventLog: EventLog):
@@ -56,21 +57,32 @@ class Mutator(MutatorBase):
             
             node = random.choice(nodes)
             if node.operator:
-                node.operator = random.choice(list(Operator))
+                node.operator = random.choice([Operator.SEQUENCE, Operator.XOR, Operator.PARALLEL, Operator.LOOP, Operator.OR])
                 random.shuffle(node.children)
             elif node.label:
                 node.label = random.choice(list(self.EventLog.unique_activities()))
             return tree
                   
-        def subtree_removal(tree):
+        def subtree_removal(tree, max_attempts=10):
             nodes = tree.get_all_nodes()
             if len(nodes) <= 1:
-                return tree
+                return tree  # Cannot remove from a single-node tree
             
-            node = random.choice(nodes)
-            if node.parent:
-                node.parent.children.remove(node)
-            return tree
+            attempts = 0
+            while attempts < max_attempts:
+                node = random.choice(nodes)
+                if node.parent:
+                    node.parent.children.remove(node)  # Remove node from its parent
+
+                    if tree.is_valid():
+                        return tree  # Return immediately if valid
+                    
+                    # If invalid, restore the node
+                    node.parent.children.append(node)
+                
+                attempts += 1
+            
+            return tree  # Return the original tree if no valid removal was found
         
         def node_addition(tree):
             operator_nodes = [node for node in tree.get_all_nodes() if node.operator]
@@ -82,7 +94,7 @@ class Mutator(MutatorBase):
             parent.add_child(new_leaf)
             return tree
 
-        mutation_type = random.choice(['node_mutation', 'subtree_removal', 'node_addition'])
+        mutation_type = random.choice(['node_mutation', 'node_addition'])
 
         if mutation_type == 'node_mutation':
             new_tree = node_mutation(process_tree)
@@ -99,45 +111,38 @@ class Mutator(MutatorBase):
         
         return new_tree
     
-    def generate_new_population(self, old_population: List[ProcessTree], new_population_size: int) -> List[ProcessTree]:
+    def generate_new_population(self, old_population: Population) -> Population:
         """
         Given a list of process trees, generates a new population of size new_population_size using crossover.
         - selected_trees: List of best trees from the previous generation.
         - X: Desired size of the new population.
         - Returns a new list of process trees.
         """
-        new_population = []
+        new_population = Population([])
         random_creation_rate = 0.3
         crossover_rate = 0.3
         mutation_rate = 0.3
         elite_rate = 0.1        
-        
-        # order the old population by fitness
-        old_population = sorted(old_population, key=lambda tree: tree.fitness, reverse=True)
-        
         # Keep the elite trees
-        new_population.extend(old_population[:int(new_population_size * elite_rate)])
+        new_population.add_trees(old_population.get_elite(int(len(old_population) * elite_rate)))
         
         # Do random creation for a portion of the new population
-        new_population.extend(self.random_creation(int(new_population_size * random_creation_rate)))
-        
-        # Remove the worst trees
-        old_population = old_population[:int(new_population_size * random_creation_rate)]
-        
+        new_population.add_trees(self.random_creation(int(len(old_population) * random_creation_rate)))
+
         # Do crossover for a portion of the new population
-        num_trees_to_crossover = int(new_population_size * crossover_rate)
+        num_trees_to_crossover = int(len(old_population) * crossover_rate)
         for i in range(num_trees_to_crossover):
             parent1 = random.choice(old_population)
             parent2 = random.choice(old_population)
             child = self.crossover(parent1, parent2)
-            new_population.append(child) 
-             
+            new_population.add_tree(child) 
+
         # Do mutation for a portion of the new population
-        num_trees_to_mutate = int(new_population_size * mutation_rate)
+        num_trees_to_mutate = int(len(old_population) * mutation_rate)
         for i in range(num_trees_to_mutate):
             tree = random.choice(old_population)
-            new_population.append(self.mutation(tree))
-            
+            new_population.add_tree(self.mutation(tree))
+ 
         return new_population
 
 

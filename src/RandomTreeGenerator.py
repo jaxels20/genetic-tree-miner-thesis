@@ -2,6 +2,7 @@
 import random
 from typing import List
 from ProcessTree import ProcessTree, Operator
+from Population import Population
 
 # TODO: MAKE SURE THAT THE RANDOM TREES ARE VALID (E.G. NO OR OPERATOR WITH ONLY ONE CHILD)
 
@@ -50,19 +51,22 @@ class BottomUpBinaryTreeGenerator(RandomTreeGeneratorBase):
         
         return nodes[0]  # Root of the tree
 
-    def generate_population(self, unique_activities: List[str], n: int) -> List[ProcessTree]:
+    def generate_population(self, unique_activities: List[str], n: int) -> Population:
         """
         Generates n random binary process trees using the given unique activities.
         """
-        population = []
-        while len(population) < n:
+        trees = []
+        while len(trees) < n:
             tree = self._generate_naive_binary_tree(unique_activities)
             if tree.is_valid():
-                population.append(tree)
+                trees.append(tree)
             else:
                 print("Invalid tree generated. Trying again...")
                 continue
+        
+        population = Population(trees)
         return population
+        
     
     
 if __name__ == "__main__":
