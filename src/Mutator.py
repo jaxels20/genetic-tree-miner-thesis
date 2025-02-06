@@ -120,9 +120,9 @@ class Mutator(MutatorBase):
         """
         new_population = Population([])
         random_creation_rate = 0.3
-        crossover_rate = 0.3
+        crossover_rate = 0.1
         mutation_rate = 0.3
-        elite_rate = 0.1        
+        elite_rate = 0.3        
         # Keep the elite trees
         new_population.add_trees(old_population.get_elite(int(len(old_population) * elite_rate)))
         

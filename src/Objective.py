@@ -26,6 +26,7 @@ class ObjectiveBaseClass:
     def replay_fitness(self):
         with SuppressPrints():
             fitness = replay_fitness(self.event_log_pm4py, self.pm4py_pn, self.inital_marking, self.final_marking)
+        print(fitness)
         return fitness['average_trace_fitness']
 
     def precision(self):
@@ -37,20 +38,20 @@ class ObjectiveBaseClass:
         raise NotImplementedError
 
 
-class SimpleWeightedAverage(ObjectiveBaseClass):
+class SimpleWeightedScore(ObjectiveBaseClass):
     def __init__(self, process_tree: ProcessTree, event_log: EventLog):
         super().__init__(process_tree, event_log)
     
-    def weighted_average(self, scores: dict[str, float], weights: dict[str, float] = None) -> float:
+    def weighted_score(self, scores: dict[str, float], weights: dict[str, float] = None) -> float:
         # Only works if the scores and weights have the same keys 
         # The Keys must be "simplicity", "generalization", "replay_fitness", "precision"
         
         if weights is None:
             weights = {
-                "simplicity": 0.05,
-                "generalization": 0.05,
-                "replay_fitness": 0.85,
-                "precision": 0.05
+                "simplicity": 1,
+                "generalization": 1,
+                "replay_fitness": 100,
+                "precision": 5
             }
         return sum(scores[key] * weights[key] for key in scores.keys())
 
@@ -61,7 +62,7 @@ class SimpleWeightedAverage(ObjectiveBaseClass):
             "replay_fitness": self.replay_fitness(),
             "precision": self.precision(),
         }
-        return self.weighted_average(scores)
+        return self.weighted_score(scores)
 
 
 
@@ -69,11 +70,30 @@ if __name__ == "__main__":
     process_tree = ProcessTree(
         Operator.SEQUENCE,
         children=[
-            ProcessTree(label="a"),
+            ProcessTree(label="A"),
+            ProcessTree(operator=Operator.PARALLEL, children=[
+                ProcessTree(label="B"),
+                ProcessTree(label="C"),
+            ]),
+            ProcessTree(label="D"),
         ]
     )
-    event_log = EventLog.from_trace_list(["a", "a", "B"])
-    objective = SimpleWeightedAverage(process_tree, event_log)
+    
+    another_process_tree = ProcessTree(
+        Operator.XOR,
+        children=[
+            ProcessTree(label="A"),
+            ProcessTree(operator=Operator.SEQUENCE, children=[
+                ProcessTree(label="A"),
+                ProcessTree(label="C"),
+            ]),
+        ]
+    )
+    
+    
+    
+    event_log = EventLog.from_trace_list(["ACBD", "ABCD"])
+    objective = SimpleWeightedScore(process_tree, event_log)
     data = {
         "simplicity": objective.simplicity(),
         "generalization": objective.generalization(),
@@ -81,3 +101,14 @@ if __name__ == "__main__":
         "precision": objective.precision(),
     }
     print(data)
+    print(objective.fitness())
+    
+    another_objective = SimpleWeightedScore(another_process_tree, event_log)
+    another_data = {
+        "simplicity": another_objective.simplicity(),
+        "generalization": another_objective.generalization(),
+        "replay_fitness": another_objective.replay_fitness(),
+        "precision": another_objective.precision(),
+    }
+    print(another_data)
+    print(another_objective.fitness())

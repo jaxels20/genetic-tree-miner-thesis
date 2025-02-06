@@ -2,6 +2,7 @@
 from typing import List
 from ProcessTree import ProcessTree
 from EventLog import EventLog
+from copy import deepcopy
 
 class Population:
     def __init__(self, trees: List[ProcessTree]):
@@ -33,19 +34,19 @@ class Population:
         if num_elite > len(self.trees):
             raise ValueError("Number of elite trees is greater than the population size")
         
-        return sorted(self.trees, key=lambda tree: tree.get_fitness(), reverse=True)[:num_elite]
+        return deepcopy(sorted(self.trees, key=lambda tree: tree.get_fitness(), reverse=True)[:num_elite])
     
     def get_best_tree(self) -> ProcessTree:
         """
         Returns the best tree in the population
         """
-        return max(self.trees, key=lambda tree: tree.get_fitness())
+        return deepcopy(max(self.trees, key=lambda tree: tree.get_fitness()))
     
     def get_worst_tree(self) -> ProcessTree:
         """
         Returns the worst tree in the population
         """
-        return min(self.trees, key=lambda tree: tree.get_fitness())
+        return deepcopy(min(self.trees, key=lambda tree: tree.get_fitness()))
     
     def get_average_fitness_of_elite(self, survival_rate: float) -> float:
         """
