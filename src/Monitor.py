@@ -39,5 +39,13 @@ class Monitor:
         plt.show()
     
     def print_best_trees(self):
+        max_gen_len = len(f"Generation {len(self.best_trees) - 1}")  # Get width of longest "Generation X"
+        max_tree_len = max(len(str(tree)) for tree in self.best_trees)  # Get longest tree representation
+        max_fitness_len = max(len(f"{tree.get_fitness():.4f}") for tree in self.best_trees)  # Align fitness values
+
         for i, tree in enumerate(self.best_trees):
-            print(f"Generation {i}: {tree} Fitness: {tree.get_fitness()}")
+            gen_str = f"Generation {i}".ljust(max_gen_len)  # Ensure uniform width for generation
+            tree_str = str(tree).ljust(max_tree_len)  # Ensure uniform width for tree representation
+            fitness_str = f"Fitness: {tree.get_fitness():.4f}".rjust(max_fitness_len + 9)  # Align fitness values
+            print(f"{gen_str}  {tree_str}  {fitness_str}")
+

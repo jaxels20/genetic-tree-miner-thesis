@@ -138,7 +138,6 @@ class ProcessTree:
         
         return all(child.is_valid() for child in self.children)
 
-
     def to_pm4py_pn(self): #-> Tuple[pm4py.objects.petri, pm4py.objects.petri.common.final_marking, pm4py.objects.petri.common.initial_marking]:
         pm4py_tree = self.to_pm4py()
         return tree_converter.apply(pm4py_tree)
@@ -167,6 +166,33 @@ class ProcessTree:
             nodes.extend(child.get_all_nodes())
         return nodes
     
+    def get_all_activities(self) -> List[str]:
+        activities = []
+        if self.label is not None:
+            activities.append(self.label)
+        for child in self.children:
+            activities.extend(child.get_all_activities())
+        return activities
+    
+    def contains_all_activities(self, activities: List[str]) -> bool:
+        all_activities = set(activities)
+        tree_activities = set(self.get_all_activities())
+        return all_activities.issubset(tree_activities)
+    
+    def if_missing_insert_activities(self, activities: List[str]):
+        all_activities = set(activities)
+        tree_activities = set(self.get_all_activities())
+        missing_activities = all_activities - tree_activities
+        if len(missing_activities) > 0:
+            #print(f"all_activities: {all_activities}")
+            #print(f"tree_activities: {tree_activities}")
+            #print(f"Missing activities: {missing_activities}")
+            for activity in missing_activities:
+                self.add_child(ProcessTree(operator=None, label=activity))
+
+    def is_equal(self, other: 'ProcessTree') -> bool:
+        return str(self) == str(other)
+    
 if __name__ == "__main__":
     # Example usage
     tree = ProcessTree(operator=Operator.SEQUENCE, label=None)
@@ -176,5 +202,6 @@ if __name__ == "__main__":
     tree.children[0].add_child(ProcessTree(operator=None, label="B"))
     tree.children[1].add_child(ProcessTree(operator=None, label="C"))
     
-    print(tree.is_valid())
-    tree.visualize()
+    print(tree.contains_all_activities(["A", "B", "C", "D"]))  # False
+    print(tree.contains_all_activities(["A", "B", "C"]))  # True
+    

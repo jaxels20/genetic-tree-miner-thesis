@@ -10,7 +10,7 @@ import time
 
 
 class GeneticAlgorithm:
-    def __init__(self, min_fitness=None, max_generations=100, stagnation_limit=10, time_limit=10, population_size=100):
+    def __init__(self, min_fitness=None, max_generations=100, stagnation_limit=None, time_limit=None, population_size=100):
         """
         :param min_fitness: Minimum fitness level to stop the algorithm
         :param max_generations: Maximum number of generations
@@ -30,34 +30,37 @@ class GeneticAlgorithm:
     def _check_stopping_criteria(self, generation: int, population: Population) -> bool:
         generation_best_tree = population.get_best_tree()
         generation_best_fitness = generation_best_tree.get_fitness()
-        
-        
-        if self.best_tree is None:
-            self.best_tree = generation_best_tree
-        
+                
         # Criterion 1: Minimum fitness level reached
         if self.min_fitness is not None:
-            if generation_best_tree.get_fitness() >= self.min_fitness:
+            if self.best_tree.fitness >= self.min_fitness:
                 print(f"Minimum fitness level reached in generation {generation}")
                 self.best_tree = generation_best_tree
                 return True
         
         # Criterion 2: No improvement for `stagnation_limit` generations
-        if generation_best_fitness > self.best_tree.get_fitness():
-            self.best_tree = generation_best_tree
-            self.stagnation_counter = 0  # Reset stagnation counter
-        else:
-            self.stagnation_counter += 1
-            if self.stagnation_counter >= self.stagnation_limit:
-                print(f"Stagnation limit reached in generation {generation}")
-                return True
+        if self.stagnation_limit is not None:
+            if generation_best_fitness > self.best_tree.get_fitness():
+                self.best_tree = generation_best_tree
+                self.stagnation_counter = 0  # Reset stagnation counter
+            else:
+                self.stagnation_counter += 1
+                if self.stagnation_counter >= self.stagnation_limit:
+                    print(f"Stagnation limit reached in generation {generation}")
+                    return True
             
         # Criterion 3: Time limit reached
-        if time.time() - self.start_time >= self.time_limit:
-            print(f"Time limit reached in generation {generation}")
-            return True
+        if self.time_limit is not None:
+            if time.time() - self.start_time >= self.time_limit:
+                print(f"Time limit reached in generation {generation}")
+                return True
         
         return False
+    
+    def _update_best_tree(self, population: Population):
+        best_tree = population.get_best_tree()
+        if self.best_tree is None or best_tree.get_fitness() > self.best_tree.get_fitness():
+            self.best_tree = best_tree
     
     def run(self, eventlog: EventLog) -> ProcessTree:
         # Start the timer
@@ -77,6 +80,9 @@ class GeneticAlgorithm:
             # Observe the population
             self.monitor.observe(generation, population)
             
+            # update the best tree
+            self._update_best_tree(population)
+            
             # check stopping criteria
             stop = self._check_stopping_criteria(generation, population)
             if stop:
@@ -89,8 +95,8 @@ class GeneticAlgorithm:
         return self.best_tree
     
 if __name__ == "__main__":
-    eventlog = EventLog.from_trace_list(["ACBD", "ABCD"])
-    ga = GeneticAlgorithm(min_fitness=None, max_generations=100, stagnation_limit=40, time_limit=30, population_size=100)
+    eventlog = EventLog.from_trace_list(["AB", "ACDD", "ADDC"])
+    ga = GeneticAlgorithm(min_fitness=None, max_generations=100, stagnation_limit=None, time_limit=90, population_size=50)
     best_tree = ga.run(eventlog=eventlog)
     print(f"Best tree: {best_tree}")
     print(f"Fitness: {best_tree.get_fitness()}")
@@ -98,7 +104,14 @@ if __name__ == "__main__":
     monitor = ga.monitor
     monitor.print_best_trees()
     monitor.plot_fitness()
-    # monitor.plot_population_size()
+
+    # print all the populations in the monitor 
+    for i, population in enumerate(monitor.populations):
+        sorted_population = sorted(population, key=lambda x: x.get_fitness(), reverse=True)
+        print(f"Generation {i}")
+        for tree in sorted_population:
+            print(f"Fitness: {tree.get_fitness()} Tree: {tree}")
+        print()
 
     
     

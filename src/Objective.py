@@ -26,7 +26,6 @@ class ObjectiveBaseClass:
     def replay_fitness(self):
         with SuppressPrints():
             fitness = replay_fitness(self.event_log_pm4py, self.pm4py_pn, self.inital_marking, self.final_marking)
-        print(fitness)
         return fitness['average_trace_fitness']
 
     def precision(self):

@@ -1,6 +1,6 @@
 
 from typing import List
-from ProcessTree import ProcessTree
+from ProcessTree import ProcessTree, Operator
 from EventLog import EventLog
 from copy import deepcopy
 
@@ -18,13 +18,13 @@ class Population:
         """
         Adds a tree to the population
         """
-        self.trees.append(tree)
+        self.trees.append(deepcopy(tree))
         
     def add_trees(self, trees: List[ProcessTree]):
         """
         Adds multiple trees to the population
         """
-        self.trees.extend(trees)
+        self.trees.extend(deepcopy(trees))
     
     def get_elite(self, num_elite: int) -> List[ProcessTree]:
         """
@@ -40,7 +40,7 @@ class Population:
         """
         Returns the best tree in the population
         """
-        return deepcopy(max(self.trees, key=lambda tree: tree.get_fitness()))
+        return self.get_elite(1)[0]
     
     def get_worst_tree(self) -> ProcessTree:
         """
@@ -60,3 +60,44 @@ class Population:
     
     def __len__(self) -> int:
         return len(self.trees)
+    
+    def is_equal(self, other: 'Population') -> bool:
+        """
+        Returns True if the two populations are equal without considering the order of the trees
+        """
+        if len(self.trees) != len(other.trees):
+            return False
+        
+        for tree in self.trees:
+            for other_tree in other.trees:
+                if tree.is_equal(other_tree):
+                    break
+            else:
+                return False
+        return True
+    
+    def __str__(self, fitness = False) -> str:
+        if not self.trees:
+            return "Population is empty"
+
+        max_tree_len = max(len(str(tree)) for tree in self.trees)  # Get longest tree representation
+        if fitness:
+            max_fitness_len = max(len(f"{tree.get_fitness():.4f}") for tree in self.trees)  # Align fitness values
+
+        result = f"Population of size {len(self.trees)}\n"
+        for tree in self.trees:
+            tree_str = str(tree).ljust(max_tree_len)  # Ensure uniform width for tree representation
+            if fitness:
+                fitness_str = f"Fitness: {tree.get_fitness():.4f}".rjust(max_fitness_len + 9)  # Align fitness values
+                result += f"{tree_str}  {fitness_str}\n"
+            else:
+                result += f"{tree_str}\n"
+
+        return result
+
+if __name__ == "__main__":
+    pop1 = Population([ProcessTree(operator=Operator.SEQUENCE), ProcessTree(operator=Operator.PARALLEL)])
+    pop2 = Population([ProcessTree(operator=Operator.PARALLEL), ProcessTree(operator=Operator.SEQUENCE),])
+    
+    # check if two empty populations are equal
+    print(pop1.is_equal(pop2))  # True

@@ -6,6 +6,9 @@ from EventLog import EventLog
 from copy import deepcopy
 from Population import Population
 
+# TODO ONLY Create Valid trees and onyl create trees with all activities in the log
+
+
 class MutatorBase:
     def __init__(self, EventLog: EventLog):
         self.EventLog = EventLog
@@ -45,9 +48,14 @@ class Mutator(MutatorBase):
                 idx2 = new_parent2.children.index(subtree2)
                 new_parent1.children[idx1] = subtree2
                 new_parent2.children[idx2] = subtree1
+                
+                if random.random() > 0.5:
+                    new_parent1.if_missing_insert_activities(self.EventLog.unique_activities())
+                    return new_parent1
+                else:
+                    new_parent2.if_missing_insert_activities(self.EventLog.unique_activities())
+                    return new_parent2
 
-                return new_parent1 if random.random() < 0.5 else new_parent2
-    
     def mutation(self, process_tree: ProcessTree) -> ProcessTree:
         
         def node_mutation(tree):
@@ -100,15 +108,16 @@ class Mutator(MutatorBase):
             new_tree = node_mutation(process_tree)
             if not new_tree.is_valid():
                 raise ValueError("Invalid tree (node_mutation)") 
-        elif mutation_type == 'subtree_removal':
-            new_tree = subtree_removal(process_tree)
-            if not new_tree.is_valid():
-                raise ValueError("Invalid tree(subtree_removal)")
+        # elif mutation_type == 'subtree_removal':
+        #     new_tree = subtree_removal(process_tree)
+        #     if not new_tree.is_valid():
+        #         raise ValueError("Invalid tree(subtree_removal)")
         elif mutation_type == 'node_addition':
             new_tree = node_addition(process_tree)
             if not new_tree.is_valid():
                 raise ValueError("Invalid tree(node_addition)")
         
+        new_tree.if_missing_insert_activities(self.EventLog.unique_activities())
         return new_tree
     
     def generate_new_population(self, old_population: Population) -> Population:
@@ -120,15 +129,14 @@ class Mutator(MutatorBase):
         """
         new_population = Population([])
         random_creation_rate = 0.3
-        crossover_rate = 0.1
-        mutation_rate = 0.3
-        elite_rate = 0.3        
+        crossover_rate = 0.0
+        mutation_rate = 0.6
+        elite_rate = 0.1        
         # Keep the elite trees
         new_population.add_trees(old_population.get_elite(int(len(old_population) * elite_rate)))
-        
         # Do random creation for a portion of the new population
         new_population.add_trees(self.random_creation(int(len(old_population) * random_creation_rate)))
-
+        
         # Do crossover for a portion of the new population
         num_trees_to_crossover = int(len(old_population) * crossover_rate)
         for i in range(num_trees_to_crossover):
@@ -136,13 +144,19 @@ class Mutator(MutatorBase):
             parent2 = random.choice(old_population)
             child = self.crossover(parent1, parent2)
             new_population.add_tree(child) 
-
+            
         # Do mutation for a portion of the new population
         num_trees_to_mutate = int(len(old_population) * mutation_rate)
         for i in range(num_trees_to_mutate):
             tree = random.choice(old_population)
-            new_population.add_tree(self.mutation(tree))
- 
+            mutated_tree = self.mutation(tree)
+            new_population.add_tree(mutated_tree)
+
+        # Check that all the fitness values are None before returning
+        for tree in new_population:
+            if tree.get_fitness() is not None:
+                tree.set_fitness(None)
+        
         return new_population
 
 
