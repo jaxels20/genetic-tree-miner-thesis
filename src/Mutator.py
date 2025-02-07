@@ -129,11 +129,16 @@ class Mutator(MutatorBase):
         """
         new_population = Population([])
         random_creation_rate = 0.3
-        crossover_rate = 0.0
-        mutation_rate = 0.6
+        crossover_rate = 0.6
+        mutation_rate = 0.0
         elite_rate = 0.1        
         # Keep the elite trees
         new_population.add_trees(old_population.get_elite(int(len(old_population) * elite_rate)))
+        
+        # set the fitness of the elite trees to None
+        for tree in new_population:
+            tree.set_fitness(None)
+        
         # Do random creation for a portion of the new population
         new_population.add_trees(self.random_creation(int(len(old_population) * random_creation_rate)))
         
@@ -151,11 +156,6 @@ class Mutator(MutatorBase):
             tree = random.choice(old_population)
             mutated_tree = self.mutation(tree)
             new_population.add_tree(mutated_tree)
-
-        # Check that all the fitness values are None before returning
-        for tree in new_population:
-            if tree.get_fitness() is not None:
-                tree.set_fitness(None)
         
         return new_population
 

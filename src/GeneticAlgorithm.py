@@ -70,7 +70,19 @@ class GeneticAlgorithm:
         generator = BottomUpBinaryTreeGenerator()
         population = generator.generate_population(eventlog.unique_activities(), n=self.population_size)
         
-        for generation in tqdm.tqdm(range(self.max_generations), desc="Discovering process tree", unit="generation"):
+        for generation in tqdm.tqdm(range(self.max_generations), desc="Discovering process tree", unit="generation"):            
+            
+            # check if fitness of all trees is None
+            for tree in population:
+                if tree.get_fitness() is not None:
+                    print(tree)
+                    print(f"Fitness of tree is not None in generation {generation}")
+                    raise ValueError("Fitness of tree is None")
+                
+                
+            
+            
+            
             # Evaluate the fitness of each tree
             for tree in population:
                 obj = SimpleWeightedScore(tree, eventlog)
