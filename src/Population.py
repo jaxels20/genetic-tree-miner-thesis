@@ -26,6 +26,12 @@ class Population:
         """
         self.trees.extend(deepcopy(trees))
     
+    def remove_tree(self, tree: ProcessTree):
+        """
+        Removes a tree from the population
+        """
+        self.trees.remove(tree)
+    
     def get_elite(self, num_elite: int) -> List[ProcessTree]:
         """
         Returns the top `num_elite` of the population

@@ -23,10 +23,25 @@ class ObjectiveBaseClass:
             generalization_value = generalization(self.event_log_pm4py, self.pm4py_pn, self.inital_marking, self.final_marking)
         return generalization_value
     
-    def replay_fitness(self):
+    def average_trace_fitness(self):
         with SuppressPrints():
             fitness = replay_fitness(self.event_log_pm4py, self.pm4py_pn, self.inital_marking, self.final_marking)
         return fitness['average_trace_fitness']
+
+    def perc_fit_traces(self):
+        with SuppressPrints():
+            fitness = replay_fitness(self.event_log_pm4py, self.pm4py_pn, self.inital_marking, self.final_marking)
+        return fitness['perc_fit_traces']
+        
+    def log_fitness(self):
+        with SuppressPrints():
+            fitness = replay_fitness(self.event_log_pm4py, self.pm4py_pn, self.inital_marking, self.final_marking)
+        return fitness['log_fitness']
+          
+    def percentage_of_fitting_traces(self):
+        with SuppressPrints():
+            fitness = replay_fitness(self.event_log_pm4py, self.pm4py_pn, self.inital_marking, self.final_marking)
+        return fitness['perc_fit_traces']
 
     def precision(self):
         with SuppressPrints():
@@ -43,14 +58,13 @@ class SimpleWeightedScore(ObjectiveBaseClass):
     
     def weighted_score(self, scores: dict[str, float], weights: dict[str, float] = None) -> float:
         # Only works if the scores and weights have the same keys 
-        # The Keys must be "simplicity", "generalization", "replay_fitness", "precision"
         
         if weights is None:
             weights = {
-                "simplicity": 1,
-                "generalization": 1,
-                "replay_fitness": 100,
-                "precision": 5
+                "simplicity": 50,
+                "generalization": 50,
+                "average_trace_fitness": 100,
+                "precision": 50,
             }
         return sum(scores[key] * weights[key] for key in scores.keys())
 
@@ -58,11 +72,10 @@ class SimpleWeightedScore(ObjectiveBaseClass):
         scores = {
             "simplicity": self.simplicity(),
             "generalization": self.generalization(),
-            "replay_fitness": self.replay_fitness(),
+            "average_trace_fitness": self.perc_fit_traces(),
             "precision": self.precision(),
         }
         return self.weighted_score(scores)
-
 
 
 if __name__ == "__main__":
@@ -78,36 +91,7 @@ if __name__ == "__main__":
         ]
     )
     
-    another_process_tree = ProcessTree(
-        Operator.XOR,
-        children=[
-            ProcessTree(label="A"),
-            ProcessTree(operator=Operator.SEQUENCE, children=[
-                ProcessTree(label="A"),
-                ProcessTree(label="C"),
-            ]),
-        ]
-    )
-    
-    
-    
     event_log = EventLog.from_trace_list(["ACBD", "ABCD"])
     objective = SimpleWeightedScore(process_tree, event_log)
-    data = {
-        "simplicity": objective.simplicity(),
-        "generalization": objective.generalization(),
-        "replay_fitness": objective.replay_fitness(),
-        "precision": objective.precision(),
-    }
-    print(data)
     print(objective.fitness())
     
-    another_objective = SimpleWeightedScore(another_process_tree, event_log)
-    another_data = {
-        "simplicity": another_objective.simplicity(),
-        "generalization": another_objective.generalization(),
-        "replay_fitness": another_objective.replay_fitness(),
-        "precision": another_objective.precision(),
-    }
-    print(another_data)
-    print(another_objective.fitness())

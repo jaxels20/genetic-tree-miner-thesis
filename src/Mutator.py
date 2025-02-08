@@ -157,6 +157,12 @@ class Mutator(MutatorBase):
             mutated_tree = self.mutation(tree)
             new_population.add_tree(mutated_tree)
         
+        # loop through the new population and if they are not strictly valid, make them random trees
+        for tree in new_population:
+            if not tree.is_valid():
+                new_population.remove_tree(tree)
+                new_population.add_tree(random.choice(self.random_creation(1)))
+        
         return new_population
 
 

@@ -139,6 +139,29 @@ class ProcessTree:
         
         return all(child.is_valid() for child in self.children)
 
+    def is_strictly_valid(self, activities: List[str]) -> bool:
+        """
+        Checks if the tree is strict valid. A tree is strict valid if:
+        - It is valid
+        - All activities are present in the tree
+        - All activities are unique meaning that they are not repeated in the tree
+        """
+        
+        # Check if the tree is valid
+        if not self.is_valid():
+            return False
+        
+        # Check if all activities are present in the tree
+        if not self.contains_all_activities(activities):
+            return False
+        
+        # Check if all activities are unique
+        all_activities = self.get_all_activities()
+        if len(all_activities) != len(set(all_activities)):
+            return False
+        
+        return True
+          
     def to_pm4py_pn(self): #-> Tuple[pm4py.objects.petri, pm4py.objects.petri.common.final_marking, pm4py.objects.petri.common.initial_marking]:
         pm4py_tree = self.to_pm4py()
         return tree_converter.apply(pm4py_tree)
