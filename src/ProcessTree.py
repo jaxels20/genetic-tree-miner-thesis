@@ -8,6 +8,7 @@ from pm4py.objects.process_tree.importer.variants import ptml as PM4PyImporter
 
 import pm4py.visualization.process_tree.visualizer as vis_process_tree
 import pm4py.objects.conversion.process_tree.converter as tree_converter
+import re
 
 class Operator(Enum):
     SEQUENCE = 'SEQ'
@@ -147,11 +148,36 @@ class ProcessTree:
         
         return all(child.is_valid() for child in self.children)
 
+    def is_strictly_valid(self, activities: List[str]) -> bool:
+        """
+        Checks if the tree is strict valid. A tree is strict valid if:
+        - It is valid
+        - All activities are present in the tree
+        - All activities are unique meaning that they are not repeated in the tree
+        """
+        
+        # Check if the tree is valid
+        if not self.is_valid():
+            return False
+        
+        # Check if all activities are present in the tree
+        if not self.contains_all_activities(activities):
+            return False
+        
+        # Check if all activities are unique
+        all_activities = self.get_all_activities()
+        if len(all_activities) != len(set(all_activities)):
+            return False
+        
+        return True
+          
     def to_pm4py_pn(self): #-> Tuple[pm4py.objects.petri, pm4py.objects.petri.common.final_marking, pm4py.objects.petri.common.initial_marking]:
         pm4py_tree = self.to_pm4py()
         return tree_converter.apply(pm4py_tree)
 
     def set_fitness(self, fitness):
+        if self.fitness is not None and fitness is not None:
+            raise ValueError("Fitness is already set")
         self.fitness = fitness
     
     def get_fitness(self):
@@ -202,6 +228,41 @@ class ProcessTree:
     def is_equal(self, other: 'ProcessTree') -> bool:
         return str(self) == str(other)
     
+    @classmethod
+    def from_string(cls, tree_str: str) -> 'ProcessTree':
+        tree_str = tree_str.strip()
+        
+        def parse_expression(expression: str) -> 'ProcessTree':
+            match = re.match(r'([A-Z<>]+)\((.*)\)', expression)
+            if match:
+                operator = Operator(match.group(1))
+                children_str = match.group(2)
+                children = split_children(children_str)
+                node = ProcessTree(operator=operator)
+                for child in children:
+                    node.add_child(parse_expression(child))
+                return node
+            else:
+                return ProcessTree(label=expression)
+        
+        def split_children(expression: str) -> List[str]:
+            children, balance, current = [], 0, ""
+            for char in expression:
+                if char == '(':
+                    balance += 1
+                elif char == ')':
+                    balance -= 1
+                elif char == ',' and balance == 0:
+                    children.append(current.strip())
+                    current = ""
+                    continue
+                current += char
+            if current:
+                children.append(current.strip())
+            return children
+        
+        return parse_expression(tree_str)
+       
 if __name__ == "__main__":
     # Example usage
     tree = ProcessTree(operator=Operator.SEQUENCE, label=None)

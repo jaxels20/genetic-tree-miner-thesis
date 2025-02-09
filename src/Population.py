@@ -26,6 +26,12 @@ class Population:
         """
         self.trees.extend(deepcopy(trees))
     
+    def remove_tree(self, tree: ProcessTree):
+        """
+        Removes a tree from the population
+        """
+        self.trees.remove(tree)
+    
     def get_elite(self, num_elite: int) -> List[ProcessTree]:
         """
         Returns the top `num_elite` of the population
@@ -76,23 +82,19 @@ class Population:
                 return False
         return True
     
-    def __str__(self, fitness = False) -> str:
+    def __str__(self) -> str:
         if not self.trees:
             return "Population is empty"
 
         max_tree_len = max(len(str(tree)) for tree in self.trees)  # Get longest tree representation
-        if fitness:
-            max_fitness_len = max(len(f"{tree.get_fitness():.4f}") for tree in self.trees)  # Align fitness values
+        max_fitness_len = max(len(f"{tree.get_fitness():.4f}") for tree in self.trees)  # Align fitness values
 
         result = f"Population of size {len(self.trees)}\n"
         for tree in self.trees:
             tree_str = str(tree).ljust(max_tree_len)  # Ensure uniform width for tree representation
-            if fitness:
-                fitness_str = f"Fitness: {tree.get_fitness():.4f}".rjust(max_fitness_len + 9)  # Align fitness values
-                result += f"{tree_str}  {fitness_str}\n"
-            else:
-                result += f"{tree_str}\n"
-
+            fitness_str = f"Fitness: {tree.get_fitness():.4f}".rjust(max_fitness_len + 9)  # Align fitness values
+            result += f"{tree_str}  {fitness_str}\n"
+        
         return result
 
 if __name__ == "__main__":

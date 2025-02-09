@@ -1,12 +1,12 @@
-from src.PetriNet import PetriNet
-from src.EventLog import EventLog
+from PetriNet import PetriNet
+from EventLog import EventLog
 #from pm4py.algo.evaluation.replay_fitness.algorithm import apply as replay_fitness
 from pm4py.algo.evaluation.replay_fitness.variants.token_replay import apply as replay_fitness
 from pm4py.algo.evaluation.precision.variants.etconformance_token import apply as precision
 from pm4py.algo.evaluation.generalization.variants.token_based import apply as generalization
 from pm4py.algo.evaluation.simplicity.variants.arc_degree import apply as simplicity
 import pandas as pd
-from src.Discovery import Discovery
+#from Discovery import Discovery
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 from concurrent.futures import ProcessPoolExecutor
@@ -14,12 +14,13 @@ from concurrent.futures import ProcessPoolExecutor
 
 # This class can evaluate a discovered process model against an event log (only one!)
 class SingleEvaluator:
-    def __init__(self, proces_model: PetriNet, eventlog: EventLog):
-        self.process_model = proces_model
+    def __init__(self, pm4py_pn, init_marking, final_marking, eventlog: EventLog):
         self.eventlog = eventlog
         
         # convert the process model to pm4py format
-        self.process_model_pm4py, self.init_marking, self. final_marking = self.process_model.to_pm4py()
+        self.pm4py_pn = pm4py_pn
+        self.init_marking = init_marking
+        self.final_marking = final_marking
 
         # convert the eventlog to pm4py format
         self.event_log_pm4py = self.eventlog.to_pm4py()
@@ -35,19 +36,19 @@ class SingleEvaluator:
         return data    
     
     def get_simplicity(self):
-        simplicity_value = simplicity(self.process_model_pm4py)
+        simplicity_value = simplicity(self.pm4py_pn)
         return simplicity_value
     
     def get_generalization(self):
-        generalization_value = generalization(self.event_log_pm4py, self.process_model_pm4py, self.init_marking, self.final_marking)
+        generalization_value = generalization(self.event_log_pm4py, self.pm4py_pn, self.init_marking, self.final_marking)
         return generalization_value
     
     def get_replay_fitness(self):
-        fitness = replay_fitness(self.event_log_pm4py, self.process_model_pm4py, self.init_marking, self.final_marking)
+        fitness = replay_fitness(self.event_log_pm4py, self.pm4py_pn, self.init_marking, self.final_marking)
         return fitness
     
     def get_precision(self):
-        precision_value = precision(self.event_log_pm4py, self.process_model_pm4py, self.init_marking, self.final_marking)
+        precision_value = precision(self.event_log_pm4py, self.pm4py_pn, self.init_marking, self.final_marking)
         return precision_value
     
     def get_f1_score(self, precision=None, fitness=None):

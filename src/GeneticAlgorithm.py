@@ -5,8 +5,10 @@ from EventLog import EventLog
 from Mutator import Mutator
 from Population import Population
 from Monitor import Monitor
+from Evaluator import SingleEvaluator
 import tqdm
 import time
+from pprint import pprint
 
 
 class GeneticAlgorithm:
@@ -70,7 +72,8 @@ class GeneticAlgorithm:
         generator = BottomUpBinaryTreeGenerator()
         population = generator.generate_population(eventlog.unique_activities(), n=self.population_size)
         
-        for generation in tqdm.tqdm(range(self.max_generations), desc="Discovering process tree", unit="generation"):
+        for generation in tqdm.tqdm(range(self.max_generations), desc="Discovering process tree", unit="generation"):            
+                    
             # Evaluate the fitness of each tree
             for tree in population:
                 obj = SimpleWeightedScore(tree, eventlog)
@@ -95,14 +98,16 @@ class GeneticAlgorithm:
         return self.best_tree
     
 if __name__ == "__main__":
-    eventlog = EventLog.from_trace_list(["AB", "ACDD", "ADDC"])
-    ga = GeneticAlgorithm(min_fitness=None, max_generations=10, stagnation_limit=None, time_limit=None, population_size=5)
+    eventlog = EventLog.from_trace_list(["ACD", "BCE", "ACD", "BCE"])
+    ga = GeneticAlgorithm(min_fitness=None, max_generations=100, stagnation_limit=None, time_limit=90, population_size=200)
     best_tree = ga.run(eventlog=eventlog)
     print(f"Best tree: {best_tree}")
-    print(f"Fitness: {best_tree.get_fitness()}")
     
-    monitor = ga.monitor
-    monitor.print_best_trees()
+    # print the evaluation of the best tree
+    eval = SingleEvaluator(*best_tree.to_pm4py_pn(), eventlog)
+    pprint(eval.get_evaluation_metrics())
+    
+
 
     
     

@@ -8,11 +8,15 @@ from pm4py.objects.petri_net.utils.check_soundness import (
 from pm4py.objects.process_tree.importer.variants.ptml import apply as import_ptml_tree
 from pm4py.objects.petri_net.importer.variants.pnml import import_net as import_pnml_net
 from pm4py.objects.conversion.process_tree.variants.to_petri_net import apply as convert_pt_to_pn
-from src.EventLog import EventLog
+from EventLog import EventLog
 import pm4py.write as pm4py_write
 from pm4py.convert import convert_to_process_tree as convert_to_pt
-from torch_geometric.data import Data
 from copy import deepcopy
+
+import os
+import sys
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, parent_dir)
 
 class Place:
     """
@@ -559,7 +563,7 @@ class PetriNet:
                             break        
                               
     @staticmethod
-    def from_graph(graph: Data):
+    def from_graph(graph):
         """
         Populate the Petri net from a PyTorch Geometric graph, considering only selected nodes.
 

@@ -150,11 +150,12 @@ class Mutator(MutatorBase):
             tree = random.choice(old_population)
             mutated_tree = self.mutation(tree)
             new_population.add_tree(mutated_tree)
-
-        # Check that all the fitness values are None before returning
+        
+        # loop through the new population and if they are not strictly valid, make them random trees
         for tree in new_population:
-            if tree.get_fitness() is not None:
-                tree.set_fitness(None)
+            if not tree.is_valid():
+                new_population.remove_tree(tree)
+                new_population.add_tree(random.choice(self.random_creation(1)))
         
         return new_population
 
