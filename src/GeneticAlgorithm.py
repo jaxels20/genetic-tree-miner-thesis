@@ -89,7 +89,7 @@ class GeneticAlgorithm:
                 break
                
             # Generate a new population
-            mutator = Mutator(eventlog)
+            mutator = Mutator(eventlog, random_creation_rate=0, crossover_rate=0.4, mutation_rate=0, elite_rate=0.6)
             population = mutator.generate_new_population(population)
         
         return self.best_tree
