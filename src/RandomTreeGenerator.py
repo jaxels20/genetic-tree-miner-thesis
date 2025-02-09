@@ -53,15 +53,19 @@ class BottomUpBinaryTreeGenerator(RandomTreeGeneratorBase):
 
     def generate_population(self, unique_activities: List[str], n: int) -> Population:
         """
-        Generates n random binary process trees using the given unique activities.
+        Generates n unique random binary process trees using the given unique activities.
         """
         trees = []
-        while len(trees) < n:
+        max_attempts = 10
+        attempts = 0
+        while len(trees) < n and attempts <= max_attempts:
             tree = self._generate_naive_binary_tree(unique_activities)
-            if tree.is_valid():
+            if tree.is_valid() and tree not in trees:
                 trees.append(tree)
+                attempts = 0
             else:
-                print("Invalid tree generated. Trying again...")
+                attempts += 1
+                print("Invalid or duplicate tree generated. Trying again...")
                 continue
         
         population = Population(trees)

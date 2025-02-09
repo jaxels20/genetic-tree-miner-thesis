@@ -23,10 +23,10 @@ class Mutator(MutatorBase):
         self.mutation_rate = mutation_rate
         self.elite_rate = elite_rate 
         
-    def random_creation(self, num_new_trees: int):
+    def random_creation(self, num_new_trees: int) -> List[ProcessTree]:
         generator = BottomUpBinaryTreeGenerator()
         new_trees = generator.generate_population(self.EventLog.unique_activities(), num_new_trees)
-        return new_trees
+        return new_trees.get_population()
     
     def crossover(self, parent1: ProcessTree, parent2: ProcessTree) -> ProcessTree:
         """
@@ -123,40 +123,48 @@ class Mutator(MutatorBase):
         new_tree.if_missing_insert_activities(self.EventLog.unique_activities())
         return new_tree
     
-    def generate_new_population(self, old_population: Population) -> Population:
-        """
-        Given a list of process trees, generates a new population of size new_population_size using crossover.
-        - selected_trees: List of best trees from the previous generation.
-        - X: Desired size of the new population.
-        - Returns a new list of process trees.
-        """
-        new_population = Population([])       
-        # Keep the elite trees
-        new_population.add_trees(old_population.get_elite(int(len(old_population) * self.elite_rate)))
-        # Do random creation for a portion of the new population
-        new_population.add_trees(self.random_creation(int(len(old_population) * self.random_creation_rate)))
-        
-        # Do crossover for a portion of the new population
-        num_trees_to_crossover = int(len(old_population) * self.crossover_rate)
-        for i in range(num_trees_to_crossover):
-            parent1 = random.choice(old_population)
-            parent2 = random.choice(old_population)
-            child = self.crossover(parent1, parent2)
-            new_population.add_tree(child) 
-            
-        # Do mutation for a portion of the new population
-        num_trees_to_mutate = int(len(old_population) * self.mutation_rate)
-        for i in range(num_trees_to_mutate):
-            tree = random.choice(old_population)
-            mutated_tree = self.mutation(tree)
-            new_population.add_tree(mutated_tree)
-        
-        # loop through the new population and if they are not strictly valid, make them random trees
-        for tree in new_population:
-            if not tree.is_valid():
-                new_population.remove_tree(tree)
-                new_population.add_tree(random.choice(self.random_creation(1)))
-        
-        return new_population
+    def generate_new_population(self, generated_trees: set, old_population: Population) -> Population:
+        MAX_SINGLE_ATTEMPTS = 10  # Max attempts per individual tree creation
+        new_population = Population([])
 
+        # Add elite trees
+        elite = old_population.get_elite(int(len(old_population) * self.elite_rate))
+        new_population.add_trees(elite)
+
+        # Helper function for population building
+        def _add_trees(source_func, num_trees, operation_name):
+            added = 0
+            for _ in range(num_trees):
+                for _ in range(MAX_SINGLE_ATTEMPTS):
+                    tree = source_func()
+                    if tree.is_valid() and tree not in generated_trees:
+                        new_population.add_tree(tree)
+                        generated_trees.add(tree)
+                        added += 1
+                        break
+                else:
+                    print(f"Warning: Failed to create {operation_name} tree after {MAX_SINGLE_ATTEMPTS} attempts")
+            return added
+        
+        # Add random trees
+        random_count = int(len(old_population) * self.random_creation_rate)
+        _add_trees(lambda: self.random_creation(1)[0], random_count, "random")
+        
+        # Add crossover trees
+        crossover_count = int(len(old_population) * self.crossover_rate)
+        _add_trees(lambda: self.crossover(random.choice(old_population), random.choice(old_population)), crossover_count, "crossover")
+        
+        # Add mutation trees
+        mutation_count = int(len(old_population) * self.mutation_rate)
+        _add_trees(lambda: self.mutation(random.choice(old_population)), mutation_count, "mutation")
+        
+        # Fill remaining slots with random trees
+        desired_size = len(old_population)
+        remaining = desired_size - len(new_population)
+        if remaining > 0:
+            added = _add_trees(lambda: self.random_creation(1)[0], remaining, "fallback random")
+            if added < remaining:
+                print(f"Warning: Population shortfall of {remaining - added} trees")
+
+        return new_population
 

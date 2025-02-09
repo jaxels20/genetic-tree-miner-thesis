@@ -34,16 +34,6 @@ class ProcessTree:
         # Used for Genetic Algorithm
         self.fitness = None
 
-    def __eq__(self, other):
-        return (self.operator == other.operator and 
-                self.label == other.label and 
-                len(self.children) == len(other.children) and 
-                all(c1 == c2 for c1, c2 in zip(self.children, other.children)))
-        
-    def __hash__(self):
-        children_hashes = tuple(hash(child) for child in self.children)
-        return hash((self.operator, self.label, children_hashes)) 
-
     def add_child(self, child: 'ProcessTree'):
         child.parent = self
         self.children.append(child)
@@ -103,6 +93,16 @@ class ProcessTree:
             return self.label
         
         return f"{self.operator}({children_str})"
+    
+    def __eq__(self, other):
+        return isinstance(other, ProcessTree) and (
+                self.operator == other.operator and 
+                self.label == other.label and 
+                len(self.children) == len(other.children) and 
+                all(c1 == c2 for c1, c2 in zip(self.children, other.children)))
+        
+    def __hash__(self):
+        return hash((self.operator, self.label, tuple(hash(child) for child in self.children))) 
     
     @staticmethod
     def load(filename: str):
@@ -176,8 +176,6 @@ class ProcessTree:
         return tree_converter.apply(pm4py_tree)
 
     def set_fitness(self, fitness):
-        if self.fitness is not None and fitness is not None:
-            raise ValueError("Fitness is already set")
         self.fitness = fitness
     
     def get_fitness(self):

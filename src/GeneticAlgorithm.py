@@ -69,11 +69,12 @@ class GeneticAlgorithm:
         self.start_time = time.time()
         
         # Initialize the population
+        generated_trees = set()
         generator = BottomUpBinaryTreeGenerator()
         population = generator.generate_population(eventlog.unique_activities(), n=self.population_size)
+        generated_trees.update(population.get_population())
         
-        for generation in tqdm.tqdm(range(self.max_generations), desc="Discovering process tree", unit="generation"):            
-                    
+        for generation in tqdm.tqdm(range(self.max_generations), desc="Discovering process tree", unit="generation"):
             # Evaluate the fitness of each tree
             for tree in population:
                 obj = SimpleWeightedScore(tree, eventlog)
@@ -92,14 +93,15 @@ class GeneticAlgorithm:
                 break
                
             # Generate a new population
-            mutator = Mutator(eventlog, random_creation_rate=0, crossover_rate=0.4, mutation_rate=0, elite_rate=0.6)
-            population = mutator.generate_new_population(population)
+            mutator = Mutator(eventlog, random_creation_rate=0, crossover_rate=0.5, mutation_rate=0, elite_rate=0.5)
+            population = mutator.generate_new_population(generated_trees, population)
+            generated_trees.update(population.get_population())
         
         return self.best_tree
     
 if __name__ == "__main__":
     eventlog = EventLog.from_trace_list(["ACD", "BCE", "ACD", "BCE"])
-    ga = GeneticAlgorithm(min_fitness=None, max_generations=100, stagnation_limit=None, time_limit=90, population_size=200)
+    ga = GeneticAlgorithm(min_fitness=None, max_generations=10, stagnation_limit=None, time_limit=90, population_size=200)
     best_tree = ga.run(eventlog=eventlog)
     print(f"Best tree: {best_tree}")
     
