@@ -89,29 +89,20 @@ class GeneticAlgorithm:
                 break
                
             # Generate a new population
-            mutator = Mutator(eventlog)
+            mutator = Mutator(eventlog, random_creation_rate=0, crossover_rate=0.4, mutation_rate=0, elite_rate=0.6)
             population = mutator.generate_new_population(population)
         
         return self.best_tree
     
 if __name__ == "__main__":
     eventlog = EventLog.from_trace_list(["AB", "ACDD", "ADDC"])
-    ga = GeneticAlgorithm(min_fitness=None, max_generations=100, stagnation_limit=None, time_limit=90, population_size=50)
+    ga = GeneticAlgorithm(min_fitness=None, max_generations=10, stagnation_limit=None, time_limit=None, population_size=5)
     best_tree = ga.run(eventlog=eventlog)
     print(f"Best tree: {best_tree}")
     print(f"Fitness: {best_tree.get_fitness()}")
     
     monitor = ga.monitor
     monitor.print_best_trees()
-    monitor.plot_fitness()
-
-    # print all the populations in the monitor 
-    for i, population in enumerate(monitor.populations):
-        sorted_population = sorted(population, key=lambda x: x.get_fitness(), reverse=True)
-        print(f"Generation {i}")
-        for tree in sorted_population:
-            print(f"Fitness: {tree.get_fitness()} Tree: {tree}")
-        print()
 
     
     

@@ -33,6 +33,16 @@ class ProcessTree:
         # Used for Genetic Algorithm
         self.fitness = None
 
+    def __eq__(self, other):
+        return (self.operator == other.operator and 
+                self.label == other.label and 
+                len(self.children) == len(other.children) and 
+                all(c1 == c2 for c1, c2 in zip(self.children, other.children)))
+        
+    def __hash__(self):
+        children_hashes = tuple(hash(child) for child in self.children)
+        return hash((self.operator, self.label, children_hashes)) 
+
     def add_child(self, child: 'ProcessTree'):
         child.parent = self
         self.children.append(child)
@@ -122,19 +132,18 @@ class ProcessTree:
         """
         # Check that activity nodes have no children
         if self.operator is None:  # Leaf node
-            return len(self.children) == 0  # Leaf nodes should not have children
+            return len(self.children) == 0 
         
         # Check that internal nodes are operators
         if not isinstance(self.operator, Operator):
-            return False  # Internal nodes must have a valid operator
+            return False
         
         child_count = len(self.children)
         
-        # Validate based on operator type
         if self.operator in [Operator.SEQUENCE, Operator.XOR] and child_count < 1:
-            return False   # SEQUENCE, XOR, and PARALLEL nodes must have at least 1 child to be a valid tree
+            return False
         elif self.operator in [Operator.OR, Operator.LOOP, Operator.PARALLEL] and child_count < 2:
-            return False   # OR and LOOP nodes must have at least 2 children to be a valid tree
+            return False
         
         return all(child.is_valid() for child in self.children)
 

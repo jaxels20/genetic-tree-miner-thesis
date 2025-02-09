@@ -14,12 +14,6 @@ from pm4py.convert import convert_to_process_tree as convert_to_pt
 from torch_geometric.data import Data
 from copy import deepcopy
 
-import os
-import sys
-parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.insert(0, parent_dir)
-import figure_generation.constants as constants
-
 class Place:
     """
     Class representing a place in a Petri net.

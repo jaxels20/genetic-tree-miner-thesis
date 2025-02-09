@@ -28,7 +28,7 @@ class BottomUpBinaryTreeGenerator(RandomTreeGeneratorBase):
         """
         if not unique_activities:
             raise ValueError("The list of unique activities cannot be empty.")
-        
+            
         # Convert activities into leaf nodes
         nodes = [ProcessTree(label=activity) for activity in unique_activities]
         

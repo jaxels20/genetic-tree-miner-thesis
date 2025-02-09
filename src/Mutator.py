@@ -8,7 +8,6 @@ from Population import Population
 
 # TODO ONLY Create Valid trees and onyl create trees with all activities in the log
 
-
 class MutatorBase:
     def __init__(self, EventLog: EventLog):
         self.EventLog = EventLog
@@ -17,8 +16,12 @@ class MutatorBase:
         raise NotImplementedError
 
 class Mutator(MutatorBase):
-    def __init__(self, EventLog: EventLog):
+    def __init__(self, EventLog: EventLog, random_creation_rate: float, crossover_rate: float, mutation_rate: float, elite_rate: float):
         super().__init__(EventLog)
+        self.random_creation_rate = random_creation_rate
+        self.crossover_rate = crossover_rate
+        self.mutation_rate = mutation_rate
+        self.elite_rate = elite_rate 
         
     def random_creation(self, num_new_trees: int):
         generator = BottomUpBinaryTreeGenerator()
@@ -26,35 +29,35 @@ class Mutator(MutatorBase):
         return new_trees
     
     def crossover(self, parent1: ProcessTree, parent2: ProcessTree) -> ProcessTree:
-                """
-                Performs subtree crossover between two process trees.
-                - Randomly selects a subtree in parent1 and replaces it with a subtree from parent2.
-                - If either tree is too small, returns a shallow copy of parent1 or parent2.
-                """
-                # Base case: If one of the parents is a leaf node, return a copy of it
-                if not parent1.children or not parent2.children:
-                    return ProcessTree(operator=parent1.operator, label=parent1.label)
+        """
+        Performs subtree crossover between two process trees.
+        - Randomly selects a subtree in parent1 and replaces it with a subtree from parent2.
+        - If either tree is too small, returns a shallow copy of parent1 or parent2.
+        """
+        # Base case: If one of the parents is a leaf node, return a copy of it
+        if not parent1.children or not parent2.children:
+            return ProcessTree(operator=parent1.operator, label=parent1.label)
 
-                # Randomly select crossover points (subtrees)
-                subtree1 = random.choice(parent1.children)
-                subtree2 = random.choice(parent2.children)
+        # Randomly select crossover points (subtrees)
+        subtree1 = random.choice(parent1.children)
+        subtree2 = random.choice(parent2.children)
 
-                # Create copies of the parents
-                new_parent1 = ProcessTree(operator=parent1.operator, label=parent1.label, children=[c for c in parent1.children])
-                new_parent2 = ProcessTree(operator=parent2.operator, label=parent2.label, children=[c for c in parent2.children])
+        # Create copies of the parents
+        new_parent1 = ProcessTree(operator=parent1.operator, label=parent1.label, children=[c for c in parent1.children])
+        new_parent2 = ProcessTree(operator=parent2.operator, label=parent2.label, children=[c for c in parent2.children])
 
-                # Perform subtree swap
-                idx1 = new_parent1.children.index(subtree1)
-                idx2 = new_parent2.children.index(subtree2)
-                new_parent1.children[idx1] = subtree2
-                new_parent2.children[idx2] = subtree1
-                
-                if random.random() > 0.5:
-                    new_parent1.if_missing_insert_activities(self.EventLog.unique_activities())
-                    return new_parent1
-                else:
-                    new_parent2.if_missing_insert_activities(self.EventLog.unique_activities())
-                    return new_parent2
+        # Perform subtree swap
+        idx1 = new_parent1.children.index(subtree1)
+        idx2 = new_parent2.children.index(subtree2)
+        new_parent1.children[idx1] = subtree2
+        new_parent2.children[idx2] = subtree1
+        
+        if random.random() > 0.5:
+            new_parent1.if_missing_insert_activities(self.EventLog.unique_activities())
+            return new_parent1
+        else:
+            new_parent2.if_missing_insert_activities(self.EventLog.unique_activities())
+            return new_parent2
 
     def mutation(self, process_tree: ProcessTree) -> ProcessTree:
         
@@ -127,18 +130,14 @@ class Mutator(MutatorBase):
         - X: Desired size of the new population.
         - Returns a new list of process trees.
         """
-        new_population = Population([])
-        random_creation_rate = 0.3
-        crossover_rate = 0.0
-        mutation_rate = 0.6
-        elite_rate = 0.1        
+        new_population = Population([])       
         # Keep the elite trees
-        new_population.add_trees(old_population.get_elite(int(len(old_population) * elite_rate)))
+        new_population.add_trees(old_population.get_elite(int(len(old_population) * self.elite_rate)))
         # Do random creation for a portion of the new population
-        new_population.add_trees(self.random_creation(int(len(old_population) * random_creation_rate)))
+        new_population.add_trees(self.random_creation(int(len(old_population) * self.random_creation_rate)))
         
         # Do crossover for a portion of the new population
-        num_trees_to_crossover = int(len(old_population) * crossover_rate)
+        num_trees_to_crossover = int(len(old_population) * self.crossover_rate)
         for i in range(num_trees_to_crossover):
             parent1 = random.choice(old_population)
             parent2 = random.choice(old_population)
@@ -146,7 +145,7 @@ class Mutator(MutatorBase):
             new_population.add_tree(child) 
             
         # Do mutation for a portion of the new population
-        num_trees_to_mutate = int(len(old_population) * mutation_rate)
+        num_trees_to_mutate = int(len(old_population) * self.mutation_rate)
         for i in range(num_trees_to_mutate):
             tree = random.choice(old_population)
             mutated_tree = self.mutation(tree)
