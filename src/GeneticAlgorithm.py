@@ -76,10 +76,7 @@ class GeneticAlgorithm:
         
         for generation in tqdm.tqdm(range(self.max_generations), desc="Discovering process tree", unit="generation"):
             # Evaluate the fitness of each tree
-            for tree in population:
-                obj = SimpleWeightedScore(tree, eventlog)
-                fitness = obj.fitness()
-                tree.set_fitness(fitness)
+            SimpleWeightedScore.evaluate_population(population, eventlog, num_processes=8)
             
             # Observe the population
             self.monitor.observe(generation, population)
@@ -101,7 +98,7 @@ class GeneticAlgorithm:
     
 if __name__ == "__main__":
     eventlog = EventLog.from_trace_list(["ACD", "BCE", "ACD", "BCE"])
-    ga = GeneticAlgorithm(min_fitness=None, max_generations=10, stagnation_limit=None, time_limit=90, population_size=200)
+    ga = GeneticAlgorithm(min_fitness=None, max_generations=100, stagnation_limit=None, time_limit=90, population_size=500)
     best_tree = ga.run(eventlog=eventlog)
     print(f"Best tree: {best_tree}")
     
