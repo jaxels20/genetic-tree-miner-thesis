@@ -6,6 +6,10 @@ from pm4py.algo.evaluation.precision.variants.etconformance_token import apply a
 from pm4py.algo.evaluation.generalization.variants.token_based import apply as generalization
 from pm4py.algo.evaluation.simplicity.variants.arc_degree import apply as simplicity
 from SupressPrints import SuppressPrints
+from Population import Population
+from RandomTreeGenerator import BottomUpBinaryTreeGenerator
+import multiprocessing
+
 class ObjectiveBaseClass:
     def __init__(self, process_tree: ProcessTree, event_log: EventLog):
         self.process_tree = process_tree
@@ -50,7 +54,9 @@ class ObjectiveBaseClass:
     
     def fitness(self) -> float:
         raise NotImplementedError
-
+    
+    def evaluate_population(population: Population, event_log: EventLog, num_processes: int = 1):
+        raise NotImplementedError
 
 class SimpleWeightedScore(ObjectiveBaseClass):
     def __init__(self, process_tree: ProcessTree, event_log: EventLog):
@@ -78,20 +84,55 @@ class SimpleWeightedScore(ObjectiveBaseClass):
         return self.weighted_score(scores)
 
 
+    @staticmethod
+    def _evaluate_trees(event_log: EventLog, trees: list[ProcessTree]):
+        for tree in trees:
+            tree.fitness = SimpleWeightedScore(tree, event_log).fitness()
+    
+    @staticmethod
+    def evaluate_population(population: Population, event_log: EventLog, num_processes: int = 1):
+        """Evaluates a population of process trees, using multiple processes if specified."""
+        if num_processes > 1:
+            # Split trees into approximately equal chunks
+            num_trees = len(population.trees)
+            chunk_size = (num_trees + num_processes - 1) // num_processes  # Ensure all trees are covered
+            trees_per_process = [population.trees[i:i + chunk_size] for i in range(0, num_trees, chunk_size)]
+
+            # Use multiprocessing to parallelize evaluation
+            with multiprocessing.Pool(processes=num_processes) as pool:
+                pool.starmap(SimpleWeightedScore._evaluate_trees, [(event_log, trees) for trees in trees_per_process])
+        else:
+            SimpleWeightedScore._evaluate_trees(event_log, population.trees)
+
+
 if __name__ == "__main__":
-    process_tree = ProcessTree(
-        Operator.SEQUENCE,
-        children=[
-            ProcessTree(label="A"),
-            ProcessTree(operator=Operator.PARALLEL, children=[
-                ProcessTree(label="B"),
-                ProcessTree(label="C"),
-            ]),
-            ProcessTree(label="D"),
-        ]
-    )
+
     
     event_log = EventLog.from_trace_list(["ACBD", "ABCD"])
-    objective = SimpleWeightedScore(process_tree, event_log)
-    print(objective.fitness())
+    
+    generator = BottomUpBinaryTreeGenerator()
+    population = generator.generate_population(event_log.unique_activities(), n=1000)
+    
+    # benchmark how num_processes affects the speed
+    import time
+    num_processes_data = []
+    times = []
+    
+    for num_processes in range(1, 9):
+        start = time.time()
+        SimpleWeightedScore.evaluate_population(population, event_log, num_processes=num_processes)
+        total_time = time.time() - start
+        print(f"num_processes: {num_processes}, time: {total_time}")
+        
+        num_processes_data.append(num_processes)
+        times.append(total_time)
+    
+    import matplotlib.pyplot as plt
+    plt.plot(num_processes_data, times)
+    plt.xlabel("Number of processes")
+    plt.ylabel("Time taken")
+    plt.show()
+        
+    
+
     
