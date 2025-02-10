@@ -25,3 +25,12 @@ class ProcessTreeRegister:
         :param fitness: The new fitness value to set.
         """
         self.fitness_values[tree_id] = fitness
+        
+        
+    def __len__(self) -> int:
+        """
+        Get the number of process trees stored in the register.
+        
+        :return: The number of process trees in the register.
+        """
+        return len(self.fitness_values)

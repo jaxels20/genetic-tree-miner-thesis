@@ -1,7 +1,7 @@
 from ProcessTree import ProcessTree
 from EventLog import EventLog
 from ProcessTree import Operator
-from Register import ProcessTreeRegister
+from ProcessTreeRegister import ProcessTreeRegister
 from pm4py.algo.evaluation.replay_fitness.variants.token_replay import apply as replay_fitness
 from pm4py.algo.evaluation.precision.variants.etconformance_token import apply as precision
 from pm4py.algo.evaluation.generalization.variants.token_based import apply as generalization

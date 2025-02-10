@@ -6,7 +6,7 @@ from Mutator import Mutator
 from Population import Population
 from Monitor import Monitor
 from Evaluator import SingleEvaluator
-from Register import ProcessTreeRegister
+from ProcessTreeRegister import ProcessTreeRegister
 import tqdm
 import time
 from pprint import pprint
@@ -30,7 +30,7 @@ class GeneticAlgorithm:
         self.population_size = population_size
 
         self.monitor = Monitor()
-
+        self.process_tree_register = ProcessTreeRegister({})
     def _check_stopping_criteria(self, generation: int, population: Population) -> bool:
         generation_best_tree = population.get_best_tree()
         generation_best_fitness = generation_best_tree.get_fitness()
@@ -73,11 +73,10 @@ class GeneticAlgorithm:
         # Initialize the population
         generator = BottomUpBinaryTreeGenerator()
         population = generator.generate_population(eventlog.unique_activities(), n=self.population_size)
-        process_tree_register = ProcessTreeRegister({})
         
         for generation in tqdm.tqdm(range(self.max_generations), desc="Discovering process tree", unit="generation"):
             # Evaluate the fitness of each tree
-            SimpleWeightedScore.evaluate_population(population, eventlog, process_tree_register, num_processes=1)
+            SimpleWeightedScore.evaluate_population(population, eventlog, self.process_tree_register, num_processes=1)
             
             # Observe the population
             self.monitor.observe(generation, population)
@@ -97,7 +96,7 @@ class GeneticAlgorithm:
         return self.best_tree
     
 if __name__ == "__main__":
-    eventlog = EventLog.from_trace_list(["ABCBCBCBCD", "ABCBCBCBCD", "ABCBCD"])
+    eventlog = EventLog.from_trace_list(["ABCD", "ABCBCD", "ABCBCBCD"])
     ga = GeneticAlgorithm(min_fitness=None, max_generations=100, stagnation_limit=None, time_limit=90, population_size=500)
     start = time.time()
     best_tree = ga.run(eventlog=eventlog)
@@ -105,6 +104,7 @@ if __name__ == "__main__":
     print(f"Best tree: {best_tree}")
     print(f"Best tree fitness: {best_tree.get_fitness()}")
     print(f"Best tree is valid: {best_tree.is_strictly_valid(eventlog.unique_activities())}")
+    print(f"Number of trees explored: {len(ga.process_tree_register)}")
         
     # print the evaluation of the best tree
     eval = SingleEvaluator(*best_tree.to_pm4py_pn(), eventlog)
