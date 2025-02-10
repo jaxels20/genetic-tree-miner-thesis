@@ -9,11 +9,18 @@ from SupressPrints import SuppressPrints
 from Population import Population
 from RandomTreeGenerator import BottomUpBinaryTreeGenerator
 import multiprocessing
+from typing import Union
+from PetriNet import PetriNet
+
 
 class ObjectiveBaseClass:
-    def __init__(self, process_tree: ProcessTree, event_log: EventLog):
-        self.process_tree = process_tree
-        self.pm4py_pn, self.inital_marking, self.final_marking = process_tree.to_pm4py_pn()
+    def __init__(self, process_model: Union[ProcessTree, PetriNet], event_log: EventLog):
+        self.process_model = process_model
+        if isinstance(process_model, ProcessTree):
+            self.pm4py_pn, self.inital_marking, self.final_marking = process_model.to_pm4py_pn()
+        elif isinstance(process_model, PetriNet):
+            self.pm4py_pn, self.inital_marking, self.final_marking = process_model.to_pm4py()
+            
         self.eventlog = event_log
         self.event_log_pm4py = event_log.to_pm4py()
 
@@ -59,8 +66,8 @@ class ObjectiveBaseClass:
         raise NotImplementedError
 
 class SimpleWeightedScore(ObjectiveBaseClass):
-    def __init__(self, process_tree: ProcessTree, event_log: EventLog):
-        super().__init__(process_tree, event_log)
+    def __init__(self, process_model: Union[ProcessTree, PetriNet], event_log: EventLog):
+        super().__init__(process_model, event_log)
     
     def weighted_score(self, scores: dict[str, float], weights: dict[str, float] = None) -> float:
         # Only works if the scores and weights have the same keys 
@@ -111,7 +118,7 @@ if __name__ == "__main__":
     event_log = EventLog.from_trace_list(["ACBD", "ABCD"])
     
     generator = BottomUpBinaryTreeGenerator()
-    population = generator.generate_population(event_log.unique_activities(), n=1000)
+    population = generator.generate_population(event_log.unique_activities(), n=100)
     
     # benchmark how num_processes affects the speed
     import time

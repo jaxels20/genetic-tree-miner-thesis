@@ -68,7 +68,7 @@ class Mutator(MutatorBase):
             
             node = random.choice(nodes)
             if node.operator:
-                node.operator = random.choice([Operator.SEQUENCE, Operator.XOR, Operator.PARALLEL, Operator.LOOP, Operator.OR])
+                node.operator = random.choice([Operator.SEQUENCE, Operator.XOR, Operator.PARALLEL, Operator.LOOP])
                 random.shuffle(node.children)
             elif node.label:
                 node.label = random.choice(list(self.EventLog.unique_activities()))
@@ -123,48 +123,34 @@ class Mutator(MutatorBase):
         new_tree.if_missing_insert_activities(self.EventLog.unique_activities())
         return new_tree
     
-    def generate_new_population(self, generated_trees: set, old_population: Population) -> Population:
-        MAX_SINGLE_ATTEMPTS = 10  # Max attempts per individual tree creation
+    def generate_new_population(self, old_population: Population) -> Population:
         new_population = Population([])
 
         # Add elite trees
         elite = old_population.get_elite(int(len(old_population) * self.elite_rate))
         new_population.add_trees(elite)
 
-        # Helper function for population building
-        def _add_trees(source_func, num_trees, operation_name):
-            added = 0
-            for _ in range(num_trees):
-                for _ in range(MAX_SINGLE_ATTEMPTS):
-                    tree = source_func()
-                    if tree.is_valid() and tree not in generated_trees:
-                        new_population.add_tree(tree)
-                        generated_trees.add(tree)
-                        added += 1
-                        break
-                else:
-                    print(f"Warning: Failed to create {operation_name} tree after {MAX_SINGLE_ATTEMPTS} attempts")
-            return added
-        
         # Add random trees
         random_count = int(len(old_population) * self.random_creation_rate)
-        _add_trees(lambda: self.random_creation(1)[0], random_count, "random")
+        new_population.add_trees(self.random_creation(random_count))
         
         # Add crossover trees
         crossover_count = int(len(old_population) * self.crossover_rate)
-        _add_trees(lambda: self.crossover(random.choice(old_population), random.choice(old_population)), crossover_count, "crossover")
-        
+        for _ in range(crossover_count):
+            parent1, parent2 = random.sample(old_population.get_population(), 2)
+            new_population.add_tree(self.crossover(parent1, parent2))
+                
         # Add mutation trees
         mutation_count = int(len(old_population) * self.mutation_rate)
-        _add_trees(lambda: self.mutation(random.choice(old_population)), mutation_count, "mutation")
+        for _ in range(mutation_count):
+            parent = random.choice(old_population)
+            new_population.add_tree(self.mutation(parent))
+    
+        # check if all trees are strictly valid if not generate new ones
+        for tree in new_population:
+            if not tree.is_strictly_valid(self.EventLog.unique_activities()):
+                new_population.remove_tree(tree)
+                new_population.add_tree(BottomUpBinaryTreeGenerator().generate_population(self.EventLog.unique_activities(), 1).get_population()[0])
         
-        # Fill remaining slots with random trees
-        desired_size = len(old_population)
-        remaining = desired_size - len(new_population)
-        if remaining > 0:
-            added = _add_trees(lambda: self.random_creation(1)[0], remaining, "fallback random")
-            if added < remaining:
-                print(f"Warning: Population shortfall of {remaining - added} trees")
-
         return new_population
 

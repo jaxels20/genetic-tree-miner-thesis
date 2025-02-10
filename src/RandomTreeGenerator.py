@@ -37,7 +37,7 @@ class BottomUpBinaryTreeGenerator(RandomTreeGeneratorBase):
             new_nodes = []
             
             for i in range(0, len(nodes) - 1, 2):
-                operator = random.choice([Operator.SEQUENCE, Operator.XOR, Operator.PARALLEL, Operator.LOOP, Operator.OR])
+                operator = random.choice([Operator.SEQUENCE, Operator.XOR, Operator.PARALLEL, Operator.LOOP])
                 parent = ProcessTree(operator=operator)
                 parent.add_child(nodes[i])
                 parent.add_child(nodes[i + 1])
@@ -56,18 +56,10 @@ class BottomUpBinaryTreeGenerator(RandomTreeGeneratorBase):
         Generates n unique random binary process trees using the given unique activities.
         """
         trees = []
-        max_attempts = 10
-        attempts = 0
-        while len(trees) < n and attempts <= max_attempts:
+        for _ in range(n):
             tree = self._generate_naive_binary_tree(unique_activities)
-            if tree.is_valid() and tree not in trees:
-                trees.append(tree)
-                attempts = 0
-            else:
-                attempts += 1
-                print("Invalid or duplicate tree generated. Trying again...")
-                continue
-        
+            trees.append(tree)
+
         population = Population(trees)
         return population
         

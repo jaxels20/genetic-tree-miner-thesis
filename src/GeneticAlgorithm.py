@@ -9,6 +9,7 @@ from Evaluator import SingleEvaluator
 import tqdm
 import time
 from pprint import pprint
+from Discovery import Discovery
 
 
 class GeneticAlgorithm:
@@ -69,15 +70,12 @@ class GeneticAlgorithm:
         self.start_time = time.time()
         
         # Initialize the population
-        generated_trees = set()
         generator = BottomUpBinaryTreeGenerator()
         population = generator.generate_population(eventlog.unique_activities(), n=self.population_size)
-        generated_trees.update(population.get_population())
         
         for generation in tqdm.tqdm(range(self.max_generations), desc="Discovering process tree", unit="generation"):
             # Evaluate the fitness of each tree
-            SimpleWeightedScore.evaluate_population(population, eventlog, num_processes=8)
-            
+            SimpleWeightedScore.evaluate_population(population, eventlog, num_processes=1)
             # Observe the population
             self.monitor.observe(generation, population)
             
@@ -90,21 +88,33 @@ class GeneticAlgorithm:
                 break
                
             # Generate a new population
-            mutator = Mutator(eventlog, random_creation_rate=0, crossover_rate=0.5, mutation_rate=0, elite_rate=0.5)
-            population = mutator.generate_new_population(generated_trees, population)
-            generated_trees.update(population.get_population())
+            mutator = Mutator(eventlog, random_creation_rate=0.3, crossover_rate=0.2, mutation_rate=0.2, elite_rate=0.3)
+            population = mutator.generate_new_population(population)
         
         return self.best_tree
     
 if __name__ == "__main__":
-    eventlog = EventLog.from_trace_list(["ACD", "BCE", "ACD", "BCE"])
-    ga = GeneticAlgorithm(min_fitness=None, max_generations=100, stagnation_limit=None, time_limit=90, population_size=500)
+    eventlog = EventLog.from_trace_list(["ABCBCBCBCD", "ABCBCBCBCD", "ABCBCD"])
+    ga = GeneticAlgorithm(min_fitness=None, max_generations=100, stagnation_limit=None, time_limit=90, population_size=200)
     best_tree = ga.run(eventlog=eventlog)
     print(f"Best tree: {best_tree}")
-    
+    print(f"Best tree fitness: {best_tree.get_fitness()}")
     # print the evaluation of the best tree
     eval = SingleEvaluator(*best_tree.to_pm4py_pn(), eventlog)
     pprint(eval.get_evaluation_metrics())
+    
+    print(f"_________________________________________")
+    
+    inductive_pn = Discovery.inductive_miner(eventlog)
+    
+    inductive_obj = SimpleWeightedScore(inductive_pn, eventlog)
+    print(f"Inductive miner fitness: {inductive_obj.fitness()}")
+    
+    inductive_eval = SingleEvaluator(*inductive_pn.to_pm4py(), eventlog)
+    pprint(inductive_eval.get_evaluation_metrics())
+    
+    
+
     
 
 
