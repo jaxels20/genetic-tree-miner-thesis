@@ -97,9 +97,27 @@ class Population:
         
         return result
 
+    def ensure_strictly_valid(self, activities: List[str]) -> int:
+        """
+        Removes trees that are not strictly valid
+        Return the number of trees removed
+        """
+        removed = 0
+        from copy import deepcopy
+        for tree in deepcopy(self.trees):
+            if not tree.is_strictly_valid(activities):
+                self.remove_tree(tree)
+                removed += 1
+                
+        return removed
+
 if __name__ == "__main__":
-    pop1 = Population([ProcessTree(operator=Operator.SEQUENCE), ProcessTree(operator=Operator.PARALLEL)])
-    pop2 = Population([ProcessTree(operator=Operator.PARALLEL), ProcessTree(operator=Operator.SEQUENCE),])
+    pop = Population([ProcessTree.from_string("AND(SEQ(B,C),AND(B,C),A,D)"), ProcessTree.from_string("SEQ(SEQ(A,B),O(C,B),D)"),ProcessTree.from_string("SEQ(SEQ(A,B),O(C,B),D)")])
     
-    # check if two empty populations are equal
-    print(pop1.is_equal(pop2))  # True
+    removed = pop.ensure_strictly_valid(["A", "B", "C", "D"])
+    
+    print(f"Removed {removed} trees")
+    #print(pop)
+    
+        
+        

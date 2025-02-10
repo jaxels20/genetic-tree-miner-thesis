@@ -95,11 +95,7 @@ class ProcessTree:
         return f"{self.operator}({children_str})"
     
     def __eq__(self, other):
-        return isinstance(other, ProcessTree) and (
-                self.operator == other.operator and 
-                self.label == other.label and 
-                len(self.children) == len(other.children) and 
-                all(c1 == c2 for c1, c2 in zip(self.children, other.children)))
+        return str(self) == str(other)
         
     def __hash__(self):
         return hash((self.operator, self.label, tuple(hash(child) for child in self.children))) 
@@ -263,13 +259,7 @@ class ProcessTree:
        
 if __name__ == "__main__":
     # Example usage
-    tree = ProcessTree(operator=Operator.SEQUENCE, label=None)
-    tree.add_child(ProcessTree(operator=Operator.XOR, label=None))
-    tree.add_child(ProcessTree(operator=Operator.LOOP, label=None))
-    tree.children[0].add_child(ProcessTree(operator=None, label="A"))
-    tree.children[0].add_child(ProcessTree(operator=None, label="B"))
-    tree.children[1].add_child(ProcessTree(operator=None, label="C"))
+    tree = ProcessTree.from_string("SEQ(O(A,C),SEQ(C,A),D,B)")
+    print(tree.is_strictly_valid(["A", "B", "C", "D"]))
     
-    print(tree.contains_all_activities(["A", "B", "C", "D"]))  # False
-    print(tree.contains_all_activities(["A", "B", "C"]))  # True
     
