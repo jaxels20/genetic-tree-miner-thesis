@@ -91,7 +91,7 @@ class GeneticAlgorithm:
                 break
                
             # Generate a new population
-            mutator = Mutator(eventlog, random_creation_rate=0.3, crossover_rate=0.2, mutation_rate=0.2, elite_rate=0.3)
+            mutator = Mutator(eventlog, random_creation_rate=0.7, crossover_rate=0.1, mutation_rate=0.0, elite_rate=0.2)
             population = mutator.generate_new_population(population)
         
         return self.best_tree
@@ -104,7 +104,8 @@ if __name__ == "__main__":
     print(f"Time taken: {time.time() - start}")
     print(f"Best tree: {best_tree}")
     print(f"Best tree fitness: {best_tree.get_fitness()}")
-    
+    print(f"Best tree is valid: {best_tree.is_strictly_valid(eventlog.unique_activities())}")
+        
     # print the evaluation of the best tree
     eval = SingleEvaluator(*best_tree.to_pm4py_pn(), eventlog)
     pprint(eval.get_evaluation_metrics())

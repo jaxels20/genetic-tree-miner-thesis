@@ -145,12 +145,12 @@ class Mutator(MutatorBase):
         for _ in range(mutation_count):
             parent = random.choice(old_population)
             new_population.add_tree(self.mutation(parent))
-    
-        # check if all trees are strictly valid if not generate new ones
-        for tree in new_population:
-            if not tree.is_strictly_valid(self.EventLog.unique_activities()):
-                new_population.remove_tree(tree)
-                new_population.add_tree(BottomUpBinaryTreeGenerator().generate_population(self.EventLog.unique_activities(), 1).get_population()[0])
+                    
+        # check if the tree is strictly valid if not remove it and insert random new tree     
+        num_removed = new_population.ensure_strictly_valid(self.EventLog.unique_activities())
         
+        if num_removed > 0:
+            new_population.add_trees(self.random_creation(num_removed))
+    
         return new_population
 

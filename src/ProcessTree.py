@@ -252,13 +252,7 @@ class ProcessTree:
        
 if __name__ == "__main__":
     # Example usage
-    tree = ProcessTree(operator=Operator.SEQUENCE, label=None)
-    tree.add_child(ProcessTree(operator=Operator.XOR, label=None))
-    tree.add_child(ProcessTree(operator=Operator.LOOP, label=None))
-    tree.children[0].add_child(ProcessTree(operator=None, label="A"))
-    tree.children[0].add_child(ProcessTree(operator=None, label="B"))
-    tree.children[1].add_child(ProcessTree(operator=None, label="C"))
+    tree = ProcessTree.from_string("SEQ(O(A,C),SEQ(C,A),D,B)")
+    print(tree.is_strictly_valid(["A", "B", "C", "D"]))
     
-    print(tree.contains_all_activities(["A", "B", "C", "D"]))  # False
-    print(tree.contains_all_activities(["A", "B", "C"]))  # True
     
