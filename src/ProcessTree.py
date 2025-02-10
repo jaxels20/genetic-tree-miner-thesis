@@ -72,7 +72,6 @@ class ProcessTree:
 
     @staticmethod
     def _from_pm4py_operator(pm4py_operator):
-        
         map = {
             PM4PyOperator.SEQUENCE: Operator.SEQUENCE,
             PM4PyOperator.XOR: Operator.XOR,
@@ -93,16 +92,6 @@ class ProcessTree:
             return self.label
         
         return f"{self.operator}({children_str})"
-    
-    def __eq__(self, other):
-        return isinstance(other, ProcessTree) and (
-                self.operator == other.operator and 
-                self.label == other.label and 
-                len(self.children) == len(other.children) and 
-                all(c1 == c2 for c1, c2 in zip(self.children, other.children)))
-        
-    def __hash__(self):
-        return hash((self.operator, self.label, tuple(hash(child) for child in self.children))) 
     
     @staticmethod
     def load(filename: str):
