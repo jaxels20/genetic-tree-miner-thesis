@@ -99,17 +99,16 @@ class Population:
 
     def ensure_strictly_valid(self, activities: List[str]) -> int:
         """
-        Removes trees that are not strictly valid
-        Return the number of trees removed
+        Removes trees that are not strictly valid.
+        Returns the number of trees removed.
         """
         removed = 0
-        from copy import deepcopy
-        for tree in deepcopy(self.trees):
+        for tree in self.trees[:]:  # Iterate over a copy
             if not tree.is_strictly_valid(activities):
                 self.remove_tree(tree)
                 removed += 1
-                
         return removed
+                    
 
 if __name__ == "__main__":
     pop = Population([ProcessTree.from_string("AND(SEQ(B,C),AND(B,C),A,D)"), ProcessTree.from_string("SEQ(SEQ(A,B),O(C,B),D)"),ProcessTree.from_string("SEQ(SEQ(A,B),O(C,B),D)")])
