@@ -12,6 +12,7 @@ from EventLog import EventLog
 import pm4py.write as pm4py_write
 from pm4py.convert import convert_to_process_tree as convert_to_pt
 from copy import deepcopy
+import FastTokenBasedReplay
 
 class Place:
     """
@@ -612,3 +613,31 @@ class PetriNet:
         pn.construct_start_place()
         pn.construct_end_place()        
         return pn
+    
+    
+    def to_fast_token_based_replay(self):
+        """
+        Converts the Python PetriNet object to a FastTokenBasedReplay.PetriNet object.
+        """
+        # Create an empty FastTokenBasedReplay.PetriNet object
+        petri_net_c = FastTokenBasedReplay.PetriNet()
+
+        # Convert places
+        for place in self.places:
+            # Assuming FastTokenBasedReplay has a method to create a place
+            petri_place = FastTokenBasedReplay.Place(place.name, place.tokens)
+            petri_net_c.add_place(petri_place)
+
+        # Convert transitions
+        for transition in self.transitions:
+            # Assuming FastTokenBasedReplay has a method to create a transition
+            petri_transition = FastTokenBasedReplay.Transition(transition.name)
+            petri_net_c.add_transition(petri_transition)
+
+        # Convert arcs
+        for arc in self.arcs:
+            # Assuming FastTokenBasedReplay has a method to create an arc
+            petri_arc = FastTokenBasedReplay.Arc(arc.source, arc.target, arc.weight)
+            petri_net_c.add_arc(petri_arc)
+
+        return petri_net_c

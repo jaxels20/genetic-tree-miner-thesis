@@ -2,6 +2,7 @@ import lxml.etree as ET
 import pm4py
 from pm4py.objects.log.obj import EventLog as PM4PyEventLog, Trace as PM4PyTrace, Event as PM4PyEvent
 from collections import defaultdict
+import FastTokenBasedReplay
 
 class Event:
     """
@@ -372,4 +373,26 @@ class EventLog:
             for event in trace.events:
                 activities.add(event.activity)
         return activities
-        
+    
+    def to_fast_token_based_replay(self):
+        """
+        Converts the Python EventLog object to a FastTokenBasedReplay.EventLog object.
+        """
+        # Create an empty FastTokenBasedReplay EventLog object
+        event_log_c = FastTokenBasedReplay.EventLog()
+
+        # Convert traces
+        for trace in self.traces:
+            # Create a corresponding FastTokenBasedReplay Trace object
+            fast_trace = FastTokenBasedReplay.Trace(trace.trace_id, trace.attributes)
+
+            # Convert events within the trace
+            for event in trace.events:
+                # Assuming FastTokenBasedReplay Event object has similar attributes
+                fast_event = FastTokenBasedReplay.Event(event.activity, event.timestamp, event.attributes)
+                fast_trace.add_event(fast_event)
+
+            # Add the converted trace to the FastTokenBasedReplay EventLog
+            event_log_c.add_trace(fast_trace)
+
+        return event_log_c
