@@ -3,15 +3,8 @@
 #include "PetriNet.hpp"  // Include your PetriNet classes
 #include "Eventlog.hpp"  // Include your EventLog classes
 #include "token_based_replay.hpp"  // Include your token_based_replay function
-#include "FitnessResult.hpp"  // Include your FitnessResult struct
 
 namespace py = pybind11;
-
-py::tuple token_based_replay_python(const EventLog& event_log, PetriNet& petri_net) {
-    FitnessResult result = calculate_fitness(event_log, petri_net);
-    // Return a tuple in the order: fitness, missing, remaining, produced, consumed.
-    return py::make_tuple(result.fitness, result.missing, result.remaining, result.produced, result.consumed);
-}
 
 PYBIND11_MODULE(FastTokenBasedReplay, m) {
     py::class_<Place>(m, "Place")
@@ -49,7 +42,5 @@ PYBIND11_MODULE(FastTokenBasedReplay, m) {
         .def("add_trace", &EventLog::add_trace)
         .def("__repr__", &EventLog::repr);
 
-    m.def("token_based_replay", &token_based_replay_python,
-        "Perform token-based replay on a PetriNet and EventLog and return a tuple "
-        "(fitness, missing, remaining, produced, consumed)");
+    m.def("calculate_fitness_and_precision", &calculate_fitness_and_precision);
 }

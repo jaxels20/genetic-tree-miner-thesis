@@ -47,4 +47,22 @@ public:
     std::string repr() const {
         return "EventLog(traces=" + std::to_string(traces.size()) + ")";
     }
+
+    static EventLog from_trace_list(const std::vector<std::string>& trace_list) {
+        EventLog eventlog;
+        
+        for (size_t i = 0; i < trace_list.size(); ++i) {
+            std::string trace_id = "trace_" + std::to_string(i + 1);
+            Trace trace(trace_id, {});
+            
+            for (char activity : trace_list[i]) {
+                Event event(std::string(1, activity), "", {});
+                trace.add_event(event);
+            }
+            
+            eventlog.add_trace(trace);
+        }
+        
+        return eventlog;
+    }
 };

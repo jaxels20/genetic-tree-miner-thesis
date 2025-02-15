@@ -60,12 +60,19 @@ def init_eventlog_and_petri_net(num_traces=2):
     petri_net.add_arc("J", "J->K")
     petri_net.add_arc("J->K", "K")
     petri_net.add_arc("K", "End")
+    def limited_permutations(s, X):
+        count = 0
+        for p in itertools.permutations(s):
+            if count >= X:
+                break
+            yield ''.join(p)
+            count += 1
 
     # traces 
     s = "ABCDEFGHIJK"
-    permutations = [''.join(p) for p in itertools.permutations(s)]
+    permutations = list(limited_permutations(s, num_traces))
     print(f"Number of traces: {len(permutations)}")
-    eventlog = EventLog.from_trace_list(permutations[:num_traces])
+    eventlog = EventLog.from_trace_list(permutations)
 
     return eventlog, petri_net
 
@@ -79,7 +86,7 @@ def test_fast_token_based_replay():
     start = time.time()
     c_petri_net = petri_net.to_fast_token_based_replay()
     c_eventlog = eventlog.to_fast_token_based_replay()
-    FastTokenBasedReplay = ftr.token_based_replay(c_eventlog, c_petri_net)
+    FastTokenBasedReplay = ftr.calculate_fitness_and_precision(c_eventlog, c_petri_net)
     end = time.time()
     # print the time in milliseconds
     print(f"FastTokenBasedReplay took {(end - start) * 1000} milliseconds")
