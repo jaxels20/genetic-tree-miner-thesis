@@ -6,8 +6,6 @@ from EventLog import EventLog
 from copy import deepcopy
 from Population import Population
 
-# TODO ONLY Create Valid trees and onyl create trees with all activities in the log
-
 class MutatorBase:
     def __init__(self, EventLog: EventLog):
         self.EventLog = EventLog
@@ -27,100 +25,134 @@ class Mutator(MutatorBase):
         generator = BottomUpBinaryTreeGenerator()
         new_trees = generator.generate_population(self.EventLog.unique_activities(), num_new_trees)
         return new_trees.get_population()
-    
+        
     def crossover(self, parent1: ProcessTree, parent2: ProcessTree) -> ProcessTree:
         """
         Performs subtree crossover between two process trees.
-        - Randomly selects a subtree in parent1 and replaces it with a subtree from parent2.
-        - If either tree is too small, returns a shallow copy of parent1 or parent2.
-        """
-        # Base case: If one of the parents is a leaf node, return a copy of it
-        if not parent1.children or not parent2.children:
-            return ProcessTree(operator=parent1.operator, label=parent1.label)
+        
+        Parameters:
+            parent1 (ProcessTree): The first parent process tree.
+            parent2 (ProcessTree): The second parent process tree.
+            max_attempts (int, optional): Maximum number of attempts to find a valid crossover point. Defaults to 5.
 
-        # Randomly select crossover points (subtrees)
+        Returns:
+            ProcessTree: A new process tree produced by the crossover operation, or a randomly
+                     selected parent if no valid crossover was achieved.
+        """
+        # Randomly select crossover points
         subtree1 = random.choice(parent1.children)
         subtree2 = random.choice(parent2.children)
 
-        # Create copies of the parents
-        new_parent1 = ProcessTree(operator=parent1.operator, label=parent1.label, children=[c for c in parent1.children])
-        new_parent2 = ProcessTree(operator=parent2.operator, label=parent2.label, children=[c for c in parent2.children])
-
-        # Perform subtree swap
-        idx1 = new_parent1.children.index(subtree1)
-        idx2 = new_parent2.children.index(subtree2)
-        new_parent1.children[idx1] = subtree2
-        new_parent2.children[idx2] = subtree1
+        # Try both orders of crossover replacements
+        for candidate, sub_from, sub_to in [(parent1, subtree1, subtree2), (parent2, subtree2, subtree1)]:
+            try:
+                candidate_copy = ProcessTree(operator=candidate.operator, label=candidate.label, children=[c for c in candidate.children])
+                idx = candidate.children.index(sub_from)
+                candidate_copy.children[idx] = sub_to
+                candidate_copy.remove_duplicate_activities()
+                candidate_copy.if_missing_insert_activities(self.EventLog.unique_activities())
+                return candidate_copy
+            except ValueError:
+                continue  # remove_duplicate_activities raise an error, i.e. not possible to remove duplicate activities without breaking the tree
         
-        if random.random() > 0.5:
-            new_parent1.if_missing_insert_activities(self.EventLog.unique_activities())
-            return new_parent1
-        else:
-            new_parent2.if_missing_insert_activities(self.EventLog.unique_activities())
-            return new_parent2
+        # If no valid crossover point was found, return a random parent
+        fallback = random.choice([parent1, parent2])
+        fallback.if_missing_insert_activities(self.EventLog.unique_activities())
+        return fallback
 
     def mutation(self, process_tree: ProcessTree) -> ProcessTree:
+        """
+        Performs randomly one of the following mutations on a process tree:
+        - Operator swap: Selects a random operator node and changes its operator type.
+        - Subtree removal: Selects a random subtree and replaces it with a new random tree
+            at a random point in the tree.
+        - Node addition: Selects a random operator node and adds a new leaf node to it.
+
+        Args:
+            process_tree (ProcessTree)
+
+        Returns:
+            ProcessTree: The mutated process tree.
+        """
         
-        def node_mutation(tree):
-            nodes = tree.get_all_nodes()
-            if not nodes:
-                raise ValueError("Tree has no nodes")
-            
+        def operator_swap(tree: ProcessTree) -> ProcessTree:
+            # Select a random node to perform swap 
+            nodes = tree.get_all_operator_nodes()
             node = random.choice(nodes)
-            if node.operator:
-                node.operator = random.choice([Operator.SEQUENCE, Operator.XOR, Operator.PARALLEL, Operator.LOOP])
-                random.shuffle(node.children)
-            elif node.label:
-                node.label = random.choice(list(self.EventLog.unique_activities()))
+            
+            # Sample random operator and insert it to ensure valid tree
+            if len(node.children) == 1:
+                operators = [Operator.SEQUENCE, Operator.XOR]
+                operators.remove(node.operator)
+                node.operator = operators[0]
+            elif len(node.children) >= 2:
+                operators = [Operator.SEQUENCE, Operator.XOR, Operator.PARALLEL, Operator.LOOP]
+                operators.remove(node.operator)
+                node.operator = random.choice(operators)
+                random.shuffle(node.children)            
+            
             return tree
                   
-        def subtree_removal(tree, max_attempts=10):
-            nodes = tree.get_all_nodes()
-            if len(nodes) <= 1:
-                return tree  # Cannot remove from a single-node tree
+        def subtree_removal(tree: ProcessTree) -> ProcessTree:
+            nodes = tree.get_all_operator_nodes()
             
-            attempts = 0
-            while attempts < max_attempts:
-                node = random.choice(nodes)
-                if node.parent:
-                    node.parent.children.remove(node)  # Remove node from its parent
-
-                    if tree.is_valid():
-                        return tree  # Return immediately if valid
-                    
-                    # If invalid, restore the node
-                    node.parent.children.append(node)
-                
-                attempts += 1
+            # Sample subtree to remove
+            node = random.choice(nodes)
             
-            return tree  # Return the original tree if no valid removal was found
+            # Ensure that is not the root node
+            if not node.parent:
+                return tree
+            
+            # Attempt to remove subtree and obtain valid tree
+            print("Removing node", node)
+            print("Tree before removal (debug):", tree)
+            print("Children before removal", [str(n) for n in node.parent.children])
+            node.parent.children.remove(node)
+            print("Children after removal", [str(n) for n in node.parent.children])
+            
+            print("Tree after removal", tree)
+            if not tree.is_valid():
+                node.parent.children.append(node)
+                print("Returned tree", tree)
+                return tree
+            
+            # After succesfully removing subtree, generate random tree containing all missing activities
+            generator = BottomUpBinaryTreeGenerator()
+            missing_activities = tree.get_missing_activities(self.EventLog.unique_activities())
+            new_sub_tree = generator.generate_population(missing_activities, n=1)[0]
+            
+            # Insert the new subtree into the tree
+            insertion_node = random.choice(tree.get_all_operator_nodes())            
+            insertion_node.add_child(new_sub_tree)
+            
+            print("Returned tree", tree)
+            return tree
         
-        def node_addition(tree):
-            operator_nodes = [node for node in tree.get_all_nodes() if node.operator]
-            if not operator_nodes:
-                raise ValueError("Tree has no operator nodes")
+        def leaf_addition(tree: ProcessTree) -> ProcessTree:
+            # Select a random activity to add to the tree
+            activity = random.choice(tree.get_all_activities())
+            leaf = [leaf for leaf in tree.get_all_leaf_nodes() if leaf.label == activity][0]
+            leaf.parent.children.remove(leaf)
             
-            parent = random.choice(operator_nodes)
-            new_leaf = ProcessTree(label=random.choice(list(self.EventLog.unique_activities())))
-            parent.add_child(new_leaf)
+            if not tree.is_valid():
+                leaf.parent.children.append(leaf)
+                return tree
+                
+            # Find a random operator node to add the leaf to
+            operator = random.choice(tree.get_all_operator_nodes())
+            operator.add_child(leaf)
+
             return tree
 
-        mutation_type = random.choice(['node_mutation', 'node_addition'])
+        mutation_type = random.choice(['subtree_removal', 'leaf_addition', 'operator_swap'])
+        # print("mutation type", mutation_type)
+        if mutation_type == 'operator_swap':
+            new_tree = operator_swap(process_tree)
+        elif mutation_type == 'subtree_removal':
+            new_tree = subtree_removal(process_tree)
+        elif mutation_type == 'leaf_addition':
+            new_tree = leaf_addition(process_tree)
 
-        if mutation_type == 'node_mutation':
-            new_tree = node_mutation(process_tree)
-            if not new_tree.is_valid():
-                raise ValueError("Invalid tree (node_mutation)") 
-        # elif mutation_type == 'subtree_removal':
-        #     new_tree = subtree_removal(process_tree)
-        #     if not new_tree.is_valid():
-        #         raise ValueError("Invalid tree(subtree_removal)")
-        elif mutation_type == 'node_addition':
-            new_tree = node_addition(process_tree)
-            if not new_tree.is_valid():
-                raise ValueError("Invalid tree(node_addition)")
-        
-        new_tree.if_missing_insert_activities(self.EventLog.unique_activities())
         return new_tree
     
     def generate_new_population(self, old_population: Population) -> Population:
@@ -153,4 +185,3 @@ class Mutator(MutatorBase):
             new_population.add_trees(self.random_creation(num_removed))
     
         return new_population
-

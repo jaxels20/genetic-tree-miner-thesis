@@ -14,7 +14,7 @@ from Discovery import Discovery
 
 
 class GeneticAlgorithm:
-    def __init__(self, min_fitness=None, max_generations=100, stagnation_limit=None, time_limit=None, population_size=100):
+    def __init__(self, mutator: Mutator, min_fitness: float = None, max_generations: int = 100, stagnation_limit = None, time_limit = None, population_size = 100):
         """
         :param min_fitness: Minimum fitness level to stop the algorithm
         :param max_generations: Maximum number of generations
@@ -29,8 +29,10 @@ class GeneticAlgorithm:
         self.start_time = None
         self.population_size = population_size
 
+        self.mutator = mutator
         self.monitor = Monitor()
         self.process_tree_register = ProcessTreeRegister({})
+        
     def _check_stopping_criteria(self, generation: int, population: Population) -> bool:
         generation_best_tree = population.get_best_tree()
         generation_best_fitness = generation_best_tree.get_fitness()
@@ -90,14 +92,14 @@ class GeneticAlgorithm:
                 break
                
             # Generate a new population
-            mutator = Mutator(eventlog, random_creation_rate=0.7, crossover_rate=0.1, mutation_rate=0.0, elite_rate=0.2)
-            population = mutator.generate_new_population(population)
+            population = self.mutator.generate_new_population(population)
         
         return self.best_tree
     
 if __name__ == "__main__":
     eventlog = EventLog.from_trace_list(["ABCD", "ABCBCD", "ABCBCBCD"])
-    ga = GeneticAlgorithm(min_fitness=None, max_generations=100, stagnation_limit=None, time_limit=90, population_size=500)
+    mutator = Mutator(eventlog, random_creation_rate=0, crossover_rate=0.5, mutation_rate=0.5, elite_rate=0)
+    ga = GeneticAlgorithm(mutator, min_fitness=None, max_generations=1000, stagnation_limit=None, time_limit=90, population_size=100)
     start = time.time()
     best_tree = ga.run(eventlog=eventlog)
     print(f"Time taken: {time.time() - start}")
@@ -107,25 +109,7 @@ if __name__ == "__main__":
     print(f"Number of trees explored: {len(ga.process_tree_register)}")
         
     # print the evaluation of the best tree
-    eval = SingleEvaluator(*best_tree.to_pm4py_pn(), eventlog)
-    pprint(eval.get_evaluation_metrics())
-    
-    print(f"_________________________________________")
-    
-    inductive_pn = Discovery.inductive_miner(eventlog)
-    
-    inductive_obj = SimpleWeightedScore(inductive_pn, eventlog)
-    print(f"Inductive miner fitness: {inductive_obj.fitness()}")
-    
-    inductive_eval = SingleEvaluator(*inductive_pn.to_pm4py(), eventlog)
-    pprint(inductive_eval.get_evaluation_metrics())
-    
-    
-
-    
-
-
-    
-    
+    # eval = SingleEvaluator(*best_tree.to_pm4py_pn(), eventlog)
+    # pprint(eval.get_evaluation_metrics())
     
     
