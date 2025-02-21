@@ -13,6 +13,17 @@ class MutatorBase:
     def generate_new_population(self, old_population: List[ProcessTree], new_population_size: int) -> List[ProcessTree]:
         raise NotImplementedError
 
+def deep_copy_tree(node: ProcessTree) -> ProcessTree:
+    # Create a new node without a parent yet.
+    new_node = ProcessTree(operator=node.operator, label=node.label)
+    # Recursively copy each child and update the parent pointer.
+    for child in node.children:
+        new_child = deep_copy_tree(child)
+        new_child.parent = new_node
+        new_node.children.append(new_child)
+    return new_node
+
+
 class Mutator(MutatorBase):
     def __init__(self, EventLog: EventLog, random_creation_rate: float, crossover_rate: float, mutation_rate: float, elite_rate: float):
         super().__init__(EventLog)
@@ -42,15 +53,22 @@ class Mutator(MutatorBase):
         # Randomly select crossover points
         subtree1 = random.choice(parent1.children)
         subtree2 = random.choice(parent2.children)
-
+        
         # Try both orders of crossover replacements
-        for candidate, sub_from, sub_to in [(parent1, subtree1, subtree2), (parent2, subtree2, subtree1)]:
+        for candidate, swap_from, swap_to in [(parent1, subtree1, subtree2), (parent2, subtree2, subtree1)]:
             try:
-                candidate_copy = ProcessTree(operator=candidate.operator, label=candidate.label, children=[c for c in candidate.children])
-                idx = candidate.children.index(sub_from)
-                candidate_copy.children[idx] = sub_to
+                # Create a deep copy of the candidate tree
+                candidate_copy = candidate.deep_copy_tree() 
+                
+                # Swap the subtree at the crossover point
+                idx = candidate.children.index(swap_from)
+                candidate_copy.children[idx] = swap_to.deep_copy_tree()
+                candidate_copy.children[idx].parent = candidate_copy
+                
+                # Ensure that the tree is strictly valid
                 candidate_copy.remove_duplicate_activities()
                 candidate_copy.if_missing_insert_activities(self.EventLog.unique_activities())
+                
                 return candidate_copy
             except ValueError:
                 continue  # remove_duplicate_activities raise an error, i.e. not possible to remove duplicate activities without breaking the tree
@@ -94,9 +112,8 @@ class Mutator(MutatorBase):
             return tree
                   
         def subtree_removal(tree: ProcessTree) -> ProcessTree:
+            # Select a random operator node to remove
             nodes = tree.get_all_operator_nodes()
-            
-            # Sample subtree to remove
             node = random.choice(nodes)
             
             # Ensure that is not the root node
@@ -104,16 +121,9 @@ class Mutator(MutatorBase):
                 return tree
             
             # Attempt to remove subtree and obtain valid tree
-            print("Removing node", node)
-            print("Tree before removal (debug):", tree)
-            print("Children before removal", [str(n) for n in node.parent.children])
             node.parent.children.remove(node)
-            print("Children after removal", [str(n) for n in node.parent.children])
-            
-            print("Tree after removal", tree)
             if not tree.is_valid():
                 node.parent.children.append(node)
-                print("Returned tree", tree)
                 return tree
             
             # After succesfully removing subtree, generate random tree containing all missing activities
@@ -125,7 +135,6 @@ class Mutator(MutatorBase):
             insertion_node = random.choice(tree.get_all_operator_nodes())            
             insertion_node.add_child(new_sub_tree)
             
-            print("Returned tree", tree)
             return tree
         
         def leaf_addition(tree: ProcessTree) -> ProcessTree:

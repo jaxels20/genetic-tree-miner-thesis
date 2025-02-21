@@ -98,7 +98,7 @@ class GeneticAlgorithm:
     
 if __name__ == "__main__":
     eventlog = EventLog.from_trace_list(["ABCD", "ABCBCD", "ABCBCBCD"])
-    mutator = Mutator(eventlog, random_creation_rate=0, crossover_rate=0.5, mutation_rate=0.5, elite_rate=0)
+    mutator = Mutator(eventlog, random_creation_rate=0.1, crossover_rate=0.2, mutation_rate=0.5, elite_rate=0.2)
     ga = GeneticAlgorithm(mutator, min_fitness=None, max_generations=1000, stagnation_limit=None, time_limit=90, population_size=100)
     start = time.time()
     best_tree = ga.run(eventlog=eventlog)
@@ -109,7 +109,7 @@ if __name__ == "__main__":
     print(f"Number of trees explored: {len(ga.process_tree_register)}")
         
     # print the evaluation of the best tree
-    # eval = SingleEvaluator(*best_tree.to_pm4py_pn(), eventlog)
-    # pprint(eval.get_evaluation_metrics())
+    eval = SingleEvaluator(*best_tree.to_pm4py_pn(), eventlog)
+    pprint(eval.get_evaluation_metrics())
     
     
