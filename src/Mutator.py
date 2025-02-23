@@ -1,9 +1,9 @@
 import random
 from typing import List
-from ProcessTree import ProcessTree, Operator
-from RandomTreeGenerator import BottomUpBinaryTreeGenerator
-from EventLog import EventLog
-from Population import Population
+from src.ProcessTree import ProcessTree, Operator
+from src.RandomTreeGenerator import BottomUpBinaryTreeGenerator
+from src.EventLog import EventLog
+from src.Population import Population
 
 class MutatorBase:
     def __init__(self, EventLog: EventLog):
@@ -140,6 +140,24 @@ class Mutator(MutatorBase):
 
             return tree
 
+        def loop_addition(tree: ProcessTree) -> ProcessTree:
+            # Select a loop node and a tau node
+            loops = [node for node in tree.get_all_operator_nodes() if node.operator == Operator.LOOP]
+            
+            # Check that loops exists
+            if len(loops) == 0:
+                return tree
+            
+            # if there already exist a tau node in the loop, then skip
+            loop = random.choice(loops)
+            for child in loop.children:
+                if child.label is not None and "tau" in child.label:
+                    return tree
+            
+            loop.add_tau_leaf()
+            
+            return tree
+        
         pt_copy = deep_copy_tree(process_tree)
         mutation_type = random.choice(['subtree_removal', 'leaf_addition', 'operator_swap'])
 
@@ -149,7 +167,7 @@ class Mutator(MutatorBase):
             new_tree = subtree_removal(pt_copy)
         elif mutation_type == 'leaf_addition':
             new_tree = leaf_addition(pt_copy)
-
+            
         return new_tree
     
     def generate_new_population(self, old_population: Population) -> Population:
