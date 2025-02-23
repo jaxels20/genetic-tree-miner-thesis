@@ -1,12 +1,11 @@
-from Objective import SimpleWeightedScore
-from RandomTreeGenerator import BottomUpBinaryTreeGenerator
-from ProcessTree import ProcessTree
-from EventLog import EventLog
-from Mutator import Mutator
-from Population import Population
-from Monitor import Monitor
-from Evaluator import SingleEvaluator
-from ProcessTreeRegister import ProcessTreeRegister
+from src.Objective import SimpleWeightedScore
+from src.RandomTreeGenerator import BottomUpBinaryTreeGenerator
+from src.ProcessTree import ProcessTree
+from src.EventLog import EventLog
+from src.Mutator import Mutator
+from src.Population import Population
+from src.Monitor import Monitor
+from src.ProcessTreeRegister import ProcessTreeRegister
 import tqdm
 import time
 from pprint import pprint
@@ -92,9 +91,9 @@ class GeneticAlgorithm:
         return self.best_tree
     
 if __name__ == "__main__":
-    eventlog = EventLog.from_trace_list(["ABCD", "ABCBCD", "ABCBCBCD"])
+    eventlog = EventLog.from_trace_list(["ABBBC"])
     mutator = Mutator(eventlog, random_creation_rate=0.1, crossover_rate=0.2, mutation_rate=0.5, elite_rate=0.2)
-    ga = GeneticAlgorithm(mutator, min_fitness=None, max_generations=200, stagnation_limit=100, time_limit=90, population_size=100)
+    ga = GeneticAlgorithm(mutator, min_fitness=None, max_generations=1000, stagnation_limit=None, time_limit=90, population_size=1000)
     start = time.time()
     best_tree = ga.run(eventlog=eventlog)
     
@@ -104,10 +103,3 @@ if __name__ == "__main__":
     print(f"Best tree fitness: {best_tree.get_fitness()}")
     print(f"Best tree is valid: {best_tree.is_strictly_valid(eventlog.unique_activities())}")
     print(f"Number of trees explored: {len(ga.process_tree_register)}")
-    
-    # Visualize fitness development over time
-    ga.monitor.plot_fitness()
-        
-    # print the evaluation of the best tree
-    eval = SingleEvaluator(*best_tree.to_pm4py_pn(), eventlog)
-    pprint(eval.get_evaluation_metrics())

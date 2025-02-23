@@ -1,8 +1,7 @@
-
 import random
 from typing import List
-from ProcessTree import ProcessTree, Operator
-from Population import Population
+from src.ProcessTree import ProcessTree, Operator
+from src.Population import Population
 
 # TODO: MAKE SURE THAT THE RANDOM TREES ARE VALID (E.G. NO OR OPERATOR WITH ONLY ONE CHILD)
 
