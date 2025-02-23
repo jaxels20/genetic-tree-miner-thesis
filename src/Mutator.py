@@ -3,7 +3,6 @@ from typing import List
 from ProcessTree import ProcessTree, Operator
 from RandomTreeGenerator import BottomUpBinaryTreeGenerator
 from EventLog import EventLog
-from copy import deepcopy
 from Population import Population
 
 class MutatorBase:
@@ -12,16 +11,6 @@ class MutatorBase:
 
     def generate_new_population(self, old_population: List[ProcessTree], new_population_size: int) -> List[ProcessTree]:
         raise NotImplementedError
-
-def deep_copy_tree(node: ProcessTree) -> ProcessTree:
-    # Create a new node without a parent yet.
-    new_node = ProcessTree(operator=node.operator, label=node.label)
-    # Recursively copy each child and update the parent pointer.
-    for child in node.children:
-        new_child = deep_copy_tree(child)
-        new_child.parent = new_node
-        new_node.children.append(new_child)
-    return new_node
 
 
 class Mutator(MutatorBase):
@@ -50,33 +39,34 @@ class Mutator(MutatorBase):
             ProcessTree: A new process tree produced by the crossover operation, or a randomly
                      selected parent if no valid crossover was achieved.
         """
+        # Create of copy of the parent trees
+        parent1_copy = deep_copy_tree(parent1)
+        parent2_copy = deep_copy_tree(parent2)
+        
         # Randomly select crossover points
-        subtree1 = random.choice(parent1.children)
-        subtree2 = random.choice(parent2.children)
+        subtree1 = random.choice(parent1_copy.get_all_operator_nodes())
+        subtree2 = random.choice(parent2_copy.get_all_operator_nodes())
         
         # Try both orders of crossover replacements
-        for candidate, swap_from, swap_to in [(parent1, subtree1, subtree2), (parent2, subtree2, subtree1)]:
+        for candidate, swap_from, swap_to in [(parent1_copy, subtree1, subtree2), (parent2_copy, subtree2, subtree1)]:
+            # Swap the subtree at the crossover point
+            for node in candidate.get_all_operator_nodes():
+                if swap_from in node.children:
+                    idx = node.children.index(swap_from)
+                    node.children[idx] = swap_to
+                    node.children[idx].parent = node
+                
             try:
-                # Create a deep copy of the candidate tree
-                candidate_copy = candidate.deep_copy_tree() 
-                
-                # Swap the subtree at the crossover point
-                idx = candidate.children.index(swap_from)
-                candidate_copy.children[idx] = swap_to.deep_copy_tree()
-                candidate_copy.children[idx].parent = candidate_copy
-                
                 # Ensure that the tree is strictly valid
-                candidate_copy.remove_duplicate_activities()
-                candidate_copy.if_missing_insert_activities(self.EventLog.unique_activities())
+                candidate.remove_duplicate_activities()
+                candidate.if_missing_insert_activities(self.EventLog.unique_activities())
                 
-                return candidate_copy
+                return candidate
             except ValueError:
-                continue  # remove_duplicate_activities raise an error, i.e. not possible to remove duplicate activities without breaking the tree
+                continue   # remove_duplicate_activities raise an error, i.e. not possible to remove duplicate activities without breaking the tree
         
         # If no valid crossover point was found, return a random parent
-        fallback = random.choice([parent1, parent2])
-        fallback.if_missing_insert_activities(self.EventLog.unique_activities())
-        return fallback
+        return random.choice([parent1, parent2])
 
     def mutation(self, process_tree: ProcessTree) -> ProcessTree:
         """
@@ -113,8 +103,7 @@ class Mutator(MutatorBase):
                   
         def subtree_removal(tree: ProcessTree) -> ProcessTree:
             # Select a random operator node to remove
-            nodes = tree.get_all_operator_nodes()
-            node = random.choice(nodes)
+            node = random.choice(tree.get_all_operator_nodes())
             
             # Ensure that is not the root node
             if not node.parent:
@@ -122,7 +111,7 @@ class Mutator(MutatorBase):
             
             # Attempt to remove subtree and obtain valid tree
             node.parent.children.remove(node)
-            if not tree.is_valid():
+            if not node.parent.is_valid():
                 node.parent.children.append(node)
                 return tree
             
@@ -137,13 +126,11 @@ class Mutator(MutatorBase):
             
             return tree
         
-        def leaf_addition(tree: ProcessTree) -> ProcessTree:
-            # Select a random activity to add to the tree
-            activity = random.choice(tree.get_all_activities())
-            leaf = [leaf for leaf in tree.get_all_leaf_nodes() if leaf.label == activity][0]
+        def leaf_addition(tree: ProcessTree) -> ProcessTree:            
+            leaf = random.choice(tree.get_all_leaf_nodes())
             leaf.parent.children.remove(leaf)
             
-            if not tree.is_valid():
+            if not leaf.parent.is_valid():
                 leaf.parent.children.append(leaf)
                 return tree
                 
@@ -153,44 +140,59 @@ class Mutator(MutatorBase):
 
             return tree
 
+        pt_copy = deep_copy_tree(process_tree)
         mutation_type = random.choice(['subtree_removal', 'leaf_addition', 'operator_swap'])
-        # print("mutation type", mutation_type)
+
         if mutation_type == 'operator_swap':
-            new_tree = operator_swap(process_tree)
+            new_tree = operator_swap(pt_copy)
         elif mutation_type == 'subtree_removal':
-            new_tree = subtree_removal(process_tree)
+            new_tree = subtree_removal(pt_copy)
         elif mutation_type == 'leaf_addition':
-            new_tree = leaf_addition(process_tree)
+            new_tree = leaf_addition(pt_copy)
 
         return new_tree
     
     def generate_new_population(self, old_population: Population) -> Population:
         new_population = Population([])
-
+        population_size = len(old_population.get_population())
+        
         # Add elite trees
-        elite = old_population.get_elite(int(len(old_population) * self.elite_rate))
+        elite = old_population.get_elite(int(population_size * self.elite_rate))
         new_population.add_trees(elite)
 
         # Add random trees
-        random_count = int(len(old_population) * self.random_creation_rate)
+        random_count = int(population_size * self.random_creation_rate)
         new_population.add_trees(self.random_creation(random_count))
         
         # Add crossover trees
-        crossover_count = int(len(old_population) * self.crossover_rate)
+        crossover_count = int(population_size * self.crossover_rate)
         for _ in range(crossover_count):
-            parent1, parent2 = random.sample(old_population.get_population(), 2)
+            parent1, parent2 = random.sample(old_population.get_population(), k=2)
             new_population.add_tree(self.crossover(parent1, parent2))
                 
         # Add mutation trees
-        mutation_count = int(len(old_population) * self.mutation_rate)
+        mutation_count = int(population_size * self.mutation_rate)
         for _ in range(mutation_count):
-            parent = random.choice(old_population)
+            parent = random.choice(old_population.get_population())
             new_population.add_tree(self.mutation(parent))
                     
         # check if the tree is strictly valid if not remove it and insert random new tree     
         num_removed = new_population.ensure_strictly_valid(self.EventLog.unique_activities())
         
         if num_removed > 0:
+            print(f"Removed {num_removed} invalid trees")
             new_population.add_trees(self.random_creation(num_removed))
     
         return new_population
+    
+    
+def deep_copy_tree(node: ProcessTree) -> 'ProcessTree':
+    # Create root node
+    new_node = ProcessTree(operator=node.operator, label=node.label)
+    
+    # Recursively copy each child and update the parent pointer.
+    for child in node.children:
+        new_child = deep_copy_tree(child)
+        new_child.parent = new_node
+        new_node.children.append(new_child)
+    return new_node

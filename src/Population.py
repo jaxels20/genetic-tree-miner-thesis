@@ -40,7 +40,7 @@ class Population:
         if num_elite > len(self.trees):
             raise ValueError("Number of elite trees is greater than the population size")
         
-        return deepcopy(sorted(self.trees, key=lambda tree: tree.get_fitness(), reverse=True)[:num_elite])
+        return sorted(self.trees, key=lambda tree: tree.get_fitness(), reverse=True)[:num_elite]
     
     def get_best_tree(self) -> ProcessTree:
         """

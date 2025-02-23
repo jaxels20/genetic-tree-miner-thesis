@@ -10,7 +10,6 @@ from ProcessTreeRegister import ProcessTreeRegister
 import tqdm
 import time
 from pprint import pprint
-from Discovery import Discovery
 
 
 class GeneticAlgorithm:
@@ -34,20 +33,19 @@ class GeneticAlgorithm:
         self.process_tree_register = ProcessTreeRegister({})
         
     def _check_stopping_criteria(self, generation: int, population: Population) -> bool:
-        generation_best_tree = population.get_best_tree()
-        generation_best_fitness = generation_best_tree.get_fitness()
-                
+        # Update the best tree
+        best_tree_b_update = self.best_tree.get_fitness() if self.best_tree is not None else None
+        self._update_best_tree(population)
+        
         # Criterion 1: Minimum fitness level reached
         if self.min_fitness is not None:
-            if self.best_tree.fitness >= self.min_fitness:
+            if self.best_tree >= self.min_fitness:
                 print(f"Minimum fitness level reached in generation {generation}")
-                self.best_tree = generation_best_tree
                 return True
         
         # Criterion 2: No improvement for `stagnation_limit` generations
-        if self.stagnation_limit is not None:
-            if generation_best_fitness > self.best_tree.get_fitness():
-                self.best_tree = generation_best_tree
+        if self.stagnation_limit is not None and best_tree_b_update is not None:
+            if self.best_tree.get_fitness() > best_tree_b_update:
                 self.stagnation_counter = 0  # Reset stagnation counter
             else:
                 self.stagnation_counter += 1
@@ -56,7 +54,7 @@ class GeneticAlgorithm:
                     return True
             
         # Criterion 3: Time limit reached
-        if self.time_limit is not None:
+        if self.time_limit is not None:                
             if time.time() - self.start_time >= self.time_limit:
                 print(f"Time limit reached in generation {generation}")
                 return True
@@ -83,9 +81,6 @@ class GeneticAlgorithm:
             # Observe the population
             self.monitor.observe(generation, population)
             
-            # update the best tree
-            self._update_best_tree(population)
-            
             # check stopping criteria
             stop = self._check_stopping_criteria(generation, population)
             if stop:
@@ -99,17 +94,20 @@ class GeneticAlgorithm:
 if __name__ == "__main__":
     eventlog = EventLog.from_trace_list(["ABCD", "ABCBCD", "ABCBCBCD"])
     mutator = Mutator(eventlog, random_creation_rate=0.1, crossover_rate=0.2, mutation_rate=0.5, elite_rate=0.2)
-    ga = GeneticAlgorithm(mutator, min_fitness=None, max_generations=1000, stagnation_limit=None, time_limit=90, population_size=100)
+    ga = GeneticAlgorithm(mutator, min_fitness=None, max_generations=200, stagnation_limit=100, time_limit=90, population_size=100)
     start = time.time()
     best_tree = ga.run(eventlog=eventlog)
+    
+    # Print results
     print(f"Time taken: {time.time() - start}")
     print(f"Best tree: {best_tree}")
     print(f"Best tree fitness: {best_tree.get_fitness()}")
     print(f"Best tree is valid: {best_tree.is_strictly_valid(eventlog.unique_activities())}")
     print(f"Number of trees explored: {len(ga.process_tree_register)}")
+    
+    # Visualize fitness development over time
+    ga.monitor.plot_fitness()
         
     # print the evaluation of the best tree
     eval = SingleEvaluator(*best_tree.to_pm4py_pn(), eventlog)
     pprint(eval.get_evaluation_metrics())
-    
-    

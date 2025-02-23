@@ -100,16 +100,6 @@ class ProcessTree:
         
         return f"{self.operator}({children_str})"
     
-    def deep_copy_tree(self) -> 'ProcessTree':
-        # Create a new node without a parent yet.
-        new_node = ProcessTree(operator=self.operator, label=self.label)
-        # Recursively copy each child and update the parent pointer.
-        for child in self.children:
-            new_child = child.deep_copy_tree()
-            new_child.parent = new_node
-            new_node.children.append(new_child)
-        return new_node
-    
     @staticmethod
     def load(filename: str):
         pm4py_tree = PM4PyImporter.apply(filename)
