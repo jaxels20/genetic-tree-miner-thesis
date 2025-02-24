@@ -1,6 +1,6 @@
 import random
 from graphviz import Digraph
-from pm4py.objects.petri_net.obj import PetriNet as PM4PyPetriNet, Marking
+from pm4py.objects.petri_net.obj import PetriNet as PM4PyPetriNet, Marking as PM4PyMarking
 from pm4py.analysis import check_soundness
 from pm4py.objects.petri_net.utils.check_soundness import (
     check_easy_soundness_net_in_fin_marking,
@@ -14,6 +14,32 @@ from pm4py.convert import convert_to_process_tree as convert_to_pt
 from copy import deepcopy
 import FastTokenBasedReplay
 
+class Marking:
+    """
+    Class representing a marking in a Petri net.
+
+    Attributes:
+    -----------
+    places : dict
+        Dictionary mapping place names to the number of tokens in each place.
+    """
+
+    def __init__(self, places: dict):
+        self.places = places # Dictionary mapping place names to the number of tokens
+
+    def __repr__(self):
+        return f"Marking({self.places})"
+
+    def to_fast_token_based_replay(self):
+        """
+        Converts the Python Marking object to a FastTokenBasedReplay.Marking object.
+        """
+        marking = FastTokenBasedReplay.Marking()
+        for place, tokens in self.places.items():
+            marking.add_place(place, tokens)
+        return marking
+    
+    
 class Place:
     """
     Class representing a place in a Petri net.
@@ -110,9 +136,18 @@ class PetriNet:
         self.places = places
         self.transitions = transitions
         self.arcs = arcs
+        
+        self.initial_marking = None
+        self.final_marking = None
 
     def __repr__(self):
         return f"PetriNet(Places: {len(self.places)}, Transitions: {len(self.transitions)}, Arcs: {len(self.arcs)})"
+    
+    def set_final_marking(self, marking: Marking):
+        self.final_marking = marking
+    
+    def set_initial_marking(self, marking: Marking):
+        self.initial_marking = marking
     
     def add_place(self, name: str, tokens: int = 0):
         """Add a place to the Petri net."""
@@ -359,8 +394,8 @@ class PetriNet:
 
         source = pm4py_dict[self.get_start_place().name]
         target = pm4py_dict[self.get_end_place().name]
-        initial_marking = Marking({source: 1})
-        final_marking = Marking({target: 1})
+        initial_marking = PM4PyMarking({source: 1})
+        final_marking = PM4PyMarking({target: 1})
         
         
         return pm4py_pn, initial_marking, final_marking
@@ -396,8 +431,6 @@ class PetriNet:
 
         # Add token to start place
         converted_pn = cls(places, transitions, arcs)
-        start_place = converted_pn.get_start_place()
-        start_place.tokens = 1
 
         return deepcopy(converted_pn)
 
@@ -625,7 +658,7 @@ class PetriNet:
         # Convert places
         for place in self.places:
             # Assuming FastTokenBasedReplay has a method to create a place
-            petri_place = FastTokenBasedReplay.Place(place.name, place.tokens)
+            petri_place = FastTokenBasedReplay.Place(place.name, 0) # Initialize tokens to 0 
             petri_net_c.add_place(petri_place)
 
         # Convert transitions
@@ -639,5 +672,9 @@ class PetriNet:
             # Assuming FastTokenBasedReplay has a method to create an arc
             petri_arc = FastTokenBasedReplay.Arc(arc.source, arc.target, arc.weight)
             petri_net_c.add_arc(petri_arc)
+            
+        # Set the initial and final marking
+        petri_net_c.set_initial_marking(self.initial_marking.to_fast_token_based_replay())
+        petri_net_c.set_final_marking(self.final_marking.to_fast_token_based_replay())
 
         return petri_net_c

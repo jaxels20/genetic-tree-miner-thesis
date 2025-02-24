@@ -4,6 +4,9 @@
 #include <vector>
 #include <stdexcept>
 #include <iostream>
+#include <unordered_map>
+#include <string>
+#include <cstdint>
 
 class Place {
 public:
@@ -28,6 +31,11 @@ public:
     std::string repr() const {
         return "Place(" + name + ", tokens=" + std::to_string(tokens) + ")";
     }
+
+    int32_t number_of_tokens() const {
+        return tokens;
+    }
+
 };
 
 class Transition {
@@ -40,17 +48,11 @@ public:
         return "Transition(" + name + ")";
     }
 
-    bool operator==(const Transition& other) const {
-        return name == other.name;
+    // If the name starts with "tau", it is a silent transition
+    bool is_silent() const {
+        return name.rfind("tau", 0) == 0; // Checks if "tau" is at the start
     }
 
-    bool operator<(const Transition& other) const {
-        return name < other.name;
-    }
-
-    bool operator>(const Transition& other) const {
-        return name > other.name;
-    }
 };
 
 class Arc {
@@ -67,11 +69,39 @@ public:
     }
 };
 
+class Marking {
+    public:
+        std::unordered_map<std::string, uint32_t> places;
+        
+        Marking() = default;
+
+        Marking(std::initializer_list<std::pair<std::string, uint32_t>> init) {
+            for (const auto& [place, tokens] : init) {
+                places[place] = tokens;
+            }
+        }
+    
+        void add_place(const std::string& place, uint32_t tokens) {
+            places[place] += tokens;
+        }
+    
+        uint32_t number_of_tokens() const {
+            uint32_t tokens = 0;
+            for (const auto& [_, count] : places) {
+                tokens += count;
+            }
+            return tokens;
+        }
+    };
+
 class PetriNet {
     public:
         std::vector<Place> places;
         std::vector<Transition> transitions;
         std::vector<Arc> arcs;
+
+        Marking initial_marking;
+        Marking final_marking;
     
         void add_place(const Place& place) {
             places.push_back(place);
@@ -84,7 +114,15 @@ class PetriNet {
         void add_arc(const Arc& arc) {
             arcs.push_back(arc);
         }
-    
+        
+        void set_initial_marking(const Marking& marking) {
+            initial_marking = marking;
+        }
+        
+        void set_final_marking(const Marking& marking) {
+            final_marking = marking;
+        }
+
         // Find a place by name
         Place* get_place(const std::string& name) {
             for (auto& place : places) {
@@ -119,28 +157,88 @@ class PetriNet {
         }
     
         // Fire a transition, updating tokens in the places
-        void fire_transition(const Transition& transition, int& consumed, int& produced) {
+        void fire_transition(const Transition& transition, int* consumed, int* produced) {
             for (auto& arc : arcs) {
                 if (arc.target == transition.name) {
                     Place* place = get_place(arc.source);
                     if (place) {
                         place->remove_tokens(arc.weight);
-                        consumed += arc.weight;
+                        *consumed += arc.weight;  // Dereferencing the pointer
                     }
                 }
                 if (arc.source == transition.name) {
                     Place* place = get_place(arc.target);
                     if (place) {
                         place->add_tokens(arc.weight);
-                        produced += arc.weight;
+                        *produced += arc.weight;  // Dereferencing the pointer
                     }
                 }
             }
         }
-    
+
         std::string repr() const {
             return "PetriNet(places=" + std::to_string(places.size()) +
                    ", transitions=" + std::to_string(transitions.size()) +
                    ", arcs=" + std::to_string(arcs.size()) + ")";
         }
+
+        std::vector<Place> get_postset(const Transition& transition) {
+            std::vector<Place> postset;
+            for (const auto& arc : arcs) {
+                if (arc.source == transition.name) {
+                    Place* place = get_place(arc.target);
+                    if (place) {
+                        postset.push_back(*place);
+                    }
+                }
+            }
+            return postset;
+        }
+
+        std::vector<Place> get_preset(const Transition& transition) {
+            std::vector<Place> preset;
+            for (const auto& arc : arcs) {
+                if (arc.target == transition.name) {
+                    Place* place = get_place(arc.source);
+                    if (place) {
+                        preset.push_back(*place);
+                    }
+                }
+            }
+            return preset;
+        }
+        
+        uint32_t number_of_tokens() const {
+            uint32_t tokens = 0;
+            for (const auto& place : places) {
+                tokens += place.tokens;
+            }
+            return tokens;
+        }
+    
+        std::vector<Transition> get_all_silent_transitions() {
+            std::vector<Transition> silent_transitions;
+            for (const auto& transition : transitions) {
+                if (transition.is_silent()) {
+                    silent_transitions.push_back(transition);
+                }
+            }
+            return silent_transitions;
+        }
+
+        std::vector<Place> get_all_places() {
+            return places;
+        }
+
+        Marking get_current_marking() {
+            // Loop through all places and add them to the marking
+            Marking marking;
+            for (const auto& place : places) {
+                if (place.tokens > 0) {
+                    marking.add_place(place.name, place.tokens);
+                }
+            }
+            return marking;
+        }
+
     };

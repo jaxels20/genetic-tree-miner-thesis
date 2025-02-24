@@ -72,6 +72,10 @@
         "format": "cpp",
         "stop_token": "cpp",
         "thread": "cpp",
-        "cinttypes": "cpp"
+        "cinttypes": "cpp",
+        "queue": "cpp",
+        "semaphore": "cpp",
+        "stack": "cpp",
+        "numeric": "cpp"
     }
 }

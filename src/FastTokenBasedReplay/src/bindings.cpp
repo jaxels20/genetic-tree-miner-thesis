@@ -2,7 +2,7 @@
 #include <pybind11/stl.h>
 #include "PetriNet.hpp"  // Include your PetriNet classes
 #include "Eventlog.hpp"  // Include your EventLog classes
-#include "token_based_replay.hpp"  // Include your token_based_replay function
+#include "token_based_replay.cpp"  // Include your token_based_replay function
 
 namespace py = pybind11;
 
@@ -26,7 +26,9 @@ PYBIND11_MODULE(FastTokenBasedReplay, m) {
         .def("add_place", &PetriNet::add_place)
         .def("add_transition", &PetriNet::add_transition)
         .def("add_arc", &PetriNet::add_arc)
-        .def("__repr__", &PetriNet::repr);
+        .def("__repr__", &PetriNet::repr)
+        .def("set_initial_marking", &PetriNet::set_initial_marking)
+        .def("set_final_marking", &PetriNet::set_final_marking);
 
     py::class_<Event>(m, "Event")
         .def(py::init<std::string, std::string, std::unordered_map<std::string, std::string>>())
@@ -41,6 +43,12 @@ PYBIND11_MODULE(FastTokenBasedReplay, m) {
         .def(py::init<>())
         .def("add_trace", &EventLog::add_trace)
         .def("__repr__", &EventLog::repr);
+    
+    py::class_<Marking>(m, "Marking")
+        .def(py::init<>())
+        .def(py::init<std::initializer_list<std::pair<std::string, uint32_t>>>())
+        .def("add_place", &Marking::add_place)
+        .def("number_of_tokens", &Marking::number_of_tokens);
 
     m.def("calculate_fitness_and_precision", &calculate_fitness_and_precision);
 }
