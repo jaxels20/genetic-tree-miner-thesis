@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 
 from src.EventLog import EventLog
 from src.Discovery import Discovery
+from src.PetriNet import PetriNet
 
 from pm4py.algo.evaluation.replay_fitness.variants.token_replay import apply as replay_fitness
 from pm4py.algo.evaluation.precision.variants.etconformance_token import apply as precision
@@ -92,8 +93,7 @@ class MultiEvaluator:
         for method in methods:
             for event_log_name, event_log in self.event_logs.items():
                 pn_result, initial_marking, final_marking = Discovery.run_discovery(method, event_log, **kwargs)
-                if pn_result is not None:   # check needed since gnn miner sometimes doesnt work => returns None
-                    self.petri_nets[method][event_log_name] = (pn_result, initial_marking, final_marking)
+                self.petri_nets[method][event_log_name] = (pn_result, initial_marking, final_marking)
         
     def evaluate_all(self, num_cores=None):
             """
@@ -132,8 +132,19 @@ class MultiEvaluator:
             # Convert the list of dictionaries to a DataFrame
             return pd.DataFrame(results)
 
-    def export_petri_nets(self):
-        raise NotImplementedError("Exporting Petri nets is not yet implemented for current Discovery class.")
+    def export_petri_nets(self, output_dir, format="png"):
+        """
+        Export the Petri nets to the output directory.
+        """
+        for method, datasets in self.petri_nets.items():
+            for dataset, (pn, initial_marking, final_marking) in datasets.items():
+                converted_pn = PetriNet.from_pm4py(pn)
+                if format == "png":
+                    converted_pn.visualize(f"{output_dir}/{dataset}/{method}", format="png")
+                elif format == "pdf":
+                    converted_pn.visualize(f"{output_dir}/{dataset}/{method}", format="pdf")
+                else:
+                    raise ValueError(f"Invalid format: {format}. Must be 'png' or 'pdf'.")
 
     def save_df_to_pdf(self, df, pdf_path):
         """
