@@ -1,17 +1,15 @@
-from ProcessTree import ProcessTree
-from EventLog import EventLog
-from ProcessTree import Operator
-from ProcessTreeRegister import ProcessTreeRegister
+from src.ProcessTree import ProcessTree, Operator
+from src.EventLog import EventLog
+from src.ProcessTreeRegister import ProcessTreeRegister
+from src.SupressPrints import SuppressPrints
+from src.Population import Population
+from src.PetriNet import PetriNet
+
+from typing import Union
 from pm4py.algo.evaluation.replay_fitness.variants.token_replay import apply as replay_fitness
 from pm4py.algo.evaluation.precision.variants.etconformance_token import apply as precision
 from pm4py.algo.evaluation.generalization.variants.token_based import apply as generalization
 from pm4py.algo.evaluation.simplicity.variants.arc_degree import apply as simplicity
-from SupressPrints import SuppressPrints
-from Population import Population
-from RandomTreeGenerator import BottomUpBinaryTreeGenerator
-import multiprocessing
-from typing import Union
-from PetriNet import PetriNet
 
 
 class ObjectiveBaseClass:

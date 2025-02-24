@@ -1,13 +1,14 @@
-from PetriNet import PetriNet
-from EventLog import EventLog
-#from pm4py.algo.evaluation.replay_fitness.algorithm import apply as replay_fitness
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from src.EventLog import EventLog
+from src.Discovery import Discovery
+from src.PetriNet import PetriNet
+
 from pm4py.algo.evaluation.replay_fitness.variants.token_replay import apply as replay_fitness
 from pm4py.algo.evaluation.precision.variants.etconformance_token import apply as precision
 from pm4py.algo.evaluation.generalization.variants.token_based import apply as generalization
 from pm4py.algo.evaluation.simplicity.variants.arc_degree import apply as simplicity
-import pandas as pd
-#from Discovery import Discovery
-import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 from concurrent.futures import ProcessPoolExecutor
 
@@ -17,7 +18,6 @@ class SingleEvaluator:
     def __init__(self, pm4py_pn, init_marking, final_marking, eventlog: EventLog):
         self.eventlog = eventlog
         
-        # convert the process model to pm4py format
         self.pm4py_pn = pm4py_pn
         self.init_marking = init_marking
         self.final_marking = final_marking
@@ -64,8 +64,8 @@ class SingleEvaluator:
         
 
 # Define a helper function that will handle evaluation for a single Petri net and event log pair
-def evaluate_single(miner: str, dataset: str, petri_net: PetriNet, event_log: EventLog):
-    evaluator = SingleEvaluator(petri_net, event_log)
+def evaluate_single(miner: str, dataset: str, petri_net, initial_marking, end_marking, event_log: EventLog):
+    evaluator = SingleEvaluator(petri_net, initial_marking, end_marking, event_log)
     
     # Get metrics and round to 4 decimal places
     metrics = {k: round(v, 3) for k, v in evaluator.get_evaluation_metrics().items()}
@@ -78,7 +78,7 @@ def evaluate_single(miner: str, dataset: str, petri_net: PetriNet, event_log: Ev
 # This function discovers a process model from an event log 
 # and evaluates it against the event log (calculates the metrics)
 class MultiEvaluator:
-    def __init__(self, event_logs: dict, methods: list):
+    def __init__(self, event_logs: dict, methods: list, **kwargs):
         """
         Initialize with dictionaries of Petri nets and event logs.
         Args:
@@ -92,9 +92,8 @@ class MultiEvaluator:
         # and values a dict of event log names and PetriNet objects
         for method in methods:
             for event_log_name, event_log in self.event_logs.items():
-                pn_result = Discovery.run_discovery(method, event_log)
-                if pn_result is not None:   # check needed since gnn miner sometimes doesnt work => returns None
-                    self.petri_nets[method][event_log_name] = pn_result
+                pn_result, initial_marking, final_marking = Discovery.run_discovery(method, event_log, **kwargs)
+                self.petri_nets[method][event_log_name] = (pn_result, initial_marking, final_marking)
         
     def evaluate_all(self, num_cores=None):
             """
@@ -109,11 +108,18 @@ class MultiEvaluator:
                 
                 # Iterate through each miner type and dataset in petri_nets
                 for miner, datasets in self.petri_nets.items():
-                    for dataset, petri_net in datasets.items():
+                    for dataset, (pn, initital_marking, final_marking) in datasets.items():
+                        # pn, initital_marking, final_marking = petri_net
                         if dataset in self.event_logs:
                             event_log = self.event_logs[dataset]
                             futures.append(
-                                executor.submit(evaluate_single, miner, dataset, petri_net, event_log)
+                                executor.submit(evaluate_single, 
+                                                miner, 
+                                                dataset, 
+                                                pn, 
+                                                initital_marking, 
+                                                final_marking, 
+                                                event_log)
                             )
                 
                 # Collect the results as they complete
@@ -128,17 +134,17 @@ class MultiEvaluator:
 
     def export_petri_nets(self, output_dir, format="png"):
         """
-        Export all Petri nets to the specified directory. They format can be specified as "png" or "pdf.
+        Export the Petri nets to the output directory.
         """
-        for miner, datasets in self.petri_nets.items():
-            for dataset, petri_net in datasets.items():
+        for method, datasets in self.petri_nets.items():
+            for dataset, (pn, initial_marking, final_marking) in datasets.items():
+                converted_pn = PetriNet.from_pm4py(pn)
                 if format == "png":
-                    petri_net.visualize(f"{output_dir}/{dataset}/{miner}", format="png")
+                    converted_pn.visualize(f"{output_dir}/{dataset}/{method}", format="png")
                 elif format == "pdf":
-                    petri_net.visualize(f"{output_dir}/{dataset}/{miner}", format="pdf")
+                    converted_pn.visualize(f"{output_dir}/{dataset}/{method}", format="pdf")
                 else:
-                    print(f"Invalid format: {format}. Must be 'png' or 'pdf'.")
-                    break
+                    raise ValueError(f"Invalid format: {format}. Must be 'png' or 'pdf'.")
 
     def save_df_to_pdf(self, df, pdf_path):
         """
@@ -197,60 +203,4 @@ class MultiEvaluator:
 
         print(f"PDF saved as {pdf_path}")
         
-    def save_df_to_latex(self, df: pd.DataFrame, output_dir: str, scenario: str) -> None:
-        """
-        Save the DataFrame to a LaTeX table format.
-        """
-        # Rename the datasets to avoid problems with underscores in LaTeX
-        if scenario == "controlled":
-            df['dataset'] = df['dataset'].replace({
-                'overleaf_example': 'Overleaf Example',
-                'simple_sequence': 'Simple Sequence',
-                'long_dependency': 'Long Dependency',
-                'loop_lenght_1': 'Loop Length 1',
-                'loop_lenght_2': 'Loop Length 2',
-                'simple_and_split': 'Simple AND Split',
-                'simple_xor_split': 'Simple XOR Split'
-            })
-        
-        # Group by dataset and miner
-        grouped = df.groupby(['dataset', 'miner'])
-        table_data = []
-        previous_dataset = None
-
-        for (dataset, miner), group in grouped:
-            # Add a horizontal line between groups
-            if dataset != previous_dataset and previous_dataset is not None:
-                table_data.append(r"\hline")
-            
-            # Create a row for the current group
-            row = (
-                f"{dataset if dataset != previous_dataset else ''} & "
-                f"{miner} & "
-                f"{group['f1_score'].mean():.3f} & "
-                f"{group['log_fitness'].mean():.3f} & "
-                f"{group['precision'].mean():.3f} & "
-                f"{group['generalization'].mean():.3f} & "
-                f"{group['simplicity'].mean():.3f} \\\\"
-            )
-            table_data.append(row)
-            previous_dataset = dataset
-
-        # Add a final horizontal line
-        table_data.append(r"\hline")
-
-        # Construct the LaTeX table
-        latex_table = (
-            r"\begin{tabular}{|l|l|r|r|r|r|r|}" + "\n"
-            r"\hline" + "\n"
-            r" Dataset & Method & F1-score & Fitness & Precision & Generalization & Simplicity \\" + "\n"
-            r"\hline" + "\n"
-            + "\n".join(table_data) + "\n"
-            r"\end{tabular}"
-        )
-
-        # Save the table to a file
-        with open(output_dir + "latex_table.tex", "w") as f:
-            f.write(latex_table)
-
-        # print(latex_table)
+    

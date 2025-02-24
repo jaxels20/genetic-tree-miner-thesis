@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import List, Optional, Tuple
-import os
-import pm4py
+import random
+from collections import Counter
 from pm4py.objects.process_tree.obj import ProcessTree as PM4PyProcessTree, Operator as PM4PyOperator
 from pm4py.objects.process_tree.exporter.variants import ptml as PM4PyExporter
 from pm4py.objects.process_tree.importer.variants import ptml as PM4PyImporter
@@ -38,6 +38,28 @@ class ProcessTree:
         child.parent = self
         self.children.append(child)
 
+    def add_random_leaf(self, activity: str):
+        leaf = ProcessTree(label=activity)
+        operator_nodes = self.get_all_operator_nodes()
+        parent = random.choice(operator_nodes)
+        parent.children.append(leaf)
+        leaf.parent = parent
+    
+    def add_tau_leaf(self):
+        # Find the root node
+        root_node = self
+        while root_node.parent:
+            root_node = root_node.parent
+        
+        # Find the next available tau id
+        leaf_labels = [leaf.label for leaf in root_node.get_all_leaf_nodes()]
+        tau_leaf_label = "tau_0"
+        while tau_leaf_label in leaf_labels:
+            tau_leaf_label = f"tau_{int(tau_leaf_label.split('_')[1]) + 1}"
+        
+        # Insert the tau leaf at the insertion node
+        self.add_child(tau_leaf_label)
+    
     def to_pm4py(self) -> PM4PyProcessTree:
         pm4py_node = PM4PyProcessTree(operator=self._to_pm4py_operator(), label=self.label)
         for child in self.children:
@@ -113,9 +135,13 @@ class ProcessTree:
         gviz = vis_process_tree.apply(pm4py_tree)
         vis_process_tree.view(gviz) 
     
-    def is_valid(self):
+    def is_valid(self) -> bool:
         """
         Checks if a process tree is valid according to the definition of a process tree.
+        - An activity node has no children
+        - Internal nodes are operators
+        - Sequence and XOR nodes have at least one child
+        - OR, LOOP and Parallel nodes have at least two children
 
         Returns:
             bool: True if the tree is valid, False otherwise.
@@ -139,7 +165,7 @@ class ProcessTree:
 
     def is_strictly_valid(self, activities: List[str]) -> bool:
         """
-        Checks if the tree is strict valid. A tree is strict valid if:
+        Checks if the tree is strictly valid. A tree is strictly valid if:
         - It is valid
         - All activities are present in the tree
         - All activities are unique meaning that they are not repeated in the tree
@@ -188,10 +214,25 @@ class ProcessTree:
             nodes.extend(child.get_all_nodes())
         return nodes
     
+    def get_all_leaf_nodes(self) -> List['ProcessTree']:
+        leaf_nodes = [self] if self.operator is None else []
+        for node in self.get_all_nodes():
+            if not node.children:
+                leaf_nodes.append(node)
+        return leaf_nodes
+    
+    def get_all_operator_nodes(self) -> List['ProcessTree']:
+        operator_nodes = []
+        for node in self.get_all_nodes():
+            if node.operator:
+                operator_nodes.append(node)
+        return operator_nodes
+    
     def get_all_activities(self) -> List[str]:
         activities = []
-        if self.label is not None:
+        if self.label is not None and "tau" not in self.label:
             activities.append(self.label)
+        
         for child in self.children:
             activities.extend(child.get_all_activities())
         return activities
@@ -201,16 +242,36 @@ class ProcessTree:
         tree_activities = set(self.get_all_activities())
         return all_activities.issubset(tree_activities)
     
-    def if_missing_insert_activities(self, activities: List[str]):
+    def get_missing_activities(self, activities: List[str]) -> List[str]:
         all_activities = set(activities)
         tree_activities = set(self.get_all_activities())
-        missing_activities = all_activities - tree_activities
+        return list(all_activities - tree_activities)
+    
+    def if_missing_insert_activities(self, activities: List[str]):
+        missing_activities = self.get_missing_activities(activities)
         if len(missing_activities) > 0:
-            #print(f"all_activities: {all_activities}")
-            #print(f"tree_activities: {tree_activities}")
-            #print(f"Missing activities: {missing_activities}")
             for activity in missing_activities:
-                self.add_child(ProcessTree(operator=None, label=activity))
+                self.add_random_leaf(activity)
+                
+    def remove_duplicate_activities(self):
+        all_activities = Counter(self.get_all_activities())
+        duplicated_activities = [activity for activity, count in all_activities.items() if count > 1]
+        # Check if there are any duplicated activities
+        if not duplicated_activities:
+            return
+        
+        # Remove the duplicated activities. Assuming that there can be at most one duplicate per activity.
+        for activity in duplicated_activities:
+            nodes = [leaf for leaf in self.get_all_leaf_nodes() if leaf.label == activity]           
+            for node in nodes:
+                if node.parent.operator in [Operator.SEQUENCE, Operator.XOR] and len(node.parent.children) > 1:
+                    node.parent.children.remove(node)
+                    break
+                elif node.parent.operator in [Operator.OR, Operator.LOOP, Operator.PARALLEL] and len(node.parent.children) > 2:
+                    node.parent.children.remove(node)
+                    break
+            else:
+                raise ValueError("Not possible to remove any duplicate activities without breaking the tree")
 
     def is_equal(self, other: 'ProcessTree') -> bool:
         return str(self) == str(other)
@@ -249,10 +310,4 @@ class ProcessTree:
             return children
         
         return parse_expression(tree_str)
-       
-if __name__ == "__main__":
-    # Example usage
-    tree = ProcessTree.from_string("SEQ(O(A,C),SEQ(C,A),D,B)")
-    print(tree.is_strictly_valid(["A", "B", "C", "D"]))
-    
     

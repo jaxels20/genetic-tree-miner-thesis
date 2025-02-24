@@ -1,4 +1,7 @@
 import random
+import pm4py.write as pm4py_write
+import src.FastTokenBasedReplay as FastTokenBasedReplay
+
 from graphviz import Digraph
 from pm4py.objects.petri_net.obj import PetriNet as PM4PyPetriNet, Marking as PM4PyMarking
 from pm4py.analysis import check_soundness
@@ -8,11 +11,10 @@ from pm4py.objects.petri_net.utils.check_soundness import (
 from pm4py.objects.process_tree.importer.variants.ptml import apply as import_ptml_tree
 from pm4py.objects.petri_net.importer.variants.pnml import import_net as import_pnml_net
 from pm4py.objects.conversion.process_tree.variants.to_petri_net import apply as convert_pt_to_pn
-from EventLog import EventLog
-import pm4py.write as pm4py_write
 from pm4py.convert import convert_to_process_tree as convert_to_pt
+
+from src.EventLog import EventLog
 from copy import deepcopy
-import FastTokenBasedReplay
 
 class Marking:
     """

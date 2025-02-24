@@ -1,4 +1,4 @@
-from Population import Population
+from src.Population import Population
 import matplotlib.pyplot as plt
 
 class Monitor:
