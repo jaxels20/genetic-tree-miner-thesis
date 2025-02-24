@@ -40,7 +40,6 @@ std::tuple<double, double, double, double> replay_trace(const Trace& trace, Petr
         if(net.can_fire(*transition)) {
             net.fire_transition(*transition, &consumed, &produced);
         } else {
-            bool fired = false;
             std::vector<Place> input_places = net.get_preset(*transition);
             for (const auto& input_place : input_places) {
                 Marking curr_marking = net.get_current_marking();
@@ -50,32 +49,23 @@ std::tuple<double, double, double, double> replay_trace(const Trace& trace, Petr
                     if (path_exists){
                         std::vector<std::string> transition_sequence = silent_graph.getTransitionSequence(path);
                         
-                        // Fire the transitions in the sequence
-                        for (const auto& transition_name : transition_sequence) {
-                            Transition* t = net.get_transition(transition_name);
-                            if (t) {
-                                net.fire_transition(*t, &consumed, &produced);
-                            }
-                            else {
-                                throw std::runtime_error("Transition not found: " + transition_name);
-                            }
-                        }
-                        // After the transitions are fired, the transition should be able to fire
+                        net.fire_transition_sequence(transition_sequence, &consumed, &produced);
                         if(net.can_fire(*transition)) {
-                            net.fire_transition(*transition, &consumed, &produced);
-                            fired = true;
                             break;
-                        }
-                        else {
-                            throw std::runtime_error("Transition not found: " + event.activity);
                         }
                     }
                 }
+
+                if (net.can_fire(*transition)) {
+                    break;
+                }
             }
 
-            if (fired) {
+            if(net.can_fire(*transition)) {
+                net.fire_transition(*transition, &consumed, &produced);
                 continue;
             }
+
 
            // Create a token in the pre-set of the transition
             for (const auto& place : net.get_preset(*transition)) {
@@ -92,19 +82,37 @@ std::tuple<double, double, double, double> replay_trace(const Trace& trace, Petr
     }
 
 
-
-
-
     consumed += net.final_marking.number_of_tokens();
 
-    // Check if there is tokens in the final marking if not produce tokens in the final marking
+    // Check if there are tokens in the final marking
+    // If not, try to use silent transitions before adding tokens manually
     for (const auto& [place, tokens] : net.final_marking.places) {
         Place* p = net.get_place(place);
-        if (p) {
-            int32_t tokens_in_place = p->number_of_tokens();
+        if (!p) continue;
+
+        int32_t tokens_in_place = p->number_of_tokens();
+        if (tokens_in_place < tokens) {
+            int32_t missing_tokens = tokens - tokens_in_place;
+
+            // Attempt to fire silent transitions to reach the final marking
+            Marking curr_marking = net.get_current_marking();
+            for (const auto& [place, tokens] : curr_marking.places) {
+                std::vector<std::string> path;
+                bool path_exists = silent_graph.findShortestPath(place, p->name, path);
+                if (path_exists) {
+                    std::vector<std::string> transition_sequence = silent_graph.getTransitionSequence(path);
+                    net.fire_transition_sequence(transition_sequence, &consumed, &produced);
+                    break;
+                }
+                
+            }
+
+            // Check again if the place now has enough tokens
+            tokens_in_place = p->number_of_tokens();
             if (tokens_in_place < tokens) {
+                // If silent transitions couldn't generate enough tokens, add manually
                 p->add_tokens(tokens - tokens_in_place);
-                missing += tokens - tokens_in_place;        
+                missing += tokens - tokens_in_place;
             }
         }
     }

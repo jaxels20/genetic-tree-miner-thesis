@@ -3,6 +3,8 @@ from src.EventLog import EventLog
 from src.PetriNet import PetriNet, Marking
 import src.FastTokenBasedReplay as FastTokenBasedReplay
 from pm4py.algo.evaluation.replay_fitness.variants.token_replay import apply as replay_fitness
+from src.RandomTreeGenerator import BottomUpBinaryTreeGenerator
+from src.ProcessTree import ProcessTree
 
 def test_simple_sequence():
     eventlog = EventLog.from_trace_list(["ABC"])
@@ -158,12 +160,42 @@ def test_simple_silent_transition():
     print(f"PM4Py fitness: {pm4py_fitness}")
     assert ftr_fitness == pm4py_fitness
 
+def giant_test():
+    
+    pop = BottomUpBinaryTreeGenerator().generate_population(["A", "B"], n=10)
+    eventlog = EventLog.from_trace_list(["AB"])
+    
+    for tree in pop:
+        print(f"Tree: {tree}")
+        pm4py_pn, init, final = tree.to_pm4py_pn()
+        our_pn = PetriNet.from_pm4py(pm4py_pn)
+        
+        our_pn.set_initial_marking(Marking({"source": 1}))
+        our_pn.set_final_marking(Marking({"sink": 1}))
+        
+        print(f"_______________FTR_______")
+        ftr_fitness, _ = FastTokenBasedReplay.calculate_fitness_and_precision(eventlog.to_fast_token_based_replay(), our_pn.to_fast_token_based_replay())
+
+        print(f"_______________PM4PY_______")
+        pm4py_fitness = replay_fitness(eventlog.to_pm4py(), pm4py_pn, init, final)["log_fitness"]
+        
+        if ftr_fitness != pm4py_fitness:
+            print(f"FastTokenBasedReplay fitness: {ftr_fitness}")
+            print(f"PM4Py fitness: {pm4py_fitness}")
+            # visualize the pn
+            our_pn.visualize()
+            
+            assert ftr_fitness == pm4py_fitness
+            
+            
+        
 
 if __name__ == "__main__":
-    test_simple_sequence()
-    test_simple_loop()
-    test_simple_loop_not_perfect()
-    test_simple_silent_transition()
+    #test_simple_sequence()
+    #test_simple_loop()
+    #test_simple_loop_not_perfect()
+    #test_simple_silent_transition()
+    giant_test()
 
 
 

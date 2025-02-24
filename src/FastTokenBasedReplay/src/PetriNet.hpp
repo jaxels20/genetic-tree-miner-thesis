@@ -241,4 +241,24 @@ class PetriNet {
             return marking;
         }
 
+        std::vector<std::string> fire_transition_sequence(const std::vector<std::string>& transition_names, int* consumed, int* produced) {
+            std::vector<std::string> fired_transitions;
+            for (const auto& transition_name : transition_names) {
+                Transition* transition = get_transition(transition_name);
+                if (transition) {
+                    if (can_fire(*transition)) {
+                        fire_transition(*transition, consumed, produced);
+                        fired_transitions.push_back(transition_name);
+                    }
+                    else {
+                        throw std::runtime_error("Transition cannot fire: " + transition_name);
+                    }
+                }
+                else {
+                    throw std::runtime_error("Transition not found: " + transition_name);
+                }
+            }
+            return fired_transitions;
+        }
+
     };

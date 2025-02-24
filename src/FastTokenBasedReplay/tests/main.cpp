@@ -287,6 +287,49 @@ TEST(FastTokenBasedReplayTest, test_complex_with_silent_transitions) {
 }
 
 
+// Example test case
+TEST(FastTokenBasedReplayTest, silent_transition_in_before_end_place) {
+    PetriNet net;
+    net.add_place(Place("start", 0));
+    net.add_place(Place("p1", 0));
+    net.add_place(Place("p2", 0));
+    net.add_place(Place("p3", 0));
+    net.add_place(Place("end", 0));
+
+    net.add_transition(Transition("A"));
+    net.add_transition(Transition("tau_1"));
+    net.add_transition(Transition("B"));
+    net.add_transition(Transition("tau_2"));
+
+    net.add_arc(Arc("start", "tau_1"));
+    net.add_arc(Arc("tau_1", "p1"));
+    net.add_arc(Arc("tau_1", "p2"));
+
+    net.add_arc(Arc("p1", "A"));
+    net.add_arc(Arc("p2", "B"));
+
+    net.add_arc(Arc("B", "p3"));
+    net.add_arc(Arc("A", "p3"));
+
+    net.add_arc(Arc("p3", "tau_2"));
+    net.add_arc(Arc("tau_2", "end"));
+
+    net.set_initial_marking(Marking({{"start", 1}}));
+    net.set_final_marking(Marking({{"end", 1}}));
+
+    std::vector<std::string> trace_list = {"AB"};
+    EventLog eventlog = EventLog::from_trace_list(trace_list);
+
+    auto [fitness, precision] = calculate_fitness_and_precision(eventlog, net);
+
+    
+    EXPECT_EQ(fitness, 0.8);
+    EXPECT_EQ(precision, 1.0);
+
+}
+
+
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

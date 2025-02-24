@@ -194,13 +194,6 @@ class Mutator(MutatorBase):
             parent = random.choice(old_population.get_population())
             new_population.add_tree(self.mutation(parent))
                     
-        # check if the tree is strictly valid if not remove it and insert random new tree     
-        num_removed = new_population.ensure_strictly_valid(self.EventLog.unique_activities())
-        
-        if num_removed > 0:
-            print(f"Removed {num_removed} invalid trees")
-            new_population.add_trees(self.random_creation(num_removed))
-    
         return new_population
     
     
