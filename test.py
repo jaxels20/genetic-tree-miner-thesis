@@ -1,7 +1,7 @@
 # THIS FILE TESTS FASTTOKENBASEDREPLAY AND COMPARES THE OUTPUTS TO PM4PY
-from EventLog import EventLog
-from PetriNet import PetriNet, Marking
-import FastTokenBasedReplay
+from src.EventLog import EventLog
+from src.PetriNet import PetriNet, Marking
+import src.FastTokenBasedReplay as FastTokenBasedReplay
 from pm4py.algo.evaluation.replay_fitness.variants.token_replay import apply as replay_fitness
 
 def test_simple_sequence():

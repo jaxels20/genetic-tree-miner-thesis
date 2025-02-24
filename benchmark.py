@@ -1,8 +1,8 @@
-import FastTokenBasedReplay as ftr
+import src.FastTokenBasedReplay as ftr
 import time
 import itertools
-from PetriNet import PetriNet, Marking
-from EventLog import EventLog
+from src.PetriNet import PetriNet, Marking
+from src.EventLog import EventLog
 from pm4py.algo.evaluation.replay_fitness.variants.token_replay import apply as replay_fitness
 import matplotlib.pyplot as plt
 from pm4py.algo.conformance.alignments.petri_net.algorithm import apply as align_petri_net
