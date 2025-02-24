@@ -26,15 +26,16 @@ if __name__ == "__main__":
         eventlogs, 
         methods=METHODS,
         random_creation_rate=0.1,
-        crossover_rate=0.2,
-        mutation_rate=0.5,
-        elite_rate=0.2,
+        crossover_rate=0.3,
+        mutation_rate=0.3,
+        elite_rate=0.3,
         min_fitness=None,
-        max_generations=5,
+        max_generations=500,
         stagnation_limit=None,
         time_limit=90,
-        population_size=1000
+        population_size=200
         )
     
     results_df = multi_evaluator.evaluate_all(num_cores=NUM_WORKERS)
     multi_evaluator.save_df_to_pdf(results_df, OUTPUT_DIR + "results.pdf")
+    multi_evaluator.export_petri_nets(OUTPUT_DIR)
