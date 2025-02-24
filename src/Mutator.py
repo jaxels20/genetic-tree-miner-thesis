@@ -66,7 +66,7 @@ class Mutator(MutatorBase):
                 continue   # remove_duplicate_activities raise an error, i.e. not possible to remove duplicate activities without breaking the tree
         
         # If no valid crossover point was found, return a random parent
-        return random.choice([parent1, parent2])
+        return deep_copy_tree(random.choice([parent1, parent2]))
 
     def mutation(self, process_tree: ProcessTree) -> ProcessTree:
         """
