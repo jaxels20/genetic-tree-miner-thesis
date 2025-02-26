@@ -45,21 +45,6 @@ class ProcessTree:
         parent.children.append(leaf)
         leaf.parent = parent
     
-    def add_tau_leaf(self):
-        # Find the root node
-        root_node = self
-        while root_node.parent:
-            root_node = root_node.parent
-        
-        # Find the next available tau id
-        leaf_labels = [leaf.label for leaf in root_node.get_all_leaf_nodes()]
-        tau_leaf_label = "tau_0"
-        while tau_leaf_label in leaf_labels:
-            tau_leaf_label = f"tau_{int(tau_leaf_label.split('_')[1]) + 1}"
-        
-        # Insert the tau leaf at the insertion node
-        self.add_child(tau_leaf_label)
-    
     def to_pm4py(self) -> PM4PyProcessTree:
         pm4py_node = PM4PyProcessTree(operator=self._to_pm4py_operator(), label=self.label)
         for child in self.children:
@@ -111,7 +96,7 @@ class ProcessTree:
         children_str = ",".join(str(child) for child in self.children) if self.children else ""
         
         if self.operator is None:
-            return self.label
+            return self.label if self.label else "tau"
         
         return f"{self.operator}({children_str})"
     
@@ -230,7 +215,8 @@ class ProcessTree:
     
     def get_all_activities(self) -> List[str]:
         activities = []
-        if self.label is not None and "tau" not in self.label:
+        
+        if self.label is not None: # ignoring tau nodes
             activities.append(self.label)
         
         for child in self.children:
