@@ -54,7 +54,89 @@ class HyperGraph {
             return edges.at(edgeName).targets;
         }
     
+        void setMarking(const std::unordered_map<std::string, uint32_t>& marking) {
+            for (const auto& [place, tokens] : marking) {
+                if (hasNode(place)) {
+                    setTokens(place, tokens);
+                }
+            }
+        }
+    
+        void resetMarking() {
+            for (auto& [name, node] : nodes) {
+                node.tokens = 0;
+            }
+        }
+    
+        std::pair<bool, std::vector<std::string>> canReachTargetMarking(
+            const std::unordered_map<std::string, uint32_t>& start,
+            const std::unordered_map<std::string, uint32_t>& target) {
+            
+            using State = std::pair<std::unordered_map<std::string, uint32_t>, std::vector<std::string>>;
+            std::queue<State> queue;
+            std::unordered_set<std::unordered_map<std::string, uint32_t>, HashMapHasher> visited;
+            
+            queue.push({start, {}});
+            visited.insert(start);
+            
+            while (!queue.empty()) {
+                auto [current, path] = queue.front();
+                queue.pop();
+                
+                // Check if the current marking satisfies the target condition
+                bool targetReached = true;
+                for (const auto& [place, tokens] : target) {
+                    if (current[place] < tokens) {
+                        targetReached = false;
+                        break;
+                    }
+                }
+                if (targetReached) return {true, path};
+                
+                // Try firing enabled edges
+                for (const auto& [edgeName, edge] : edges) {
+                    bool enabled = true;
+                    for (const auto& src : edge.sources) {
+                        if (current[src] == 0) {
+                            enabled = false;
+                            break;
+                        }
+                    }
+                    
+                    if (enabled) {
+                        auto nextMarking = current;
+                        for (const auto& src : edge.sources) {
+                            nextMarking[src] -= 1;
+                        }
+                        for (const auto& tgt : edge.targets) {
+                            nextMarking[tgt] += 1;
+                        }
+                        
+                        if (visited.find(nextMarking) == visited.end()) {
+                            auto newPath = path;
+                            newPath.push_back(edgeName);
+                            queue.push({nextMarking, newPath});
+                            visited.insert(nextMarking);
+                        }
+                    }
+                }
+            }
+            return {false, {}}; // No path found
+        }
+        
+
     private:
         std::unordered_map<std::string, Node> nodes;
         std::unordered_map<std::string, Edge> edges;
+        
+        struct HashMapHasher {
+            size_t operator()(const std::unordered_map<std::string, uint32_t>& map) const {
+                size_t hash = 0;
+                for (const auto& [key, value] : map) {
+                    hash ^= std::hash<std::string>{}(key) ^ std::hash<uint32_t>{}(value);
+                }
+                return hash;
+            }
+        };
     };
+    

@@ -422,6 +422,74 @@ TEST(HyperGraphTest, ModifyTokens) {
     EXPECT_EQ(hg.getTokens("X"), 10);
 }
 
+TEST(HyperGraphTest, SetAndResetMarking) {
+    HyperGraph hg;
+    hg.addNode("A", 3);
+    hg.addNode("B", 2);
+    hg.setMarking({{"A", 5}, {"B", 0}});
+    EXPECT_EQ(hg.getTokens("A"), 5);
+    EXPECT_EQ(hg.getTokens("B"), 0);
+    hg.resetMarking();
+    EXPECT_EQ(hg.getTokens("A"), 0);
+    EXPECT_EQ(hg.getTokens("B"), 0);
+}
+
+TEST(HyperGraphTest, CanReachTargetMarking) {
+    HyperGraph hg;
+    hg.addNode("A", 1);
+    hg.addNode("B", 0);
+    hg.addNode("C", 0);
+    hg.addEdge("E1", {"A"}, {"B"});
+    hg.addEdge("E2", {"B"}, {"C"});
+    
+    std::unordered_map<std::string, uint32_t> start = {{"A", 1}, {"B", 0}, {"C", 0}};
+    std::unordered_map<std::string, uint32_t> target1 = {{"B", 1}};
+    std::unordered_map<std::string, uint32_t> target2 = {{"C", 1}};
+    
+    auto [reachable1, _] = hg.canReachTargetMarking(start, target1);
+    auto [reachable2, __] = hg.canReachTargetMarking(start, target2);
+
+    EXPECT_TRUE(reachable1);
+    EXPECT_TRUE(reachable2);
+
+}
+
+TEST(HyperGraphTest, HyperEdgeFiring) {
+    HyperGraph hg;
+    hg.addNode("A", 1);
+    hg.addNode("B", 1);
+    hg.addNode("C", 0);
+    hg.addNode("D", 0);
+
+    // Hyperedge requires both A and B as sources, and produces tokens in C and D
+    hg.addEdge("E1", {"A", "B"}, {"C", "D"});
+
+    std::unordered_map<std::string, uint32_t> start = {{"A", 1}, {"B", 1}, {"C", 0}, {"D", 0}};
+    std::unordered_map<std::string, uint32_t> target = {{"C", 1}, {"D", 1}};
+
+    auto [reachable, _] = hg.canReachTargetMarking(start, target);
+    EXPECT_TRUE(reachable);
+}
+
+TEST(HyperGraphTest, FindFiringSequence) {
+    HyperGraph hg;
+    hg.addNode("A", 1);
+    hg.addNode("B", 0);
+    hg.addNode("C", 0);
+
+    hg.addEdge("E1", {"A"}, {"B"});
+    hg.addEdge("E2", {"B"}, {"C"});
+
+    std::unordered_map<std::string, uint32_t> start = {{"A", 1}, {"B", 0}, {"C", 0}};
+    std::unordered_map<std::string, uint32_t> target = {{"C", 1}};
+
+    auto [reachable, sequence] = hg.canReachTargetMarking(start, target);
+    
+    EXPECT_TRUE(reachable);
+    ASSERT_EQ(sequence.size(), 2);
+    EXPECT_EQ(sequence[0], "E1");
+    EXPECT_EQ(sequence[1], "E2");
+}
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
