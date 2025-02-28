@@ -34,4 +34,9 @@ class Marking {
             }
             return true;
         }
+    
+        // Implement the equality operator
+        bool operator==(const Marking& other) const {
+            return places == other.places;
+        }
     };

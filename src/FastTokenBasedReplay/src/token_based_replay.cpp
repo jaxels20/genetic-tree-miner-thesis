@@ -10,6 +10,8 @@
 #include "PetriNet.hpp"
 #include "Eventlog.hpp"
 #include "Graph.hpp"
+#include "HyperGraph.hpp"
+
 
 
 bool stop_condition_final_marking(Marking& current_marking, Marking& final_marking) {
@@ -174,6 +176,43 @@ Graph create_silent_graph(const PetriNet& net) {
     }
 
     return silent_graph;
+}
+
+HyperGraph create_silent_hyper_graph(const PetriNet& net) {
+    HyperGraph hypergraph;
+    PetriNet net_copy = net;
+    // Add places as nodes in the hypergraph
+    for (const auto& place : net_copy.places) {
+        hypergraph.addNode(place.name, place.tokens);
+    }
+
+    // Add silent transitions as hyperedges in the hypergraph
+    for (const auto& transition : net_copy.transitions) {
+        if (transition.is_silent()) {
+            // Identify the input places (sources) and output places (targets) for the silent transition
+            std::vector<std::string> sourcePlaces;
+            std::vector<std::string> targetPlaces;
+
+            // Gather input places (sources)
+            for (const auto& arc : net_copy.arcs) {
+                if (arc.target == transition.name) {
+                    sourcePlaces.push_back(arc.source);
+                }
+            }
+
+            // Gather output places (targets)
+            for (const auto& arc : net_copy.arcs) {
+                if (arc.source == transition.name) {
+                    targetPlaces.push_back(arc.target);
+                }
+            }
+
+            // Add the hyperedge to the hypergraph
+            hypergraph.addEdge(transition.name, sourcePlaces, targetPlaces);
+        }
+    }
+
+    return hypergraph;
 }
 
 std::tuple<double, double> calculate_fitness_and_precision(const EventLog& log, const PetriNet& net) {

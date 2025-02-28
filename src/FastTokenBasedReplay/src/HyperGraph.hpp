@@ -4,7 +4,18 @@
 #include <unordered_map>
 #include <vector>
 #include <unordered_set>
+#include "Marking.hpp"
 
+// Define MarkingHasher outside the HyperGraph class
+struct MarkingHasher {
+    size_t operator()(const Marking& m) const {
+        size_t hash = 0;
+        for (const auto& [place, tokens] : m.places) {
+            hash ^= std::hash<std::string>{}(place) ^ std::hash<uint32_t>{}(tokens);
+        }
+        return hash;
+    }
+};
 
 
 class HyperGraph {
@@ -69,60 +80,74 @@ class HyperGraph {
         }
     
         std::pair<bool, std::vector<std::string>> canReachTargetMarking(
-            const std::unordered_map<std::string, uint32_t>& start,
-            const std::unordered_map<std::string, uint32_t>& target) {
-            
-            using State = std::pair<std::unordered_map<std::string, uint32_t>, std::vector<std::string>>;
-            std::queue<State> queue;
-            std::unordered_set<std::unordered_map<std::string, uint32_t>, HashMapHasher> visited;
-            
-            queue.push({start, {}});
-            visited.insert(start);
-            
-            while (!queue.empty()) {
-                auto [current, path] = queue.front();
-                queue.pop();
-                
-                // Check if the current marking satisfies the target condition
-                bool targetReached = true;
-                for (const auto& [place, tokens] : target) {
-                    if (current[place] < tokens) {
-                        targetReached = false;
+            const Marking& start,
+            const Marking& target) {
+    
+        using State = std::pair<Marking, std::vector<std::string>>;
+        std::queue<State> queue;
+        std::unordered_set<Marking, MarkingHasher> visited;
+    
+        queue.push({start, {}});
+        visited.insert(start);
+    
+        while (!queue.empty()) {
+            auto [current, path] = queue.front();
+            queue.pop();
+    
+            // Check if the current marking satisfies the target condition
+            bool targetReached = true;
+            for (const auto& [place, tokens] : target.places) {
+                // If the place is missing, treat it as zero tokens.
+                uint32_t currentTokens = 0;
+                if (current.places.find(place) != current.places.end()) {
+                    currentTokens = current.places.at(place);
+                }
+                if (currentTokens < tokens) {
+                    targetReached = false;
+                    break;
+                }
+            }
+            if (targetReached) {
+                return {true, path};
+            }
+    
+            // Try firing enabled edges
+            for (const auto& [edgeName, edge] : edges) {
+                bool enabled = true;
+                for (const auto& src : edge.sources) {
+                    // Check if each source exists and has at least one token.
+                    if (current.places.find(src) == current.places.end() || current.places.at(src) == 0) {
+                        enabled = false;
                         break;
                     }
                 }
-                if (targetReached) return {true, path};
-                
-                // Try firing enabled edges
-                for (const auto& [edgeName, edge] : edges) {
-                    bool enabled = true;
+    
+                if (enabled) {
+                    Marking nextMarking = current;
+    
+                    // Decrement tokens from source places (they must exist, or the edge wouldn’t be enabled)
                     for (const auto& src : edge.sources) {
-                        if (current[src] == 0) {
-                            enabled = false;
-                            break;
-                        }
+                        nextMarking.add_place(src, -1);
                     }
-                    
-                    if (enabled) {
-                        auto nextMarking = current;
-                        for (const auto& src : edge.sources) {
-                            nextMarking[src] -= 1;
-                        }
-                        for (const auto& tgt : edge.targets) {
-                            nextMarking[tgt] += 1;
-                        }
-                        
-                        if (visited.find(nextMarking) == visited.end()) {
-                            auto newPath = path;
-                            newPath.push_back(edgeName);
-                            queue.push({nextMarking, newPath});
-                            visited.insert(nextMarking);
-                        }
+    
+                    // Increment tokens to target places.
+                    // This will add the target to the marking if it does not exist.
+                    for (const auto& tgt : edge.targets) {
+                        nextMarking.add_place(tgt, 1);
+                    }
+    
+                    if (visited.find(nextMarking) == visited.end()) {
+                        auto newPath = path;
+                        newPath.push_back(edgeName);
+                        queue.push({nextMarking, newPath});
+                        visited.insert(nextMarking);
                     }
                 }
             }
-            return {false, {}}; // No path found
         }
+        return {false, {}}; // No path found
+    }
+
         
 
     private:
