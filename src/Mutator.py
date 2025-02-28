@@ -84,20 +84,37 @@ class Mutator(MutatorBase):
         """
         
         def operator_swap(tree: ProcessTree) -> ProcessTree:
-            # Select a random node to perform swap 
+            # Select a random node to perform swap
             nodes = tree.get_all_operator_nodes()
-            node = random.choice(nodes)
+            swap_node = random.choice(nodes)
             
-            # Sample random operator and insert it to ensure valid tree
-            if len(node.children) == 1:
-                operators = [Operator.SEQUENCE, Operator.XOR]
-                operators.remove(node.operator)
-                node.operator = operators[0]
-            elif len(node.children) >= 2:
-                operators = [Operator.SEQUENCE, Operator.XOR, Operator.PARALLEL, Operator.LOOP]
-                operators.remove(node.operator)
-                node.operator = random.choice(operators)
-                random.shuffle(node.children)            
+            non_tau_children, taus = [], []
+            for child in swap_node.children:
+                (taus if not child.label and not child.operator else non_tau_children).append(child)
+            
+            # Do operator swap according to the operator type
+            curr_operator = swap_node.operator
+ 
+            if len(non_tau_children) >= 2:
+                if curr_operator == Operator.LOOP:
+                    swap_node.operator = random.choice([Operator.SEQUENCE, Operator.XOR, Operator.PARALLEL])
+                    for tau in taus:
+                        swap_node.children.remove(tau)
+                else:
+                    swap_node.operator = random.choice([Operator.SEQUENCE, Operator.XOR, Operator.PARALLEL, Operator.LOOP])
+                    
+            elif len(non_tau_children) == 1:
+                if curr_operator == Operator.LOOP:
+                    swap_node.operator = random.choice([Operator.SEQUENCE, Operator.XOR])
+                    for tau in taus:
+                        swap_node.children.remove(tau)
+                else:
+                    if curr_operator == Operator.SEQUENCE:
+                        swap_node.operator = Operator.XOR
+                    else:
+                        swap_node.operator = Operator.SEQUENCE
+                                                        
+            random.shuffle(swap_node.children)        
             
             return tree
                   
@@ -126,10 +143,12 @@ class Mutator(MutatorBase):
             
             return tree
         
-        def leaf_addition(tree: ProcessTree) -> ProcessTree:            
-            leaf = random.choice(tree.get_all_leaf_nodes())
-            leaf.parent.children.remove(leaf)
+        def leaf_addition(tree: ProcessTree) -> ProcessTree:
+            activities = [node for node in tree.get_all_leaf_nodes() if node.label is not None]
+            leaf = random.choice(activities)
             
+            # Attempt to remove leaf without breaking structure
+            leaf.parent.children.remove(leaf)
             if not leaf.parent.is_valid():
                 leaf.parent.children.append(leaf)
                 return tree
@@ -141,25 +160,25 @@ class Mutator(MutatorBase):
             return tree
 
         def loop_addition(tree: ProcessTree) -> ProcessTree:
-            # Select a loop node and a tau node
-            loops = [node for node in tree.get_all_operator_nodes() if node.operator == Operator.LOOP]
+            # Select a random leaf node
+            leaves = [node for node in tree.get_all_leaf_nodes() if node.label is not None]
+            new_loop = random.choice(leaves)
             
-            # Check that loops exists
-            if len(loops) == 0:
-                return tree
+            # Replace the leaf node with a loop node
+            actvity = new_loop.label
+            new_loop.label = None
+            new_loop.operator = Operator.LOOP
             
-            # if there already exist a tau node in the loop, then skip
-            loop = random.choice(loops)
-            for child in loop.children:
-                if child.label is not None and "tau" in child.label:
-                    return tree
-            
-            loop.add_tau_leaf()
+            # Add tau node to new_loop
+            tau = ProcessTree(parent=new_loop, operator = None, label = None)
+            new_loop.add_child(tau)
+            new_loop.add_child(ProcessTree(parent=new_loop, label=actvity))
+            random.shuffle(new_loop.children)
             
             return tree
         
         pt_copy = deep_copy_tree(process_tree)
-        mutation_type = random.choice(['subtree_removal', 'leaf_addition', 'operator_swap'])
+        mutation_type = random.choice(['loop_addition', 'operator_swap', 'subtree_removal', 'leaf_addition'])
 
         if mutation_type == 'operator_swap':
             new_tree = operator_swap(pt_copy)
@@ -167,6 +186,8 @@ class Mutator(MutatorBase):
             new_tree = subtree_removal(pt_copy)
         elif mutation_type == 'leaf_addition':
             new_tree = leaf_addition(pt_copy)
+        elif mutation_type == 'loop_addition':
+            new_tree = loop_addition(pt_copy)
             
         return new_tree
     
@@ -193,7 +214,7 @@ class Mutator(MutatorBase):
         for _ in range(mutation_count):
             parent = random.choice(old_population.get_population())
             new_population.add_tree(self.mutation(parent))
-                    
+    
         return new_population
     
     
