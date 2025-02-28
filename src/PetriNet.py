@@ -41,6 +41,13 @@ class Marking:
             marking.add_place(place, tokens)
         return marking
     
+    @staticmethod
+    def from_fask_token_based_replay(self):
+        """
+        Converts a FastTokenBasedReplay.Marking object to a Python Marking object.
+        """
+        marking = Marking({place: tokens for place, tokens in marking.places.items()})
+        return marking
     
 class Place:
     """
