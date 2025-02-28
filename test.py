@@ -162,22 +162,34 @@ def test_simple_silent_transition():
 
 def giant_test():
     
-    pop = BottomUpBinaryTreeGenerator().generate_population(["A", "B"], n=10)
-    eventlog = EventLog.from_trace_list(["AB"])
+    pop = BottomUpBinaryTreeGenerator().generate_population(["A", "B"], n=40)
+    eventlog = EventLog.from_trace_list(["AA"])
     
     for tree in pop:
-        print(f"Tree: {tree}")
         pm4py_pn, init, final = tree.to_pm4py_pn()
         our_pn = PetriNet.from_pm4py(pm4py_pn)
         
         our_pn.set_initial_marking(Marking({"source": 1}))
         our_pn.set_final_marking(Marking({"sink": 1}))
         
-        print(f"_______________FTR_______")
-        ftr_fitness, _ = FastTokenBasedReplay.calculate_fitness_and_precision(eventlog.to_fast_token_based_replay(), our_pn.to_fast_token_based_replay())
-
-        print(f"_______________PM4PY_______")
-        pm4py_fitness = replay_fitness(eventlog.to_pm4py(), pm4py_pn, init, final)["log_fitness"]
+        
+        try:
+            print(f"_______________PM4PY_______")
+            pm4py_fitness = replay_fitness(eventlog.to_pm4py(), pm4py_pn, init, final)["log_fitness"]
+            print(f"PM4Py fitness: {pm4py_fitness}")
+        except Exception as e:
+            print(f"PM4Py failed: {e}")
+            our_pn.visualize()
+            raise e
+        
+        try:
+            print(f"_______________FTR_______")
+            ftr_fitness, _ = FastTokenBasedReplay.calculate_fitness_and_precision(eventlog.to_fast_token_based_replay(), our_pn.to_fast_token_based_replay())
+            print(f"FastTokenBasedReplay fitness: {ftr_fitness}")
+        except Exception as e:
+            print(f"FTR failed: {e}")
+            our_pn.visualize()
+            raise e
         
         if ftr_fitness != pm4py_fitness:
             print(f"FastTokenBasedReplay fitness: {ftr_fitness}")
@@ -185,10 +197,7 @@ def giant_test():
             # visualize the pn
             our_pn.visualize()
             
-            assert ftr_fitness == pm4py_fitness
-            
-            
-        
+            assert ftr_fitness == pm4py_fitness        
 
 if __name__ == "__main__":
     #test_simple_sequence()
@@ -196,6 +205,5 @@ if __name__ == "__main__":
     #test_simple_loop_not_perfect()
     #test_simple_silent_transition()
     giant_test()
-
 
 

@@ -293,7 +293,6 @@ TEST(FastTokenBasedReplayTest, silent_transition_in_before_end_place) {
     net.add_place(Place("start", 0));
     net.add_place(Place("p1", 0));
     net.add_place(Place("p2", 0));
-    net.add_place(Place("p3", 0));
     net.add_place(Place("end", 0));
 
     net.add_transition(Transition("A"));
@@ -303,15 +302,14 @@ TEST(FastTokenBasedReplayTest, silent_transition_in_before_end_place) {
 
     net.add_arc(Arc("start", "tau_1"));
     net.add_arc(Arc("tau_1", "p1"));
-    net.add_arc(Arc("tau_1", "p2"));
 
     net.add_arc(Arc("p1", "A"));
-    net.add_arc(Arc("p2", "B"));
+    net.add_arc(Arc("p1", "B"));
 
-    net.add_arc(Arc("B", "p3"));
-    net.add_arc(Arc("A", "p3"));
+    net.add_arc(Arc("B", "p2"));
+    net.add_arc(Arc("A", "p2"));
 
-    net.add_arc(Arc("p3", "tau_2"));
+    net.add_arc(Arc("p2", "tau_2"));
     net.add_arc(Arc("tau_2", "end"));
 
     net.set_initial_marking(Marking({{"start", 1}}));
@@ -328,7 +326,66 @@ TEST(FastTokenBasedReplayTest, silent_transition_in_before_end_place) {
 
 }
 
+// Example test case
+TEST(FastTokenBasedReplayTest, seq_and) {
+    PetriNet net;
+    net.add_place(Place("start", 0));
+    net.add_place(Place("p1", 0));
+    net.add_place(Place("p2", 0));
+    net.add_place(Place("p3", 0));
+    net.add_place(Place("p4", 0));
+    net.add_place(Place("end", 0));
 
+    net.add_transition(Transition("A"));
+    net.add_transition(Transition("tau_1"));
+    net.add_transition(Transition("B"));
+    net.add_transition(Transition("tau_2"));
+
+    net.add_arc(Arc("start", "tau_1"));
+    net.add_arc(Arc("tau_1", "p1"));
+    net.add_arc(Arc("tau_1", "p2"));
+
+    net.add_arc(Arc("p1", "A"));
+    net.add_arc(Arc("p2", "B"));
+
+    net.add_arc(Arc("A", "p3"));
+    net.add_arc(Arc("B", "p4"));
+
+    net.add_arc(Arc("p3", "tau_2"));
+    net.add_arc(Arc("p4", "tau_2"));
+    net.add_arc(Arc("tau_2", "end"));
+
+    net.set_initial_marking(Marking({{"start", 1}}));
+    net.set_final_marking(Marking({{"end", 1}}));
+
+    std::vector<std::string> trace_list = { "AA"};
+    EventLog eventlog = EventLog::from_trace_list(trace_list);
+
+    auto [fitness, precision] = calculate_fitness_and_precision(eventlog, net);
+
+    EXPECT_EQ(fitness, 0.8);
+    EXPECT_EQ(precision, 1.0);
+    
+
+}
+
+
+
+TEST(FastTokenBasedReplayTest, final_marking_condition) {
+    Marking final_marking = Marking({{"p1", 1}});
+
+    Marking m1 = Marking({{"p1", 1}});
+    Marking m2 = Marking({{"p1", 2}});
+    Marking m3 = Marking({{"p1", 0}});
+    Marking m4 = Marking({{"p1", 0}, {"p2", 1}});
+    Marking m5 = Marking({{"p1", 1}, {"p2", 1}});
+
+    EXPECT_EQ(stop_condition_final_marking(m1, final_marking), true);
+    EXPECT_EQ(stop_condition_final_marking(m2, final_marking), true);
+    EXPECT_EQ(stop_condition_final_marking(m3, final_marking), false);
+    EXPECT_EQ(stop_condition_final_marking(m4, final_marking), false);
+    EXPECT_EQ(stop_condition_final_marking(m5, final_marking), true);
+}
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);

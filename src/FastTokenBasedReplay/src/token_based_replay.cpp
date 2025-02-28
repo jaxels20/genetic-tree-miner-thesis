@@ -12,6 +12,65 @@
 #include "Graph.hpp"
 
 
+bool stop_condition_final_marking(Marking& current_marking, Marking& final_marking) {
+    // Check if the current marking is equal (or a subset of) the final marking
+    for (const auto& [place, tokens] : final_marking.places) {
+        if (current_marking.places.find(place) == current_marking.places.end()) {
+            return false;
+        }
+        if (current_marking.places[place] < tokens) {
+            return false;
+        }
+    }
+    return true;
+    
+}
+
+
+void initialize_tokens(PetriNet& net) {
+    // produce tokens in the initial marking
+    for (const auto& [place, tokens] : net.initial_marking.places) {
+        Place* p = net.get_place(place);
+        if (p) {
+            p->add_tokens(tokens);
+        }
+    }
+}
+
+void finalize_tokens(PetriNet& net, Graph& silent_graph, int& missing, int& consumed, int& produced) {
+    // Check if there are tokens in the final marking
+    // If not, try to use silent transitions before adding tokens manually
+
+    for (const auto& [place, tokens] : net.final_marking.places) {
+        Place* p = net.get_place(place);
+        if (!p) continue;
+
+        int32_t tokens_in_place = p->number_of_tokens();
+        if (tokens_in_place < tokens) {
+            int32_t missing_tokens = tokens - tokens_in_place;
+
+            // Attempt to fire silent transitions to reach the final marking
+            Marking curr_marking = net.get_current_marking();
+            for (const auto& [place, tokens] : curr_marking.places) {
+                std::vector<std::string> path;
+                bool path_exists = silent_graph.findShortestPath(place, p->name, path);
+                if ( path_exists ) {
+                    std::vector<std::string> transition_sequence = silent_graph.getTransitionSequence(path);
+                    net.fire_transition_sequence(transition_sequence, &consumed, &produced);
+                    break;
+                }
+            }
+            // Check again if the place now has enough tokens
+            tokens_in_place = p->number_of_tokens();
+            if (tokens_in_place < tokens) {
+                // If silent transitions couldn't generate enough tokens, add manually
+                p->add_tokens(tokens - tokens_in_place);
+                missing += tokens - tokens_in_place;
+            }
+        }
+    }
+}
+
 std::tuple<double, double, double, double> replay_trace(const Trace& trace, PetriNet& net, Graph silent_graph) {
     int missing = 0;   // Count of missing tokens (tokens added to input places to enable transitions)
     int remaining = 0; // Count of remaining tokens in the Petri net at the end
@@ -20,13 +79,8 @@ std::tuple<double, double, double, double> replay_trace(const Trace& trace, Petr
 
     produced += net.initial_marking.number_of_tokens();
 
-    // produce tokens in the initial marking
-    for (const auto& [place, tokens] : net.initial_marking.places) {
-        Place* p = net.get_place(place);
-        if (p) {
-            p->add_tokens(tokens);
-        }
-    }
+    // Initialize the tokens in the Petri net
+    initialize_tokens(net);
 
     // Iterate over the events in the trace
     for (const auto& event : trace.events) {
@@ -72,7 +126,7 @@ std::tuple<double, double, double, double> replay_trace(const Trace& trace, Petr
                 Place* p = net.get_place(place.name);
                 if (p) {
                     p->add_tokens(1);
-                    produced += 1;
+                    //produced += 1;
                     missing += 1;
                 }
             }
@@ -81,48 +135,13 @@ std::tuple<double, double, double, double> replay_trace(const Trace& trace, Petr
         }
     }
 
-
     consumed += net.final_marking.number_of_tokens();
 
-    // Check if there are tokens in the final marking
-    // If not, try to use silent transitions before adding tokens manually
-    for (const auto& [place, tokens] : net.final_marking.places) {
-        Place* p = net.get_place(place);
-        if (!p) continue;
-
-        int32_t tokens_in_place = p->number_of_tokens();
-        if (tokens_in_place < tokens) {
-            int32_t missing_tokens = tokens - tokens_in_place;
-
-            // Attempt to fire silent transitions to reach the final marking
-            Marking curr_marking = net.get_current_marking();
-            for (const auto& [place, tokens] : curr_marking.places) {
-                std::vector<std::string> path;
-                bool path_exists = silent_graph.findShortestPath(place, p->name, path);
-                if (path_exists) {
-                    std::vector<std::string> transition_sequence = silent_graph.getTransitionSequence(path);
-                    net.fire_transition_sequence(transition_sequence, &consumed, &produced);
-                    break;
-                }
-                
-            }
-
-            // Check again if the place now has enough tokens
-            tokens_in_place = p->number_of_tokens();
-            if (tokens_in_place < tokens) {
-                // If silent transitions couldn't generate enough tokens, add manually
-                p->add_tokens(tokens - tokens_in_place);
-                missing += tokens - tokens_in_place;
-            }
-        }
-    }
+    // Finalize the tokens in the Petri net
+    finalize_tokens(net, silent_graph, missing, consumed, produced);
 
     // Count the remaining tokens in the Petri net
     int32_t remaining_tokens = net.number_of_tokens() - net.final_marking.number_of_tokens();
-
-    if (remaining_tokens < 0) {
-        throw std::runtime_error("Negative number of tokens in Petri net: " + std::to_string(remaining_tokens));
-    }
 
     remaining += remaining_tokens;
 
