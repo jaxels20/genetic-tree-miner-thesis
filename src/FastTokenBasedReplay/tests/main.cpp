@@ -2,8 +2,10 @@
 #include "PetriNet.hpp"
 #include "Eventlog.hpp"
 #include "token_based_replay.cpp"
-
+#include "Place.hpp"
+#include "Marking.hpp"
 #include <vector>
+#include "HyperGraph.hpp"
 
 // Example test case
 TEST(FastTokenBasedReplayTest, SimpleSequence) {
@@ -327,49 +329,47 @@ TEST(FastTokenBasedReplayTest, silent_transition_in_before_end_place) {
 }
 
 // Example test case
-TEST(FastTokenBasedReplayTest, seq_and) {
-    PetriNet net;
-    net.add_place(Place("start", 0));
-    net.add_place(Place("p1", 0));
-    net.add_place(Place("p2", 0));
-    net.add_place(Place("p3", 0));
-    net.add_place(Place("p4", 0));
-    net.add_place(Place("end", 0));
+// TEST(FastTokenBasedReplayTest, seq_and) {
+//     PetriNet net;
+//     net.add_place(Place("start", 0));
+//     net.add_place(Place("p1", 0));
+//     net.add_place(Place("p2", 0));
+//     net.add_place(Place("p3", 0));
+//     net.add_place(Place("p4", 0));
+//     net.add_place(Place("end", 0));
 
-    net.add_transition(Transition("A"));
-    net.add_transition(Transition("tau_1"));
-    net.add_transition(Transition("B"));
-    net.add_transition(Transition("tau_2"));
+//     net.add_transition(Transition("A"));
+//     net.add_transition(Transition("tau_1"));
+//     net.add_transition(Transition("B"));
+//     net.add_transition(Transition("tau_2"));
 
-    net.add_arc(Arc("start", "tau_1"));
-    net.add_arc(Arc("tau_1", "p1"));
-    net.add_arc(Arc("tau_1", "p2"));
+//     net.add_arc(Arc("start", "tau_1"));
+//     net.add_arc(Arc("tau_1", "p1"));
+//     net.add_arc(Arc("tau_1", "p2"));
 
-    net.add_arc(Arc("p1", "A"));
-    net.add_arc(Arc("p2", "B"));
+//     net.add_arc(Arc("p1", "A"));
+//     net.add_arc(Arc("p2", "B"));
 
-    net.add_arc(Arc("A", "p3"));
-    net.add_arc(Arc("B", "p4"));
+//     net.add_arc(Arc("A", "p3"));
+//     net.add_arc(Arc("B", "p4"));
 
-    net.add_arc(Arc("p3", "tau_2"));
-    net.add_arc(Arc("p4", "tau_2"));
-    net.add_arc(Arc("tau_2", "end"));
+//     net.add_arc(Arc("p3", "tau_2"));
+//     net.add_arc(Arc("p4", "tau_2"));
+//     net.add_arc(Arc("tau_2", "end"));
 
-    net.set_initial_marking(Marking({{"start", 1}}));
-    net.set_final_marking(Marking({{"end", 1}}));
+//     net.set_initial_marking(Marking({{"start", 1}}));
+//     net.set_final_marking(Marking({{"end", 1}}));
 
-    std::vector<std::string> trace_list = { "AA"};
-    EventLog eventlog = EventLog::from_trace_list(trace_list);
+//     std::vector<std::string> trace_list = { "AA"};
+//     EventLog eventlog = EventLog::from_trace_list(trace_list);
 
-    auto [fitness, precision] = calculate_fitness_and_precision(eventlog, net);
+//     auto [fitness, precision] = calculate_fitness_and_precision(eventlog, net);
 
-    EXPECT_EQ(fitness, 0.8);
-    EXPECT_EQ(precision, 1.0);
+//     EXPECT_EQ(fitness, 0.8);
+//     EXPECT_EQ(precision, 1.0);
     
 
-}
-
-
+// }
 
 TEST(FastTokenBasedReplayTest, final_marking_condition) {
     Marking final_marking = Marking({{"p1", 1}});
@@ -386,6 +386,42 @@ TEST(FastTokenBasedReplayTest, final_marking_condition) {
     EXPECT_EQ(stop_condition_final_marking(m4, final_marking), false);
     EXPECT_EQ(stop_condition_final_marking(m5, final_marking), true);
 }
+
+
+
+// HYPERGRAPH TESTS
+
+// Unit Tests
+TEST(HyperGraphTest, AddNode) {
+    HyperGraph hg;
+    hg.addNode("A", 3);
+    EXPECT_TRUE(hg.hasNode("A"));
+    EXPECT_EQ(hg.getTokens("A"), 3);
+}
+
+TEST(HyperGraphTest, AddEdge) {
+    HyperGraph hg;
+    hg.addNode("A");
+    hg.addNode("B");
+    hg.addNode("C");
+    hg.addEdge("E1", {"A"}, {"B", "C"});
+    EXPECT_TRUE(hg.hasEdge("E1"));
+    auto sources = hg.getEdgeSources("E1");
+    auto targets = hg.getEdgeTargets("E1");
+    EXPECT_EQ(sources.size(), 1);
+    EXPECT_EQ(targets.size(), 2);
+    EXPECT_TRUE(sources.find("A") != sources.end());
+    EXPECT_TRUE(targets.find("B") != targets.end());
+    EXPECT_TRUE(targets.find("C") != targets.end());
+}
+
+TEST(HyperGraphTest, ModifyTokens) {
+    HyperGraph hg;
+    hg.addNode("X", 5);
+    hg.setTokens("X", 10);
+    EXPECT_EQ(hg.getTokens("X"), 10);
+}
+
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);

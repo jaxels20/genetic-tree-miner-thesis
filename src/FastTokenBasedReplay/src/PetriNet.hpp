@@ -7,36 +7,9 @@
 #include <unordered_map>
 #include <string>
 #include <cstdint>
+#include "Marking.hpp"
+#include "Place.hpp"
 
-class Place {
-public:
-    std::string name;
-    int tokens;
-
-    Place(std::string name, int tokens = 0) : name(name), tokens(tokens) {}
-
-    void add_tokens(int count = 1) {
-        tokens += count;
-    }
-
-    void remove_tokens(int count = 1) {
-        if (tokens - count < 0) {
-            throw std::runtime_error("Cannot remove " + std::to_string(count) +
-                                     " tokens from place '" + name + "' (tokens = " +
-                                     std::to_string(tokens) + ")");
-        }
-        tokens -= count;
-    }
-
-    std::string repr() const {
-        return "Place(" + name + ", tokens=" + std::to_string(tokens) + ")";
-    }
-
-    int32_t number_of_tokens() const {
-        return tokens;
-    }
-
-};
 
 class Transition {
 public:
@@ -69,30 +42,6 @@ public:
     }
 };
 
-class Marking {
-    public:
-        std::unordered_map<std::string, uint32_t> places;
-        
-        Marking() = default;
-
-        Marking(std::initializer_list<std::pair<std::string, uint32_t>> init) {
-            for (const auto& [place, tokens] : init) {
-                places[place] = tokens;
-            }
-        }
-    
-        void add_place(const std::string& place, uint32_t tokens) {
-            places[place] += tokens;
-        }
-    
-        uint32_t number_of_tokens() const {
-            uint32_t tokens = 0;
-            for (const auto& [_, count] : places) {
-                tokens += count;
-            }
-            return tokens;
-        }
-    };
 
 class PetriNet {
     public:

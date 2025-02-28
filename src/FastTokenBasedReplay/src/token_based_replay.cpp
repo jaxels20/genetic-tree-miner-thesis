@@ -26,7 +26,6 @@ bool stop_condition_final_marking(Marking& current_marking, Marking& final_marki
     
 }
 
-
 void initialize_tokens(PetriNet& net) {
     // produce tokens in the initial marking
     for (const auto& [place, tokens] : net.initial_marking.places) {
