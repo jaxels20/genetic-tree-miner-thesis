@@ -2,8 +2,8 @@ from src.BatchFileLoader import BatchFileLoader
 from src.Evaluator import MultiEvaluator
 import os
 
-INPUT_DIR = "./controlled_scenarios/"
-OUTPUT_DIR = "./controlled_scenarios_results/" 
+INPUT_DIR = "./real_life_datasets/"
+OUTPUT_DIR = "./datasets_results/" 
 METHODS = ["Genetic Miner", "Inductive Miner"]
 NUM_WORKERS = 4
 
