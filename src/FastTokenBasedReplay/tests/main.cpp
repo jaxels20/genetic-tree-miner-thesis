@@ -432,7 +432,7 @@ TEST(HyperGraphTest, HyperEdgeFiring) {
 
 TEST(HyperGraphTest, FindFiringSequence) {
     HyperGraph hg;
-    hg.addNode("A", 1);
+    hg.addNode("A", 0);
     hg.addNode("B", 0);
     hg.addNode("C", 0);
 
@@ -441,7 +441,7 @@ TEST(HyperGraphTest, FindFiringSequence) {
 
     Marking start = Marking({{"A", 1}});
     Marking target = Marking({{"C", 1}});
-    
+
     auto [reachable, sequence] = hg.canReachTargetMarking(start, target);
     
     EXPECT_TRUE(reachable);

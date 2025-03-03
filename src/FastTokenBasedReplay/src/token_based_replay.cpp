@@ -38,9 +38,30 @@ void initialize_tokens(PetriNet& net) {
     }
 }
 
-void finalize_tokens(PetriNet& net, Graph& silent_graph, int& missing, int& consumed, int& produced) {
+void finalize_tokens(PetriNet& net, HyperGraph& silent_graph, int& missing, int& consumed, int& produced) {
     // Check if there are tokens in the final marking
     // If not, try to use silent transitions before adding tokens manually
+
+    Marking final_marking = net.final_marking;
+    Marking curr_marking = net.get_current_marking();
+
+    // check if the final mrking is contained in the current marking
+    if (stop_condition_final_marking(curr_marking, final_marking)) {
+        return;
+    }
+
+    // Check if the final marking is reachable from the current marking
+    auto [reachable, sequence] = silent_graph.canReachTargetMarking(curr_marking, final_marking);
+    if (reachable) {
+        net.fire_transition_sequence(sequence, &consumed, &produced);
+    }
+
+    // check if the final mrking is contained in the current marking
+    if (stop_condition_final_marking(curr_marking, final_marking)) {
+        return;
+    }
+
+    // Else create tokens in the places of the final markin
 
     for (const auto& [place, tokens] : net.final_marking.places) {
         Place* p = net.get_place(place);
@@ -48,31 +69,13 @@ void finalize_tokens(PetriNet& net, Graph& silent_graph, int& missing, int& cons
 
         int32_t tokens_in_place = p->number_of_tokens();
         if (tokens_in_place < tokens) {
-            int32_t missing_tokens = tokens - tokens_in_place;
-
-            // Attempt to fire silent transitions to reach the final marking
-            Marking curr_marking = net.get_current_marking();
-            for (const auto& [place, tokens] : curr_marking.places) {
-                std::vector<std::string> path;
-                bool path_exists = silent_graph.findShortestPath(place, p->name, path);
-                if ( path_exists ) {
-                    std::vector<std::string> transition_sequence = silent_graph.getTransitionSequence(path);
-                    net.fire_transition_sequence(transition_sequence, &consumed, &produced);
-                    break;
-                }
-            }
-            // Check again if the place now has enough tokens
-            tokens_in_place = p->number_of_tokens();
-            if (tokens_in_place < tokens) {
-                // If silent transitions couldn't generate enough tokens, add manually
-                p->add_tokens(tokens - tokens_in_place);
-                missing += tokens - tokens_in_place;
-            }
+            p->add_tokens(tokens - tokens_in_place);
+            missing += tokens - tokens_in_place;
         }
     }
 }
 
-std::tuple<double, double, double, double> replay_trace(const Trace& trace, PetriNet& net, Graph silent_graph) {
+std::tuple<double, double, double, double> replay_trace(const Trace& trace, PetriNet& net, HyperGraph silent_graph) {   
     int missing = 0;   // Count of missing tokens (tokens added to input places to enable transitions)
     int remaining = 0; // Count of remaining tokens in the Petri net at the end
     int consumed = 0;  // Count of tokens consumed from input places
@@ -96,41 +99,31 @@ std::tuple<double, double, double, double> replay_trace(const Trace& trace, Petr
             net.fire_transition(*transition, &consumed, &produced);
         } else {
             std::vector<Place> input_places = net.get_preset(*transition);
-            for (const auto& input_place : input_places) {
-                Marking curr_marking = net.get_current_marking();
-                for (const auto& [place, tokens] : curr_marking.places) {
-                    std::vector<std::string> path;
-                    bool path_exists = silent_graph.findShortestPath(place, input_place.name, path);
-                    if (path_exists){
-                        std::vector<std::string> transition_sequence = silent_graph.getTransitionSequence(path);
-                        
-                        net.fire_transition_sequence(transition_sequence, &consumed, &produced);
-                        if(net.can_fire(*transition)) {
-                            break;
+            Marking curr_marking = net.get_current_marking();
+            Marking marking_enabling_transition;
+            for (const auto& place : input_places) {
+                marking_enabling_transition.add_place(place.name, 1);
+            }
+
+            // check if there is a path from the current marking to the marking enabling the transition
+            
+            auto [reachable, sequence] = silent_graph.canReachTargetMarking(curr_marking, marking_enabling_transition);
+
+            if (reachable) {
+                net.fire_transition_sequence(sequence, &consumed, &produced);
+            } else {
+                // Create a token in the pre-set of the transition
+                for (const auto& place : net.get_preset(*transition)) {
+                    Place* p = net.get_place(place.name);
+                    if (p) {
+                        if (p->number_of_tokens() == 0) {
+                            p->add_tokens(1);
+                            missing += 1;
                         }
                     }
                 }
-
-                if (net.can_fire(*transition)) {
-                    break;
-                }
             }
 
-            if(net.can_fire(*transition)) {
-                net.fire_transition(*transition, &consumed, &produced);
-                continue;
-            }
-
-
-           // Create a token in the pre-set of the transition
-            for (const auto& place : net.get_preset(*transition)) {
-                Place* p = net.get_place(place.name);
-                if (p) {
-                    p->add_tokens(1);
-                    //produced += 1;
-                    missing += 1;
-                }
-            }
             // Fire the transition
             net.fire_transition(*transition, &consumed, &produced);
         }
@@ -221,7 +214,7 @@ std::tuple<double, double> calculate_fitness_and_precision(const EventLog& log, 
     int total_produced = 0;
     int total_consumed = 0;
 
-    Graph silent_graph = create_silent_graph(net);
+    HyperGraph silent_graph = create_silent_hyper_graph(net);
 
     // Iterate over the traces in the event log
     for (const auto& trace : log.traces) {

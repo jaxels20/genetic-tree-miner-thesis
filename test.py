@@ -162,8 +162,8 @@ def test_simple_silent_transition():
 
 def giant_test():
     
-    pop = BottomUpBinaryTreeGenerator().generate_population(["A", "B"], n=40)
-    eventlog = EventLog.from_trace_list(["AA"])
+    pop = BottomUpBinaryTreeGenerator().generate_population(["A", "B", "C", "D", "E"], n=100)
+    eventlog = EventLog.from_trace_list(["AB"])
     
     for tree in pop:
         pm4py_pn, init, final = tree.to_pm4py_pn()
