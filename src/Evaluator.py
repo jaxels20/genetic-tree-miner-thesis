@@ -1,10 +1,14 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import subprocess
+import os
+import tempfile
 
 from src.EventLog import EventLog
 from src.Discovery import Discovery
 from src.PetriNet import PetriNet
 
+import pm4py.write as pm4py_write
 from pm4py.algo.evaluation.replay_fitness.variants.token_replay import apply as replay_fitness
 from pm4py.algo.evaluation.precision.variants.etconformance_token import apply as precision
 from pm4py.algo.evaluation.generalization.variants.token_based import apply as generalization
@@ -31,6 +35,8 @@ class SingleEvaluator:
             "generalization": self.get_generalization(),
             **self.get_replay_fitness(),
             "precision": self.get_precision(),
+            "exact_matching_precision": self.get_exact_matching(type="precision"),
+            "exact_matching_recall": self.get_exact_matching(type="recall")
         }
         data["f1_score"] = self.get_f1_score(data["precision"], data["log_fitness"])
         return data    
@@ -51,6 +57,51 @@ class SingleEvaluator:
         precision_value = precision(self.event_log_pm4py, self.pm4py_pn, self.init_marking, self.final_marking)
         return precision_value
     
+    def get_exact_matching(self, type):
+        """Runs the jbpt library to calculate the entropy-based precision metric.
+        
+        Args:
+        - type (str): The type of metric to calculate. Must be either "precision" or "recall".
+        """
+        
+        jar_path = os.path.join("src", "EntropyBasedMetrics", "jbpt-pm", "entropia", "jbpt-pm-entropia-1.7.jar")
+        
+        # Use a safe temporary directory
+        temp_dir = tempfile.gettempdir()
+        temp_path_pn = os.path.join(temp_dir, "petrinet.pnml")
+        temp_path_el = os.path.join(temp_dir, "eventlog.xes")
+
+        # Convert event log and Petri net to required formats
+        self.eventlog.to_xes(temp_path_el)
+        pm4py_write.write_pnml(self.pm4py_pn, self.init_marking, self.final_marking, temp_path_pn) 
+
+        # Java command to run jBPT Entropy-based Precision
+        if type == "precision":
+            type_flag = "-emp"
+        elif type == "recall":
+            type_flag = "-emr"
+        else:
+            raise ValueError("Invalid type. Must be 'precision' or 'recall'.")
+        
+        command = [
+            "java", "-jar", jar_path,
+            type_flag,
+            "-s",
+            "-rel=" + temp_path_el,
+            "-ret=" + temp_path_pn
+        ]
+
+        try:
+            result = subprocess.run(command, capture_output=True, text=True, check=True)
+        except subprocess.CalledProcessError as e:
+            print("Error running the jbpt library:", e.stderr.strip())
+            
+        # Remove the temporary files
+        os.remove(temp_path_pn)
+        os.remove(temp_path_el)
+        
+        return float(result.stdout)
+    
     def get_f1_score(self, precision=None, fitness=None):
         if precision is None:
             precision = self.get_precision()
@@ -61,7 +112,6 @@ class SingleEvaluator:
         except ZeroDivisionError:
             f1_score = 0.0
         return f1_score
-        
 
 # Define a helper function that will handle evaluation for a single Petri net and event log pair
 def evaluate_single(miner: str, dataset: str, petri_net, initial_marking, end_marking, event_log: EventLog):
@@ -71,7 +121,6 @@ def evaluate_single(miner: str, dataset: str, petri_net, initial_marking, end_ma
     metrics = {k: round(v, 3) for k, v in evaluator.get_evaluation_metrics().items()}
     metrics['miner'] = miner
     metrics['dataset'] = dataset
-    
     
     return metrics
 
