@@ -19,14 +19,12 @@ from concurrent.futures import ProcessPoolExecutor
 
 # This class can evaluate a discovered process model against an event log (only one!)
 class SingleEvaluator:
-    def __init__(self, pm4py_pn, init_marking, final_marking, eventlog: EventLog):
+    def __init__(self, pn: PetriNet, eventlog: EventLog):
         self.eventlog = eventlog
-        
-        self.pm4py_pn = pm4py_pn
-        self.init_marking = init_marking
-        self.final_marking = final_marking
+        self.pn = pn
 
         # convert the eventlog to pm4py format
+        self.pm4py_pn, self.init_marking, self.final_marking = self.pn.to_pm4py()
         self.event_log_pm4py = self.eventlog.to_pm4py()
     
     def get_evaluation_metrics(self):
@@ -36,7 +34,6 @@ class SingleEvaluator:
             **self.get_replay_fitness(),
             "precision": self.get_precision(),
             "exact_matching_precision": self.get_exact_matching(type="precision"),
-            "exact_matching_recall": self.get_exact_matching(type="recall")
         }
         data["f1_score"] = self.get_f1_score(data["precision"], data["log_fitness"])
         return data    
@@ -71,9 +68,14 @@ class SingleEvaluator:
         temp_path_pn = os.path.join(temp_dir, "petrinet.pnml")
         temp_path_el = os.path.join(temp_dir, "eventlog.xes")
 
+        # rename all tau transitions to empty string so that they are recognized as silent transitions
+        for t in self.pm4py_pn.transitions:
+            if t.label == None:
+                t.label = ""
+        
         # Convert event log and Petri net to required formats
         self.eventlog.to_xes(temp_path_el)
-        pm4py_write.write_pnml(self.pm4py_pn, self.init_marking, self.final_marking, temp_path_pn) 
+        pm4py_write.write_pnml(self.pm4py_pn, self.init_marking, self.final_marking, temp_path_pn)
 
         # Java command to run jBPT Entropy-based Precision
         if type == "precision":
@@ -114,8 +116,8 @@ class SingleEvaluator:
         return f1_score
 
 # Define a helper function that will handle evaluation for a single Petri net and event log pair
-def evaluate_single(miner: str, dataset: str, petri_net, initial_marking, end_marking, event_log: EventLog):
-    evaluator = SingleEvaluator(petri_net, initial_marking, end_marking, event_log)
+def evaluate_single(miner: str, dataset: str, petri_net, event_log: EventLog):
+    evaluator = SingleEvaluator(petri_net, event_log)
     
     # Get metrics and round to 4 decimal places
     metrics = {k: round(v, 3) for k, v in evaluator.get_evaluation_metrics().items()}
@@ -141,8 +143,8 @@ class MultiEvaluator:
         # and values a dict of event log names and PetriNet objects
         for method in methods:
             for event_log_name, event_log in self.event_logs.items():
-                pn_result, initial_marking, final_marking = Discovery.run_discovery(method, event_log, **kwargs)
-                self.petri_nets[method][event_log_name] = (pn_result, initial_marking, final_marking)
+                pn_result = Discovery.run_discovery(method, event_log, **kwargs)
+                self.petri_nets[method][event_log_name] = pn_result
         
     def evaluate_all(self, num_cores=None):
             """
@@ -157,17 +159,14 @@ class MultiEvaluator:
                 
                 # Iterate through each miner type and dataset in petri_nets
                 for miner, datasets in self.petri_nets.items():
-                    for dataset, (pn, initital_marking, final_marking) in datasets.items():
-                        # pn, initital_marking, final_marking = petri_net
+                    for dataset, pn in datasets.items():
                         if dataset in self.event_logs:
                             event_log = self.event_logs[dataset]
                             futures.append(
                                 executor.submit(evaluate_single, 
                                                 miner, 
                                                 dataset, 
-                                                pn, 
-                                                initital_marking, 
-                                                final_marking, 
+                                                pn,
                                                 event_log)
                             )
                 
@@ -186,12 +185,11 @@ class MultiEvaluator:
         Export the Petri nets to the output directory.
         """
         for method, datasets in self.petri_nets.items():
-            for dataset, (pn, initial_marking, final_marking) in datasets.items():
-                converted_pn = PetriNet.from_pm4py(pn)
+            for dataset, pn in datasets.items():
                 if format == "png":
-                    converted_pn.visualize(f"{output_dir}/{dataset}/{method}", format="png")
+                    pn.visualize(f"{output_dir}/{dataset}/{method}", format="png")
                 elif format == "pdf":
-                    converted_pn.visualize(f"{output_dir}/{dataset}/{method}", format="pdf")
+                    pn.visualize(f"{output_dir}/{dataset}/{method}", format="pdf")
                 else:
                     raise ValueError(f"Invalid format: {format}. Must be 'png' or 'pdf'.")
 
@@ -200,7 +198,7 @@ class MultiEvaluator:
         Save the DataFrame to a single PDF figure with all datasets grouped.
         """
         table_data = []
-        column_headers = ["Dataset", "Method", "F1-Score", "Fitness", "Precision", "Generalization", "Simplicity"]
+        column_headers = ["Dataset", "Method", "F1-Score", "Fitness", "Precision", "Generalization", "Simplicity", "Entropy Precision"]
         grouped = df.groupby('dataset')
         
         for dataset, group in grouped:
@@ -215,6 +213,7 @@ class MultiEvaluator:
                         f"{row['precision']:.3f}",
                         f"{row['generalization']:.3f}",
                         f"{row['simplicity']:.3f}",
+                        f"{row['exact_matching_precision']:.3f}"
                     ])
                 else:
                     table_data.append([
@@ -225,6 +224,7 @@ class MultiEvaluator:
                         f"{row['precision']:.3f}",
                         f"{row['generalization']:.3f}",
                         f"{row['simplicity']:.3f}",
+                        f"{row['exact_matching_precision']:.3f}",
                     ])
 
         # Create the figure and add the table

@@ -3,6 +3,7 @@ from src.Mutator import Mutator
 from src.GeneticAlgorithm import GeneticAlgorithm
 from pm4py.algo.discovery.inductive.algorithm import apply as pm4py_inductive_miner
 from pm4py.objects.conversion.process_tree import converter as pt_converter
+from src.PetriNet import PetriNet
 
 
 class Discovery:
@@ -23,7 +24,7 @@ class Discovery:
         best_tree = ga.run(event_log)
         pm4py_net, init, end = best_tree.to_pm4py_pn()
         
-        return pm4py_net, init, end
+        return PetriNet.from_pm4py(pm4py_net)
     
     @staticmethod
     def inductive_miner(event_log: EventLog, **kwargs):
@@ -34,8 +35,7 @@ class Discovery:
         pm4py_pt = pm4py_inductive_miner(event_log)
         pm4py_net, init, end = pt_converter.apply(pm4py_pt, variant=pt_converter.Variants.TO_PETRI_NET)
         
-        return pm4py_net, init, end
-
+        return PetriNet.from_pm4py(pm4py_net)
 
 
     # Map method names to static methods
