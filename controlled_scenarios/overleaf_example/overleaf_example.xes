@@ -4,49 +4,49 @@
     <string key="concept:name" value="trace_1"/>
     <event>
       <string key="concept:name" value="A"/>
-      <date key="time:timestamp" value=""/>
+      <date key="time:timestamp" value="2023-08-15T10:00:00.000Z"/>
     </event>
     <event>
       <string key="concept:name" value="B"/>
-      <date key="time:timestamp" value=""/>
+      <date key="time:timestamp" value="2023-08-15T11:00:00.000Z"/>
     </event>
   </trace>
   <trace>
     <string key="concept:name" value="trace_2"/>
     <event>
       <string key="concept:name" value="A"/>
-      <date key="time:timestamp" value=""/>
+      <date key="time:timestamp" value="2023-08-15T12:00:00.000Z"/>
     </event>
     <event>
       <string key="concept:name" value="C"/>
-      <date key="time:timestamp" value=""/>
+      <date key="time:timestamp" value="2023-08-15T13:00:00.000Z"/>
     </event>
     <event>
       <string key="concept:name" value="D"/>
-      <date key="time:timestamp" value=""/>
+      <date key="time:timestamp" value="2023-08-15T14:00:00.000Z"/>
     </event>
     <event>
       <string key="concept:name" value="D"/>
-      <date key="time:timestamp" value=""/>
+      <date key="time:timestamp" value="2023-08-15T15:00:00.000Z"/>
     </event>
   </trace>
   <trace>
     <string key="concept:name" value="trace_3"/>
     <event>
       <string key="concept:name" value="A"/>
-      <date key="time:timestamp" value=""/>
+      <date key="time:timestamp" value="2023-08-15T16:00:00.000Z"/>
     </event>
     <event>
       <string key="concept:name" value="D"/>
-      <date key="time:timestamp" value=""/>
+      <date key="time:timestamp" value="2023-08-15T17:00:00.000Z"/>
     </event>
     <event>
       <string key="concept:name" value="D"/>
-      <date key="time:timestamp" value=""/>
+      <date key="time:timestamp" value="2023-08-15T18:00:00.000Z"/>
     </event>
     <event>
       <string key="concept:name" value="C"/>
-      <date key="time:timestamp" value=""/>
+      <date key="time:timestamp" value="2023-08-15T19:00:00.000Z"/>
     </event>
   </trace>
 </log>
