@@ -4,8 +4,8 @@ import os
 
 INPUT_DIR = "./controlled_scenarios/"
 OUTPUT_DIR = "./controlled_scenarios_results/" 
-METHODS = ["Genetic Miner", "Inductive Miner"]
-NUM_WORKERS = 4
+METHODS = ["Inductive Miner", "Genetic Miner"]
+NUM_WORKERS = 1
 
 if __name__ == "__main__":
     dataset_dirs = os.listdir(INPUT_DIR)

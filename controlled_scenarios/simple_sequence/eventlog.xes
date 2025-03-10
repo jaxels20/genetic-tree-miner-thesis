@@ -19,15 +19,15 @@
     <string key="concept:name" value="trace_2"/>
     <event>
       <string key="concept:name" value="A"/>
-      <date key="time:timestamp" value="2023-08-15T13:00:00.000Z"/>
+      <date key="time:timestamp" value="2023-08-15T10:00:00.000Z"/>
     </event>
     <event>
       <string key="concept:name" value="B"/>
-      <date key="time:timestamp" value="2023-08-15T14:00:00.000Z"/>
+      <date key="time:timestamp" value="2023-08-15T11:00:00.000Z"/>
     </event>
     <event>
       <string key="concept:name" value="C"/>
-      <date key="time:timestamp" value="2023-08-15T15:00:00.000Z"/>
+      <date key="time:timestamp" value="2023-08-15T12:00:00.000Z"/>
     </event>
   </trace>
 </log>

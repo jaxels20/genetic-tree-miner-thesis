@@ -1,6 +1,7 @@
 import lxml.etree as ET
 from pm4py.objects.log.obj import EventLog as PM4PyEventLog, Trace as PM4PyTrace, Event as PM4PyEvent
 import src.FastTokenBasedReplay as FastTokenBasedReplay
+from datetime import datetime, timedelta
 
 class Event:
     """
@@ -128,10 +129,14 @@ class EventLog:
             trace = Trace(trace_id, attributes={})
 
             # Create an event for each activity in the trace string
+            timestamp = datetime(2023, 8, 15, 10, 0, 0)
+            timestamp_str = timestamp.strftime('%Y-%m-%dT%H:%M:%S.000Z')
             for activity in trace_str:
-                event = Event(activity, timestamp="", attributes={})  # No timestamp or attributes
+                event = Event(activity, timestamp=timestamp_str, attributes={})  # No timestamp or attributes
                 trace.add_event(event)
-
+                timestamp += timedelta(hours=1)   # Increment timestamp by 1 hour
+                timestamp_str = timestamp.strftime('%Y-%m-%dT%H:%M:%S.000Z')
+                
             # Add trace to the event log
             eventlog.traces.append(trace)
 
