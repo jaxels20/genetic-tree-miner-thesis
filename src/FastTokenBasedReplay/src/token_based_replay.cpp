@@ -52,7 +52,7 @@ void finalize_tokens(PetriNet& net, HyperGraph& silent_graph, int& missing, int&
     }
 
     // Check if the final marking is reachable from the current marking
-    auto [reachable, sequence] = silent_graph.canReachTargetMarking(curr_marking, final_marking, 1);
+    auto [reachable, sequence] = silent_graph.canReachTargetMarking(curr_marking, final_marking, 0);
     if (reachable) {
         net.fire_transition_sequence(sequence, &consumed, &produced);
     }
@@ -173,7 +173,7 @@ replay_trace_without_caching(const Trace& trace, PetriNet& net, HyperGraph silen
 
             // check if there is a path from the current marking to the marking enabling the transition
             
-            auto [reachable, sequence] = silent_graph.canReachTargetMarking(curr_marking, net.get_marking_enabling_transition(*transition), 1);
+            auto [reachable, sequence] = silent_graph.canReachTargetMarking(curr_marking, net.get_marking_enabling_transition(*transition), 0);
 
             if (reachable) {
                 net.fire_transition_sequence(sequence, &consumed, &produced);

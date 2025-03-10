@@ -6,6 +6,10 @@ from pm4py.algo.evaluation.replay_fitness.variants.token_replay import apply as 
 from src.RandomTreeGenerator import BottomUpBinaryTreeGenerator
 from src.ProcessTree import ProcessTree
 
+
+
+from src.Filtering import Filtering
+
 def test_simple_sequence():
     eventlog = EventLog.from_trace_list(["ABC"])
     petrinet = PetriNet()
@@ -204,6 +208,15 @@ if __name__ == "__main__":
     #test_simple_loop()
     #test_simple_loop_not_perfect()
     #test_simple_silent_transition()
-    giant_test()
+    #giant_test()
 
 
+    eventlog = EventLog.load_xes("./real_life_datasets/BPI_Challenge_2012.xes")
+    before_num_traces = len(eventlog.traces)
+    print(f"Number of traces before filtering: {before_num_traces}")
+    
+    filtered_log = Filtering.filter_eventlog_random(eventlog, 0.3)
+    after_num_traces = len(filtered_log.traces)
+    print(f"Number of traces after filtering: {after_num_traces}")
+    
+    print(f"Percentage of traces kept: {after_num_traces / before_num_traces * 100}%")

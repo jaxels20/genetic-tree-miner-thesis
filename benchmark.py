@@ -208,7 +208,6 @@ def real_life_evaluation():
     eventlog_dir = "./real_life_datasets"
     data = {}
     for filename in os.listdir(eventlog_dir):
-        #if filename.endswith(".xes") and (filename == "road_traffic_fine.xes" or filename == "BPI-2020-Prepaid-travel-cost.xes" or filename == "BPI_2012_O.xes"):
         if filename.endswith(".xes"):
             print(f"Processing {filename}")
             our_event_log = EventLog.load_xes(os.path.join(eventlog_dir, filename))
@@ -235,42 +234,44 @@ def real_life_evaluation():
             our_end_without_caching = time.time()
             
             
-            # FastTokenBasedReplay with prefix caching
-            c_petri_net = our_net.to_fast_token_based_replay()
-            c_eventlog = our_event_log.to_fast_token_based_replay()
-            our_start_with_prefix_caching = time.time()
-            FastTokenBasedReplay = ftr.calculate_fitness(c_eventlog, c_petri_net, True, False)
-            our_end_with_prefix_caching = time.time()
+            # # FastTokenBasedReplay with prefix caching
+            # c_petri_net = our_net.to_fast_token_based_replay()
+            # c_eventlog = our_event_log.to_fast_token_based_replay()
+            # our_start_with_prefix_caching = time.time()
+            # FastTokenBasedReplay = ftr.calculate_fitness(c_eventlog, c_petri_net, True, False)
+            # our_end_with_prefix_caching = time.time()
             
             
-            # FastTokenBasedReplay with suffix caching
-            c_petri_net = our_net.to_fast_token_based_replay()
-            c_eventlog = our_event_log.to_fast_token_based_replay()
-            our_start_with_suffix_caching = time.time()
-            FastTokenBasedReplay = ftr.calculate_fitness(c_eventlog, c_petri_net, False, True)
-            our_end_with_suffix_caching = time.time()
+            # # FastTokenBasedReplay with suffix caching
+            # c_petri_net = our_net.to_fast_token_based_replay()
+            # c_eventlog = our_event_log.to_fast_token_based_replay()
+            # our_start_with_suffix_caching = time.time()
+            # FastTokenBasedReplay = ftr.calculate_fitness(c_eventlog, c_petri_net, False, True)
+            # our_end_with_suffix_caching = time.time()
             
             
             
-            # FastTokenBasedReplay with prefix and suffix caching
-            c_petri_net = our_net.to_fast_token_based_replay()
-            c_eventlog = our_event_log.to_fast_token_based_replay()
-            our_start_with_prefix_and_suffix_caching = time.time()
-            FastTokenBasedReplay = ftr.calculate_fitness(c_eventlog, c_petri_net, True, True)
-            our_end_with_prefix_and_suffix_caching = time.time()
+            # # FastTokenBasedReplay with prefix and suffix caching
+            # c_petri_net = our_net.to_fast_token_based_replay()
+            # c_eventlog = our_event_log.to_fast_token_based_replay()
+            # our_start_with_prefix_and_suffix_caching = time.time()
+            # FastTokenBasedReplay = ftr.calculate_fitness(c_eventlog, c_petri_net, True, True)
+            # our_end_with_prefix_and_suffix_caching = time.time()
             
             
             # pm4py
             pm4py_start = time.time()
-            with SuppressPrints():
-                replay_fitness(pm4py_event_log, pm4py_net, init, end)
+            replay_fitness(pm4py_event_log, pm4py_net, init, end)
+            # with SuppressPrints():
+            #     replay_fitness(pm4py_event_log, pm4py_net, init, end)
             pm4py_end = time.time()
         
             data[filename] = {"FastTokenBasedReplay (without caching)": our_end_without_caching - our_start_without_caching, 
                               "pm4py": pm4py_end - pm4py_start,
-                              "FastTokenBasedReplay (with prefix caching)": our_end_with_prefix_caching - our_start_with_prefix_caching,
-                              "FastTokenBasedReplay (with suffix caching)": our_end_with_suffix_caching - our_start_with_suffix_caching,
-                              "FastTokenBasedReplay (with prefix and suffix caching)": our_end_with_prefix_and_suffix_caching - our_start_with_prefix_and_suffix_caching}
+                              #"FastTokenBasedReplay (with prefix caching)": our_end_with_prefix_caching - our_start_with_prefix_caching,
+                              #"FastTokenBasedReplay (with suffix caching)": our_end_with_suffix_caching - our_start_with_suffix_caching,
+                              #"FastTokenBasedReplay (with prefix and suffix caching)": our_end_with_prefix_and_suffix_caching - our_start_with_prefix_and_suffix_caching
+                              }
     
     
     
