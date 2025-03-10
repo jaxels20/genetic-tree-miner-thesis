@@ -5,18 +5,8 @@
 #include <vector>
 #include <unordered_set>
 #include "Marking.hpp"
-
-// Define MarkingHasher outside the HyperGraph class
-struct MarkingHasher {
-    size_t operator()(const Marking& m) const {
-        size_t hash = 0;
-        for (const auto& [place, tokens] : m.places) {
-            hash ^= std::hash<std::string>{}(place) ^ std::hash<uint32_t>{}(tokens);
-        }
-        return hash;
-    }
-};
-
+#include <queue>
+#include <stack>
 
 class HyperGraph {
     public:
@@ -79,89 +69,168 @@ class HyperGraph {
             }
         }
     
+        // std::pair<bool, std::vector<std::string>> canReachTargetMarking(
+        //     const Marking& start,
+        //     const Marking& target,
+        //     int maxDepth) {
+            
+        //     if (cache.find({start, target}) != cache.end()) {
+        //         return cache.at({start, target});
+        //     }
+
+        //     using State = std::tuple<Marking, std::vector<std::string>, int>; // Added depth as third element
+        //     std::queue<State> queue;
+        //     std::unordered_set<Marking, MarkingHasher> visited;
+        
+        //     queue.push({start, {}, 0});
+        //     visited.insert(start);
+        
+        //     while (!queue.empty()) {
+        //         auto [current, path, depth] = queue.front();
+        //         queue.pop();
+        
+        //         // Check if the current marking satisfies the target condition
+        //         bool targetReached = true;
+        //         for (const auto& [place, tokens] : target.places) {
+        //             uint32_t currentTokens = 0;
+        //             if (current.places.find(place) != current.places.end()) {
+        //                 currentTokens = current.places.at(place);
+        //             }
+        //             if (currentTokens < tokens) {
+        //                 targetReached = false;
+        //                 break;
+        //             }
+        //         }
+        //         if (targetReached) {
+        //             cache[{start, target}] = {true, path};
+        //             return {true, path};
+        //         }
+        
+        //         // Stop exploring further if depth limit is reached
+        //         if (depth >= maxDepth) {
+        //             continue;
+        //         }
+        
+        //         // Try firing enabled edges
+        //         for (const auto& [edgeName, edge] : edges) {
+        //             bool enabled = true;
+        //             for (const auto& src : edge.sources) {
+        //                 if (current.places.find(src) == current.places.end() || current.places.at(src) == 0) {
+        //                     enabled = false;
+        //                     break;
+        //                 }
+        //             }
+        
+        //             if (enabled) {
+        //                 Marking nextMarking = current;
+        
+        //                 // Decrement tokens from source places
+        //                 for (const auto& src : edge.sources) {
+        //                     nextMarking.add_place(src, -1);
+        //                 }
+        
+        //                 // Increment tokens to target places
+        //                 for (const auto& tgt : edge.targets) {
+        //                     nextMarking.add_place(tgt, 1);
+        //                 }
+        
+        //                 if (visited.find(nextMarking) == visited.end()) {
+        //                     auto newPath = path;
+        //                     newPath.push_back(edgeName);
+        //                     queue.push({nextMarking, newPath, depth + 1}); // Increase depth
+        //                     visited.insert(nextMarking);
+        //                 }
+        //             }
+        //         }
+        //     }
+            
+        //     cache[{start, target}] = {false, {}};
+        //     return {false, {}}; // No path found
+        // }
+
         std::pair<bool, std::vector<std::string>> canReachTargetMarking(
             const Marking& start,
-            const Marking& target) {
-    
-        using State = std::pair<Marking, std::vector<std::string>>;
-        std::queue<State> queue;
-        std::unordered_set<Marking, MarkingHasher> visited;
-    
-        queue.push({start, {}});
-        visited.insert(start);
-    
-        while (!queue.empty()) {
-            auto [current, path] = queue.front();
-            queue.pop();
-    
-            // Check if the current marking satisfies the target condition
-            bool targetReached = true;
-            for (const auto& [place, tokens] : target.places) {
-                // If the place is missing, treat it as zero tokens.
-                uint32_t currentTokens = 0;
-                if (current.places.find(place) != current.places.end()) {
-                    currentTokens = current.places.at(place);
-                }
-                if (currentTokens < tokens) {
-                    targetReached = false;
-                    break;
-                }
+            const Marking& target,
+            int maxDepth) {
+            
+            if (cache.find({start, target}) != cache.end()) {
+                return cache.at({start, target});
             }
-            if (targetReached) {
-                return {true, path};
-            }
-    
-            // Try firing enabled edges
-            for (const auto& [edgeName, edge] : edges) {
-                bool enabled = true;
-                for (const auto& src : edge.sources) {
-                    // Check if each source exists and has at least one token.
-                    if (current.places.find(src) == current.places.end() || current.places.at(src) == 0) {
-                        enabled = false;
+        
+            using State = std::tuple<Marking, std::vector<std::string>, int>;
+            std::stack<State> stack;
+            std::unordered_set<Marking, MarkingHasher> visited;
+        
+            stack.push({start, {}, 0});
+            visited.insert(start);
+        
+            while (!stack.empty()) {
+                auto [current, path, depth] = stack.top();
+                stack.pop();
+        
+                // Check if the current marking satisfies the target condition
+                bool targetReached = true;
+                for (const auto& [place, tokens] : target.places) {
+                    uint32_t currentTokens = 0;
+                    if (current.places.find(place) != current.places.end()) {
+                        currentTokens = current.places.at(place);
+                    }
+                    if (currentTokens < tokens) {
+                        targetReached = false;
                         break;
                     }
                 }
-    
-                if (enabled) {
-                    Marking nextMarking = current;
-    
-                    // Decrement tokens from source places (they must exist, or the edge wouldn’t be enabled)
+                if (targetReached) {
+                    cache[{start, target}] = {true, path};
+                    return {true, path};
+                }
+        
+                // Stop exploring further if depth limit is reached
+                if (depth >= maxDepth) {
+                    continue;
+                }
+        
+                // Try firing enabled edges
+                for (const auto& [edgeName, edge] : edges) {
+                    bool enabled = true;
                     for (const auto& src : edge.sources) {
-                        nextMarking.add_place(src, -1);
+                        if (current.places.find(src) == current.places.end() || current.places.at(src) == 0) {
+                            enabled = false;
+                            break;
+                        }
                     }
-    
-                    // Increment tokens to target places.
-                    // This will add the target to the marking if it does not exist.
-                    for (const auto& tgt : edge.targets) {
-                        nextMarking.add_place(tgt, 1);
-                    }
-    
-                    if (visited.find(nextMarking) == visited.end()) {
-                        auto newPath = path;
-                        newPath.push_back(edgeName);
-                        queue.push({nextMarking, newPath});
-                        visited.insert(nextMarking);
+        
+                    if (enabled) {
+                        Marking nextMarking = current;
+        
+                        // Decrement tokens from source places
+                        for (const auto& src : edge.sources) {
+                            nextMarking.add_place(src, -1);
+                        }
+        
+                        // Increment tokens to target places
+                        for (const auto& tgt : edge.targets) {
+                            nextMarking.add_place(tgt, 1);
+                        }
+        
+                        if (visited.find(nextMarking) == visited.end()) {
+                            auto newPath = path;
+                            newPath.push_back(edgeName);
+                            stack.push({nextMarking, newPath, depth + 1}); // Increase depth
+                            visited.insert(nextMarking);
+                        }
                     }
                 }
             }
+            
+            cache[{start, target}] = {false, {}};
+            return {false, {}}; // No path found
         }
-        return {false, {}}; // No path found
-    }
-
         
-
     private:
         std::unordered_map<std::string, Node> nodes;
         std::unordered_map<std::string, Edge> edges;
+
+        std::unordered_map<std::pair<Marking, Marking>, std::pair<bool, std::vector<std::string>>,MarkingPairHasher> cache;
         
-        struct HashMapHasher {
-            size_t operator()(const std::unordered_map<std::string, uint32_t>& map) const {
-                size_t hash = 0;
-                for (const auto& [key, value] : map) {
-                    hash ^= std::hash<std::string>{}(key) ^ std::hash<uint32_t>{}(value);
-                }
-                return hash;
-            }
-        };
     };
-    

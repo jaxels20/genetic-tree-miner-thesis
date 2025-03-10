@@ -1,23 +1,12 @@
-#include <iostream>
+#pragma once
 #include <vector>
 #include <queue>
 #include <climits>
 #include <unordered_map>
 #include <string>
-#include <algorithm>
-#include <iostream>
-#include <unordered_map>
-#include <vector>
-#include <queue>
-#include <climits>
 #include <algorithm>
 
-#include <iostream>
-#include <unordered_map>
-#include <vector>
-#include <string>
-#include <queue>
-#include <algorithm>
+
 
 class Graph {
 public:

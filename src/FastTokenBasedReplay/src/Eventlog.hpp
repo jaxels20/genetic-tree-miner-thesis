@@ -16,7 +16,23 @@ public:
     std::string repr() const {
         return "Event(activity=" + activity + ", timestamp=" + timestamp + ")";
     }
+
+    // Overloading the == operator for comparing events
+    bool operator==(const Event& other) const {
+        return activity == other.activity;
+    }
+
 };
+
+// Hash function for Event 
+namespace std {
+    template<>
+    struct hash<Event> {
+        std::size_t operator()(const Event& e) const {
+            return std::hash<std::string>()(e.activity);
+        }
+    };
+}
 
 class Trace {
 public:
@@ -30,11 +46,31 @@ public:
     void add_event(const Event& event) {
         events.push_back(event);
     }
-
+   
     std::string repr() const {
         return "Trace(trace_id=" + trace_id + ", events=" + std::to_string(events.size()) + ")";
     }
+
+    // Overloading the == operator for comparing traces
+    bool operator==(const Trace& other) const {
+        return events == other.events;
+    }
+
 };
+
+// Hash function for Trace (only considering events)
+namespace std {
+    template<>
+    struct hash<Trace> {
+        std::size_t operator()(const Trace& t) const {
+            std::size_t seed = 0;
+            for (const auto& event : t.events) {
+                seed ^= std::hash<Event>()(event) + 0x9e3779b9 + (seed << 6) + (seed >> 2); 
+            }
+            return seed;
+        }
+    };
+}
 
 class EventLog {
 public:

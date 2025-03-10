@@ -105,6 +105,9 @@ class Transition:
     def __lt__(self, other):
         return self.name < other.name
 
+    def is_silent(self):
+        """Check if the transition is a silent transition."""
+        return self.name.startswith("tau")
 class Arc:
     """
     Class representing an arc in a Petri net, connecting a place and a transition.

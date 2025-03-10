@@ -4,6 +4,8 @@
 #include <unordered_map>
 #include <initializer_list>
 
+
+
 class Marking {
     public:
         std::unordered_map<std::string, uint32_t> places;
@@ -39,4 +41,40 @@ class Marking {
         bool operator==(const Marking& other) const {
             return places == other.places;
         }
+
+        int get_tokens(const std::string& place) const {
+            if (places.find(place) != places.end()) {
+                return places.at(place);
+            }
+            return 0;
+        }
+
+        std::string to_string() const {
+            std::string str = "";
+            for (const auto& [place, tokens] : places) {
+                str += place + ": " + std::to_string(tokens) + ", ";
+            }
+            return str;
+        }
     };
+
+
+// Define MarkingHasher outside the HyperGraph class
+struct MarkingHasher {
+    size_t operator()(const Marking& m) const {
+        size_t hash = 0;
+        for (const auto& [place, tokens] : m.places) {
+            hash ^= std::hash<std::string>{}(place) ^ std::hash<uint32_t>{}(tokens);
+        }
+        return hash;
+    }
+};
+
+struct MarkingPairHasher {
+    size_t operator()(const std::pair<Marking, Marking>& p) const {
+        MarkingHasher markingHasher;
+        size_t hash1 = markingHasher(p.first);
+        size_t hash2 = markingHasher(p.second);
+        return hash1 ^ (hash2 << 1); // Combine hashes uniquely
+    }
+};

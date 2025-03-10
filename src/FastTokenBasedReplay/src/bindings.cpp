@@ -50,5 +50,5 @@ PYBIND11_MODULE(FastTokenBasedReplay, m) {
         .def("add_place", &Marking::add_place)
         .def("number_of_tokens", &Marking::number_of_tokens);
 
-    m.def("calculate_fitness_and_precision", &calculate_fitness_and_precision);
+    m.def("calculate_fitness", &calculate_fitness);
 }

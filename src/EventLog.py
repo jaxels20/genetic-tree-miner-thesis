@@ -231,6 +231,12 @@ class EventLog:
                 repr_str += f"  Event: Activity={event.activity}, Timestamp={event.timestamp}, Attributes={event.attributes}\n"
         return repr_str
     
+    def __len__(self):
+        """
+        Return the number of traces in the event log.
+        """
+        return len(self.traces)
+    
     def get_all_activities(self):
         """
         Get a set of all unique activity names in the event log.
@@ -387,7 +393,7 @@ class EventLog:
             # Convert events within the trace
             for event in trace.events:
                 # Assuming FastTokenBasedReplay Event object has similar attributes
-                fast_event = FastTokenBasedReplay.Event(event.activity, event.timestamp, event.attributes)
+                fast_event = FastTokenBasedReplay.Event(event.activity, str(event.timestamp), event.attributes)
                 fast_trace.add_event(fast_event)
 
             # Add the converted trace to the FastTokenBasedReplay EventLog

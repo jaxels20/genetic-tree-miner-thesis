@@ -73,7 +73,7 @@ class PetriNet {
         }
 
         // Find a place by name
-        Place* get_place(const std::string& name) {
+        Place* get_place(const std::string& name){
             for (auto& place : places) {
                 if (place.name == name) {
                     return &place;
@@ -209,5 +209,18 @@ class PetriNet {
             }
             return fired_transitions;
         }
-
+        
+        void set_marking(const Marking& marking) {
+            for (auto& place : places) {
+                place.tokens = marking.get_tokens(place.name);
+            }
+        }
+    
+        Marking get_marking_enabling_transition(const Transition& transition) {
+            Marking marking;
+            for (const auto& place : get_preset(transition)) {
+                marking.add_place(place.name, 1);
+            }
+            return marking;
+        }
     };

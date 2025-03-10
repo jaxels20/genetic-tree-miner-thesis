@@ -8,14 +8,22 @@ import sys
 import os
 from pm4py.objects.conversion.process_tree import converter as pt_converter
 from pm4py.objects.process_tree.obj import ProcessTree, Operator
-
+import pm4py.write as pm_write
 parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, parent_dir)
 
 from src.EventLog import EventLog
-from generate_xes_from_tracelist import TraceListExporter
 from src.PetriNet import PetriNet, Transition, Place
 
+class TraceListExporter():
+    @staticmethod
+    def traces_to_xes(traces: list, file_path: str):
+        """ Save traces to an XES file """
+        # Traces is a list of strings representing activity sequences
+        
+        eventlog = EventLog.from_trace_list(traces)
+        eventlog.to_xes(file_path)
+        print(f"Event log saved as {file_path}")
 
 # TEST CASE 1: A simple sequence of activities
 def simple_sequence(output_dir: str) -> None:
@@ -303,7 +311,6 @@ def realistic_example(output_dir: str) -> None:
     our_net = PetriNet.from_pm4py(net)
     our_net.visualize(f"{output_dir}overleaf_example/overleaf_example")
     our_net.to_ptml(f"{output_dir}overleaf_example/overleaf_example.ptml")
-
 
 if __name__ == "__main__":
     output_dir = "./controlled_scenarios/"
