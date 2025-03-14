@@ -1,5 +1,6 @@
 from src.Objective import SimpleWeightedScore
 from src.RandomTreeGenerator import BottomUpBinaryTreeGenerator
+from src.RandomTreeGenerator import SequentialTreeGenerator
 from src.ProcessTree import ProcessTree
 from src.EventLog import EventLog
 from src.Mutator import Mutator
@@ -70,8 +71,10 @@ class GeneticAlgorithm:
         self.start_time = time.time()
         
         # Initialize the population
-        generator = BottomUpBinaryTreeGenerator()
-        population = generator.generate_population(eventlog.unique_activities(), n=self.population_size)
+        # generator = BottomUpBinaryTreeGenerator()
+        # population = generator.generate_population(eventlog.unique_activities(), n=self.population_size)
+        generator = SequentialTreeGenerator()
+        population = generator.generate_population(eventlog, n=self.population_size)
         
         for generation in tqdm.tqdm(range(self.max_generations), desc="Discovering process tree", unit="generation"):
             # Evaluate the fitness of each tree

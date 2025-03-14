@@ -1,5 +1,6 @@
 import random
-from typing import List
+from src.EventLog import EventLog
+from typing import List, Dict, Tuple, Set
 from src.ProcessTree import ProcessTree, Operator
 from src.Population import Population
 
@@ -62,7 +63,68 @@ class BottomUpBinaryTreeGenerator(RandomTreeGeneratorBase):
         population = Population(trees)
         return population
         
-    
+class SequentialTreeGenerator:
+    def __init__(self):
+        pass
+
+    def generate_sequential_model(self, eventlog: EventLog) -> ProcessTree:
+        footprint_matrix = eventlog.get_footprint_matrix()             
+
+        unique_activities = eventlog.unique_activities()
+
+        root = ProcessTree(operator=Operator.SEQUENCE)
+        available_activities = list(unique_activities)
+        random.shuffle(available_activities)
+
+        pairs = []
+        while len(available_activities) > 1:
+            a = available_activities.pop()
+            b = available_activities.pop()
+            pairs.append((a, b))
+
+        if available_activities:  # Handle odd number of activities
+            leftover_activity = available_activities.pop()
+            random_insertion_point = random.randint(0, len(pairs))
+            pairs.insert(random_insertion_point, (leftover_activity,))
+
+        for pair in pairs:
+            if len(pair) == 1:
+                root.add_child(ProcessTree(label=pair[0]))
+            else:
+                a, b = pair
+                forward_relation = footprint_matrix.get((a, b))
+                backward_relation = footprint_matrix.get((b, a))
+                
+                if forward_relation == '>':
+                    operator_node = ProcessTree(operator=Operator.SEQUENCE)
+                    operator_node.add_child(ProcessTree(label=a))
+                    operator_node.add_child(ProcessTree(label=b))
+                elif forward_relation == '<':
+                    operator_node = ProcessTree(operator=Operator.SEQUENCE)
+                    operator_node.add_child(ProcessTree(label=b))
+                    operator_node.add_child(ProcessTree(label=a))
+                elif forward_relation == '||':
+                    operator_node = ProcessTree(operator=Operator.PARALLEL)
+                    operator_node.add_child(ProcessTree(label=a))
+                    operator_node.add_child(ProcessTree(label=b))
+                else:
+                    operator_node = ProcessTree(operator=Operator.XOR)
+                    operator_node.add_child(ProcessTree(label=a))
+                    operator_node.add_child(ProcessTree(label=b))
+                
+                root.add_child(operator_node)
+
+        return root
+
+    def generate_population(self, event_log: EventLog, n: int) -> List[ProcessTree]:
+        trees = []
+        for _ in range(n):
+            tree = self.generate_sequential_model(event_log)
+            trees.append(tree)
+
+        population = Population(trees)
+        return population
+
     
 if __name__ == "__main__":
     unique_activities = ["A", "B", "C"]
