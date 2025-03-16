@@ -215,7 +215,7 @@ if __name__ == "__main__":
     before_num_traces = len(eventlog.traces)
     print(f"Number of traces before filtering: {before_num_traces}")
     
-    filtered_log = Filtering.filter_eventlog_random(eventlog, 0.3)
+    filtered_log = Filtering.filter_eventlog_by_top_percentage(eventlog, 0.3)
     after_num_traces = len(filtered_log.traces)
     print(f"Number of traces after filtering: {after_num_traces}")
     
