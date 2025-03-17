@@ -5,6 +5,8 @@ import src.FastTokenBasedReplay as FastTokenBasedReplay
 from pm4py.algo.evaluation.replay_fitness.variants.token_replay import apply as replay_fitness
 from src.RandomTreeGenerator import BottomUpBinaryTreeGenerator
 from src.ProcessTree import ProcessTree
+from pm4py.objects.process_tree.obj import ProcessTree, Operator
+from pm4py.objects.conversion.process_tree import converter as pt_converter
 
 
 
@@ -211,12 +213,38 @@ if __name__ == "__main__":
     #giant_test()
 
 
-    eventlog = EventLog.load_xes("./real_life_datasets/BPI_Challenge_2012.xes")
-    before_num_traces = len(eventlog.traces)
-    print(f"Number of traces before filtering: {before_num_traces}")
+    eventlog = EventLog.from_trace_list(["A"])
     
-    filtered_log = Filtering.filter_eventlog_by_top_percentage(eventlog, 0.3)
-    after_num_traces = len(filtered_log.traces)
-    print(f"Number of traces after filtering: {after_num_traces}")
+    petri_net = PetriNet()
+    petri_net.empty()
+
+    petri_net.add_transition("A")
+    petri_net.add_transition("B")
+    petri_net.add_transition("tau_1")
+    petri_net.add_transition("tau_2")
+
+    petri_net.add_place("Start", tokens=1)
+    petri_net.add_place("End")
+
+    petri_net.add_place("p1")
+    petri_net.add_place("p2")
+    petri_net.add_place("p3")
+    petri_net.add_place("p4")
+
+    petri_net.add_arc("Start", "A")
+    petri_net.add_arc("A", "p1")
+    petri_net.add_arc("A", "p2")
+    petri_net.add_arc("p1", "B")
+    petri_net.add_arc("p2", "tau_1")
+    petri_net.add_arc("B", "p3")
+    petri_net.add_arc("tau_1", "p4")
+    petri_net.add_arc("p3", "tau_2")
+    petri_net.add_arc("p4", "tau_2")
+    petri_net.add_arc("tau_2", "End")
     
-    print(f"Percentage of traces kept: {after_num_traces / before_num_traces * 100}%")
+    # replay fitness using pm4py
+    pm4py_fitness = replay_fitness(eventlog.to_pm4py(), *petri_net.to_pm4py())["log_fitness"]
+    
+    print(f"pm4py fitness: {pm4py_fitness}")
+    
+    

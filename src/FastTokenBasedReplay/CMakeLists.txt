@@ -43,3 +43,6 @@ add_custom_target(run_tests_target
 )
 
 add_dependencies(run_tests_target run_tests)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg -O2") # Enable profiling
+
