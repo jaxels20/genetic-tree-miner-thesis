@@ -241,16 +241,6 @@ class EventLog:
         Return the number of traces in the event log.
         """
         return len(self.traces)
-    
-    def get_all_activities(self):
-        """
-        Get a set of all unique activity names in the event log.
-        """
-        activities = set()
-        for trace in self.traces:
-            for event in trace.events:
-                activities.add(event.activity)
-        return activities
 
     def get_trace_by_id(self, trace_id: str):
         """
@@ -324,7 +314,7 @@ class EventLog:
             and values are the relations ('>', '||', '#').
         """
         # Step 1: Initialize a dictionary for direct succession relationships with eventual following
-        all_activities = self.get_all_activities()
+        all_activities = self.unique_activities()
         footprint_matrix = {}
 
         # Step 2: Fill the footprint matrix based on eventual succession relationships

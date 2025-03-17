@@ -1,11 +1,11 @@
-from src.EventLog import EventLog
+from src.EventLog import EventLog, Trace
 import random
 class Filtering:
     def __init__():
         pass
     
     @staticmethod
-    def filter_eventlog_by_top_percentage_unique(eventlog: EventLog, percentage: float) -> EventLog:
+    def filter_eventlog_by_top_percentage_unique(eventlog: EventLog, percentage: float, include_all_activities: bool) -> EventLog:
         """
         Filters an event log to include only the top percentage of most frequent traces.
         
@@ -42,13 +42,24 @@ class Filtering:
 
         # Extract the set of top signatures.
         top_signatures = {signature for signature, _ in sorted_signatures[:num_to_keep]}
-
+        
         # Build the filtered event log by including traces with a signature in top_signatures.
         filtered_log = EventLog()
         for trace in eventlog.traces:
             signature = tuple(event.activity for event in trace.events)
             if signature in top_signatures:
                 filtered_log.traces.append(trace)
+                
+        # If include_all_activities is True, add all activities to the filtered log.
+        if include_all_activities:
+            all_activities = eventlog.unique_activities()
+            filtered_log_activities = filtered_log.unique_activities()
+            for activity in all_activities:
+                if activity not in filtered_log_activities:
+                    for trace in eventlog.traces:
+                        if activity in [event.activity for event in trace.events]:
+                            filtered_log.traces.append(trace)
+                            break
                 
         return filtered_log
     
@@ -99,7 +110,7 @@ class Filtering:
         return filtered_log
 
     @staticmethod
-    def filter_eventlog_random(eventlog: EventLog, percentage: float) -> EventLog:
+    def filter_eventlog_random(eventlog: EventLog, percentage: float, include_all_activities: bool) -> EventLog:
         """
         Filters an event log to include a random subset of traces.
         
@@ -131,52 +142,15 @@ class Filtering:
         filtered_log = EventLog()
         filtered_log.traces = selected_traces
         
-        return filtered_log
-    
-
-        """
-        Filters an event log to include all traces whose signature is among the top percentage of unique trace signatures.
-        In other words, it finds the top X% most frequent unique trace signatures and returns all traces with any of those signatures.
+        # If include_all_activities is True, add all activities to the filtered log.
+        if include_all_activities:
+            all_activities = eventlog.unique_activities()
+            filtered_log_activities = filtered_log.unique_activities()
+            for activity in all_activities:
+                if activity not in filtered_log_activities:
+                    for trace in eventlog.traces:
+                        if activity in [event.activity for event in trace.events]:
+                            filtered_log.traces.append(trace)
+                            break
         
-        Parameters:
-        -----------
-        eventlog : EventLog
-            The input event log to filter.
-        percentage : float
-            The percentage (as a fraction between 0 and 1 or as a percentage > 1) of unique trace signatures to keep.
-            For example, use 0.2 or 20 for the top 20% unique trace signatures.
-        
-        Returns:
-        --------
-        EventLog
-            A new EventLog containing all traces from the original log that have a top signature.
-        """
-        # Convert percentage if provided as a value greater than 1 (e.g., 20 becomes 0.2)
-        if percentage > 1:
-            percentage = percentage / 100.0
-
-        # Count the frequency of each trace signature.
-        # Here, a signature is defined as a tuple of event activity names.
-        signature_freq = {}
-        for trace in eventlog.traces:
-            signature = tuple(event.activity for event in trace.events)
-            signature_freq[signature] = signature_freq.get(signature, 0) + 1
-
-        # Sort the unique signatures by their frequency (descending order).
-        sorted_signatures = sorted(signature_freq.items(), key=lambda x: x[1], reverse=True)
-
-        # Determine how many unique signatures to keep (ensuring at least one is kept).
-        total_unique = len(sorted_signatures)
-        num_to_keep = max(1, int(round(percentage * total_unique)))
-
-        # Extract the set of top signatures.
-        top_signatures = {signature for signature, _ in sorted_signatures[:num_to_keep]}
-
-        # Build a new event log containing all traces that have a signature in the top_signatures set.
-        filtered_log = EventLog()
-        for trace in eventlog.traces:
-            signature = tuple(event.activity for event in trace.events)
-            if signature in top_signatures:
-                filtered_log.traces.append(trace)
-
         return filtered_log

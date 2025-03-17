@@ -71,8 +71,6 @@ class GeneticAlgorithm:
         self.start_time = time.time()
         
         # Initialize the population
-        # generator = BottomUpBinaryTreeGenerator()
-        # population = generator.generate_population(eventlog.unique_activities(), n=self.population_size)
         generator = SequentialTreeGenerator()
         population = generator.generate_population(eventlog, n=self.population_size)
         

@@ -4,25 +4,12 @@ from src.EventLog import EventLog
 import time
 from src.Evaluator import SingleEvaluator
 from src.PetriNet import PetriNet
+from src.Filtering import Filtering
 
 
 if __name__ == "__main__":
+    eventlog = EventLog().from_trace_list(["ABC", "ABD", "ABD", "ABC"])
+    filtered_log = Filtering.filter_eventlog_by_top_percentage_unique(eventlog, 0.5, include_all_activities=True)
     
-    # import cProfile
-    # import pstats
-    
-    eventlog = EventLog().load_xes("./controlled_scenarios/overleaf_example/eventlog.xes")
-    
-    mutator = Mutator(eventlog, random_creation_rate=0.1, crossover_rate=0.2, mutation_rate=0.5, elite_rate=0.2)
-    ga = GeneticAlgorithm(mutator, min_fitness=None, max_generations=200, stagnation_limit=30, time_limit=90, population_size=100)
-    best_tree = ga.run(eventlog=eventlog)
-    pn, start, end = best_tree.to_pm4py_pn()
-    
-    PetriNet.from_pm4py(pn).visualize("best_tree")
-    
-    evaluator = SingleEvaluator(pn, start, end, eventlog)
-    precision = evaluator.get_exact_matching("precision")
-    print(precision)
-    
-    
-    
+    random_log = Filtering.filter_eventlog_random(eventlog, 0.5, include_all_activities=True)
+    print(random_log)
