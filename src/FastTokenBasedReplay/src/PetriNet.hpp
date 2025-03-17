@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include <string>
 #include <vector>
 #include <stdexcept>
@@ -112,14 +113,18 @@ class PetriNet {
                     Place* place = get_place(arc.source);
                     if (place) {
                         place->remove_tokens(arc.weight);
-                        *consumed += arc.weight;  // Dereferencing the pointer
+                        if (consumed) {
+                            *consumed += arc.weight;  // Dereferencing the pointer
+                        }
                     }
                 }
                 if (arc.source == transition.name) {
                     Place* place = get_place(arc.target);
                     if (place) {
                         place->add_tokens(arc.weight);
-                        *produced += arc.weight;  // Dereferencing the pointer
+                        if (produced) {
+                            *produced += arc.weight;  // Dereferencing the pointer
+                        }
                     }
                 }
             }
@@ -210,6 +215,30 @@ class PetriNet {
             return fired_transitions;
         }
         
+        bool can_fire_transition_sequence(const std::vector<std::string>& transition_names) {
+
+            // Make a copy of self 
+            PetriNet net_copy = *this;
+
+            // Try to fire each transition in the sequence
+            for (const auto& transition_name : transition_names) {
+                Transition* transition = net_copy.get_transition(transition_name);
+                if (transition) {
+                    if (net_copy.can_fire(*transition)) {
+                        net_copy.fire_transition(*transition, nullptr, nullptr);
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                else {
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+
         void set_marking(const Marking& marking) {
             for (auto& place : places) {
                 place.tokens = marking.get_tokens(place.name);
@@ -218,7 +247,8 @@ class PetriNet {
     
         Marking get_marking_enabling_transition(const Transition& transition) {
             Marking marking;
-            for (const auto& place : get_preset(transition)) {
+            std::vector<Place> preset = get_preset(transition);
+            for (const auto& place : preset) {
                 marking.add_place(place.name, 1);
             }
             return marking;

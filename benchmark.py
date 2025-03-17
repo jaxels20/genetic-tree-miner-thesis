@@ -14,6 +14,67 @@ from src.SupressPrints import SuppressPrints
 from pyinstrument import Profiler
 import numpy as np
 from pm4py.sim import play_out, generate_process_tree
+from src.Filtering import Filtering
+
+def time_fast_token_based_replay_without_caching(eventlog, petri_net):
+    c_petri_net = petri_net.to_fast_token_based_replay()
+    c_eventlog = eventlog.to_fast_token_based_replay()
+    
+    start = time.time()
+    FastTokenBasedReplay = ftr.calculate_fitness(c_eventlog, c_petri_net, False, False)
+    end = time.time()
+    
+    return end - start
+
+def time_fast_token_based_replay_with_prefix_caching(eventlog, petri_net):
+    c_petri_net = petri_net.to_fast_token_based_replay()
+    c_eventlog = eventlog.to_fast_token_based_replay()
+    
+    start = time.time()
+    FastTokenBasedReplay = ftr.calculate_fitness(c_eventlog, c_petri_net, True, False)
+    end = time.time()
+    
+    return end - start
+
+def time_fast_token_based_replay_with_suffix_caching(eventlog, petri_net):
+    c_petri_net = petri_net.to_fast_token_based_replay()
+    c_eventlog = eventlog.to_fast_token_based_replay()
+    
+    start = time.time()
+    FastTokenBasedReplay = ftr.calculate_fitness(c_eventlog, c_petri_net, False, True)
+    end = time.time()
+    
+    return end - start
+
+def time_fast_token_based_replay_with_prefix_and_suffix_caching(eventlog, petri_net):
+    c_petri_net = petri_net.to_fast_token_based_replay()
+    c_eventlog = eventlog.to_fast_token_based_replay()
+    
+    start = time.time()
+    FastTokenBasedReplay = ftr.calculate_fitness(c_eventlog, c_petri_net, True, True)
+    end = time.time()
+    
+    return end - start
+
+def time_pm4py_token_based_replay(eventlog, petri_net):
+    PetriNet, initital_marking, final_marking = petri_net.to_pm4py()
+    EventLog = eventlog.to_pm4py()
+    
+    start = time.time()
+    replay_fitness(EventLog, PetriNet, initital_marking, final_marking)
+    end = time.time()
+    
+    return end - start
+
+def time_pm4py_alignment(eventlog, petri_net):
+    PetriNet, initital_marking, final_marking = petri_net.to_pm4py()
+    EventLog = eventlog.to_pm4py()
+    
+    start = time.time()
+    align_petri_net(EventLog, PetriNet, initital_marking, final_marking)
+    end = time.time()
+    
+    return end - start
 
 def init_synthetic_eventlog_and_petri_net(num_traces=2):
     # Initialize a new Petri net
@@ -115,14 +176,7 @@ def test_fast_token_based_replay_without_caching(num_traces=[]):
     samples = []
     for i in num_traces:        
         eventlog, petri_net = init_discovered_petri_net_and_eventlog(i)
-
-        c_petri_net = petri_net.to_fast_token_based_replay()
-        c_eventlog = eventlog.to_fast_token_based_replay()
-        
-        start = time.time()
-        FastTokenBasedReplay = ftr.calculate_fitness(c_eventlog, c_petri_net, False, False)
-        end = time.time()
-        samples.append(end - start)
+        samples.append(time_fast_token_based_replay_without_caching(eventlog, petri_net))
             
     return samples
 
@@ -131,13 +185,7 @@ def test_fast_token_based_replay_with_prefix_caching(num_traces=[]):
     for i in num_traces:        
         eventlog, petri_net = init_discovered_petri_net_and_eventlog(i)
 
-        c_petri_net = petri_net.to_fast_token_based_replay()
-        c_eventlog = eventlog.to_fast_token_based_replay()
-        
-        start = time.time()
-        FastTokenBasedReplay = ftr.calculate_fitness(c_eventlog, c_petri_net, True, False)
-        end = time.time()
-        samples.append(end - start)
+        samples.append(time_fast_token_based_replay_with_prefix_caching(eventlog, petri_net))
     return samples
 
 def test_fast_token_based_replay_with_suffix_caching(num_traces=[]):
@@ -145,14 +193,7 @@ def test_fast_token_based_replay_with_suffix_caching(num_traces=[]):
     for i in num_traces:
         eventlog, petri_net = init_discovered_petri_net_and_eventlog(i)
 
-        c_petri_net = petri_net.to_fast_token_based_replay()
-        c_eventlog = eventlog.to_fast_token_based_replay()
-        
-        start = time.time()
-        FastTokenBasedReplay = ftr.calculate_fitness(c_eventlog, c_petri_net, False, True)
-        end = time.time()
-        samples.append(end - start)
-
+        samples.append(time_fast_token_based_replay_with_suffix_caching(eventlog, petri_net))
     
     return samples
 
@@ -161,13 +202,7 @@ def test_fast_token_based_replay_with_prefix_and_suffix_caching(num_traces=[]):
     for i in num_traces:        
         eventlog, petri_net = init_discovered_petri_net_and_eventlog(i)
 
-        c_petri_net = petri_net.to_fast_token_based_replay()
-        c_eventlog = eventlog.to_fast_token_based_replay()
-        
-        start = time.time()
-        FastTokenBasedReplay = ftr.calculate_fitness(c_eventlog, c_petri_net, True, True)
-        end = time.time()
-        samples.append(end - start)
+        samples.append(time_fast_token_based_replay_with_prefix_and_suffix_caching(eventlog, petri_net))        
         
     
     return samples
@@ -176,15 +211,7 @@ def test_pm4py_token_based_replay(num_traces=[]):
     samples = []
     for i in num_traces:
         eventlog, petri_net = init_discovered_petri_net_and_eventlog(i)
-        PetriNet, initital_marking, final_marking = petri_net.to_pm4py()
-        #Print the number of transitions
-        EventLog = eventlog.to_pm4py()
-        
-        start = time.time()
-        replay_fitness(EventLog, PetriNet, initital_marking, final_marking )
-        end = time.time()
-        
-        samples.append(end - start)
+        samples.append(time_pm4py_token_based_replay(eventlog, petri_net))
         
     return samples
 
@@ -192,25 +219,22 @@ def test_pm4py_alignment(num_traces=[]):
     samples = []
     for i in num_traces:
         eventlog, petri_net = init_synthetic_eventlog_and_petri_net(i)
-        PetriNet, initital_marking, final_marking = petri_net.to_pm4py()
-        EventLog = eventlog.to_pm4py()
-        
-        start = time.time()
-        align_petri_net(EventLog, PetriNet, initital_marking, final_marking)
-        end = time.time()
-        samples.append(end - start)
-        
-        # print the time in milliseconds
-        print(f"pm4py took {(end - start) * 1000} milliseconds")
+        samples.append(time_pm4py_alignment(eventlog, petri_net))
     return samples
 
 def real_life_evaluation():
     eventlog_dir = "./real_life_datasets"
     data = {}
+    num_data_points = 1
+
     for filename in os.listdir(eventlog_dir):
         if filename.endswith(".xes"):
             print(f"Processing {filename}")
             our_event_log = EventLog.load_xes(os.path.join(eventlog_dir, filename))
+            
+            # filter the traces
+            our_event_log = Filtering.filter_eventlog_by_top_percentage_unique(our_event_log, 1)
+            
             pm4py_event_log = our_event_log.to_pm4py()
             pm4py_pt = pm4py_inductive_miner(pm4py_event_log)
             pm4py_net, init, end = pt_converter.apply(pm4py_pt, variant=pt_converter.Variants.TO_PETRI_NET)
@@ -218,61 +242,14 @@ def real_life_evaluation():
             our_net = PetriNet.from_pm4py(pm4py_net)
             our_net.set_final_marking(Marking({"End": 1}))
             our_net.set_initial_marking(Marking({"Start": 1}))
-            
-            # print stats for this event log and petri net
-            print(f"Number of traces: {len(our_event_log)}")
-            print(f"Number of transitions: {len(our_net.transitions)}")
-            print(f"Number of silent transitions: {len([t for t in our_net.transitions if t.is_silent()])}")
-            print(f"Number of Unique Activities: {len(our_event_log.unique_activities())}")
-            
-            
-            # FastTokenBasedReplay without caching
-            c_petri_net = our_net.to_fast_token_based_replay()
-            c_eventlog = our_event_log.to_fast_token_based_replay()
-            our_start_without_caching = time.time()
-            FastTokenBasedReplay = ftr.calculate_fitness(c_eventlog, c_petri_net, False, False)
-            our_end_without_caching = time.time()
-            
-            
-            # # FastTokenBasedReplay with prefix caching
-            # c_petri_net = our_net.to_fast_token_based_replay()
-            # c_eventlog = our_event_log.to_fast_token_based_replay()
-            # our_start_with_prefix_caching = time.time()
-            # FastTokenBasedReplay = ftr.calculate_fitness(c_eventlog, c_petri_net, True, False)
-            # our_end_with_prefix_caching = time.time()
-            
-            
-            # # FastTokenBasedReplay with suffix caching
-            # c_petri_net = our_net.to_fast_token_based_replay()
-            # c_eventlog = our_event_log.to_fast_token_based_replay()
-            # our_start_with_suffix_caching = time.time()
-            # FastTokenBasedReplay = ftr.calculate_fitness(c_eventlog, c_petri_net, False, True)
-            # our_end_with_suffix_caching = time.time()
-            
-            
-            
-            # # FastTokenBasedReplay with prefix and suffix caching
-            # c_petri_net = our_net.to_fast_token_based_replay()
-            # c_eventlog = our_event_log.to_fast_token_based_replay()
-            # our_start_with_prefix_and_suffix_caching = time.time()
-            # FastTokenBasedReplay = ftr.calculate_fitness(c_eventlog, c_petri_net, True, True)
-            # our_end_with_prefix_and_suffix_caching = time.time()
-            
-            
-            # pm4py
-            pm4py_start = time.time()
-            replay_fitness(pm4py_event_log, pm4py_net, init, end)
-            # with SuppressPrints():
-            #     replay_fitness(pm4py_event_log, pm4py_net, init, end)
-            pm4py_end = time.time()
         
-            data[filename] = {"FastTokenBasedReplay (without caching)": our_end_without_caching - our_start_without_caching, 
-                              "pm4py": pm4py_end - pm4py_start,
-                              #"FastTokenBasedReplay (with prefix caching)": our_end_with_prefix_caching - our_start_with_prefix_caching,
-                              #"FastTokenBasedReplay (with suffix caching)": our_end_with_suffix_caching - our_start_with_suffix_caching,
-                              #"FastTokenBasedReplay (with prefix and suffix caching)": our_end_with_prefix_and_suffix_caching - our_start_with_prefix_and_suffix_caching
+            data[filename] = {"FastTokenBasedReplay (without caching)": time_fast_token_based_replay_without_caching(our_event_log, our_net),
+                              #"pm4py": time_pm4py_token_based_replay(our_event_log, our_net),
+                              "FastTokenBasedReplay (with prefix caching)": time_fast_token_based_replay_with_prefix_caching(our_event_log, our_net),
+                              "FastTokenBasedReplay (with suffix caching)": time_fast_token_based_replay_with_suffix_caching(our_event_log, our_net),
+                              "FastTokenBasedReplay (with prefix and suffix caching)" : time_fast_token_based_replay_with_prefix_and_suffix_caching(our_event_log, our_net)
                               }
-    
+            
     
     
     # Extracting keys and values
@@ -300,17 +277,20 @@ def real_life_evaluation():
     ax.set_xticks(index + (bar_width * len(methods) / 2))
     ax.set_xticklabels(datasets, rotation=45, ha="right")
     ax.legend()
+    
+    # apply log scale to y axis
+    ax.set_yscale('log')
 
     # Show plot
     plt.tight_layout()
     plt.show()  
     
 def synthetic_evaluation():
-    num_traces = [500, 1_000, 1_500, 2_000, 2_500]
+    num_traces = [1_000, 5_000, 50_000, 100_000]
     ftr_without_caching_times = test_fast_token_based_replay_without_caching(num_traces)
     ftr_with_prefix_caching_times = test_fast_token_based_replay_with_prefix_caching(num_traces)
     ftr_with_suffix_caching_times = test_fast_token_based_replay_with_suffix_caching(num_traces)
-    ftr_with_prefix_and_suffix_times = test_fast_token_based_replay_with_prefix_and_suffix_caching(num_traces)
+    #ftr_with_prefix_and_suffix_times = test_fast_token_based_replay_with_prefix_and_suffix_caching(num_traces)
     pm4py_token_based_times = test_pm4py_token_based_replay(num_traces)
     
     # convert to ms and round to 2 decimal places
@@ -318,16 +298,14 @@ def synthetic_evaluation():
     print(f"FastTokenBasedReplay without caching: {[round(x * 1000, 2) for x in ftr_without_caching_times]}")
     print(f"FastTokenBasedReplay with prefix caching: {[round(x * 1000, 2) for x in ftr_with_prefix_caching_times]}")
     print(f"FastTokenBasedReplay with suffix caching: {[round(x * 1000, 2) for x in ftr_with_suffix_caching_times]}")
-    print(f"FastTokenBasedReplay with prefix and suffix caching: {[round(x * 1000, 2) for x in ftr_with_prefix_and_suffix_times]}")
+    #print(f"FastTokenBasedReplay with prefix and suffix caching: {[round(x * 1000, 2) for x in ftr_with_prefix_and_suffix_times]}")
     print(f"pm4py token based: {[round(x * 1000, 2) for x in pm4py_token_based_times]}")
     
-    
-    #pm4py_alignment_times = test_pm4py_alignment(num_traces)
-    
+        
     plt.plot(num_traces, ftr_without_caching_times, label="FastTokenBasedReplay without caching")
     plt.plot(num_traces, ftr_with_prefix_caching_times, label="FastTokenBasedReplay with prefix caching")
     plt.plot(num_traces, ftr_with_suffix_caching_times, label="FastTokenBasedReplay with suffix caching")
-    plt.plot(num_traces, ftr_with_prefix_and_suffix_times, label="FastTokenBasedReplay with prefix and suffix caching")
+    #plt.plot(num_traces, ftr_with_prefix_and_suffix_times, label="FastTokenBasedReplay with prefix and suffix caching")
     plt.plot(num_traces, pm4py_token_based_times, label="pm4py token based")
     #plt.plot(num_traces, pm4py_alignment_times, label="pm4py alignment")
     
