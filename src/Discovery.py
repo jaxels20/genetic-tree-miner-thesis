@@ -24,7 +24,7 @@ class Discovery:
         best_tree = ga.run(event_log)
         pm4py_net, init, end = best_tree.to_pm4py_pn()
         
-        return PetriNet.from_pm4py(pm4py_net)
+        return PetriNet.from_pm4py(pm4py_net, init, end)
     
     @staticmethod
     def inductive_miner(event_log: EventLog, **kwargs):
@@ -35,7 +35,7 @@ class Discovery:
         pm4py_pt = pm4py_inductive_miner(event_log)
         pm4py_net, init, end = pt_converter.apply(pm4py_pt, variant=pt_converter.Variants.TO_PETRI_NET)
         
-        return PetriNet.from_pm4py(pm4py_net)
+        return PetriNet.from_pm4py(pm4py_net, init, end)
 
 
     # Map method names to static methods

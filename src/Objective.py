@@ -4,6 +4,7 @@ from src.ProcessTreeRegister import ProcessTreeRegister
 from src.SupressPrints import SuppressPrints
 from src.Population import Population
 from src.PetriNet import PetriNet
+import src.FastTokenBasedReplay as FastTokenBasedReplay
 
 from typing import Union
 from pm4py.algo.evaluation.replay_fitness.variants.token_replay import apply as replay_fitness
@@ -22,7 +23,11 @@ class ObjectiveBaseClass:
             
         self.eventlog = event_log
         self.event_log_pm4py = event_log.to_pm4py()
-
+        self.ftr_eventlog = self.eventlog.to_fast_token_based_replay()
+        
+        our_pn = PetriNet.from_pm4py(self.pm4py_pn, self.inital_marking, self.final_marking)
+        self.ftr_petri_net = our_pn.to_fast_token_based_replay()
+        
     def simplicity(self):
         with SuppressPrints():
             simplicity_value = simplicity(self.pm4py_pn)
@@ -58,6 +63,10 @@ class ObjectiveBaseClass:
             precision_value = precision(self.event_log_pm4py, self.pm4py_pn, self.inital_marking, self.final_marking)
         return precision_value
     
+    def ftr_fitness(self):
+        fitness = FastTokenBasedReplay.calculate_fitness(self.ftr_eventlog, self.ftr_petri_net, False, False)
+        return fitness
+    
     def fitness(self) -> float:
         raise NotImplementedError
     
@@ -84,7 +93,7 @@ class SimpleWeightedScore(ObjectiveBaseClass):
         scores = {
             "simplicity": self.simplicity(),
             "generalization": self.generalization(),
-            "average_trace_fitness": self.perc_fit_traces(),
+            "average_trace_fitness": self.ftr_fitness(),
             "precision": self.precision(),
         }
         return self.weighted_score(scores)

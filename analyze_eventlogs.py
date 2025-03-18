@@ -12,15 +12,14 @@ def plot_results(results, save_path, filtering_percentages):
     """ Generates and saves a line plot for filtering percentage vs. fitness difference. """
     plt.figure(figsize=(8, 5))
     plt.xlabel('Filtering Percentage')
-    plt.ylabel('Fitness')
-    plt.xticks(filtering_percentages)
-    plt.grid(True)
-
+    plt.ylabel(r'$\Delta$ Fitness')
+    plt.xticks(filtering_percentages, rotation=45, fontsize=8) 
+    plt.grid(True, which='both', linestyle='--', linewidth=0.5)
     for eventlog_name, data in results.items():
         plt.plot(data.keys(), data.values(), marker='o', linestyle='-', label=eventlog_name)
 
-    plt.legend()
-    plt.savefig(save_path + '.png')
+    plt.legend(fontsize=8, loc='upper right')
+    plt.savefig(save_path + '.png', bbox_inches='tight', dpi=300)
     plt.close()
 
 def export_results(save_path, results):
@@ -32,31 +31,51 @@ def export_results(save_path, results):
 def main():
     INPUT_DIR = './real_life_datasets/'
     OUTPUT_DIR = './filtering_analysis/'
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
-
-    filtering_percentages = [0.01, 0.025, 0.05, 0.1, 0.15, 0.2]
-    eventlogs = [f for f in os.listdir(INPUT_DIR) if f.endswith('open_problems.xes')]
-
-    results_top_n_filtering = defaultdict(dict)
-    results_random_filtering = defaultdict(dict)
+    NUM_WORKERS = 1
+    FILTERING_PERCENTAGES = [0.01, 0.05, 0.1, 0.2, 0.5, 1]
     
-    for e in eventlogs:
-        eventlog_name = e.split('.')[0]
-        print(f"Processing event log: {eventlog_name}")
-        eventlog_path = os.path.join(INPUT_DIR, e)
-        _, eventlog = BatchFileLoader._load_eventlog(eventlog_path)
-
+    dataset_dirs = os.listdir(INPUT_DIR)
+    dataset_dirs = [x for x in dataset_dirs if not os.path.isfile(f"{INPUT_DIR}{x}")]
+    eventlogs = {} # name: eventlog
+    loader = BatchFileLoader(cpu_count=NUM_WORKERS)
+    
+    for dataset_dir in dataset_dirs:
+        if not dataset_dir == 'BPI_Challenge_2013_open_problems':
+            continue
+        temp_eventlogs = loader.load_all_eventlogs(f"{INPUT_DIR}{dataset_dir}")
+        # check that there is only one event log in the directory
+        assert len(temp_eventlogs) == 1, f"Expected one event log in {dataset_dir}, got {len(temp_eventlogs)}"
+        for eventlog in temp_eventlogs.values():
+            eventlogs[dataset_dir] = eventlog
+    
+    results_top_n_filtering = {}
+    results_random_filtering = {}
+    
+    for eventlog_name, cur_el in eventlogs.items():
+        print("Processing event log:", eventlog_name)
         # Discover and evaluate process model using full log
-        # discover_log = Filtering.filter_eventlog_by_top_percentage_unique(eventlog, 0.01)  # Pre-run filtering for performance
-        pn = Discovery.run_discovery("Inductive Miner", eventlog)  # Pre-run discovery for performance
-        evaluator = SingleEvaluator(pn, eventlog)
+        pn = Discovery.run_discovery(
+            "Genetic Miner", 
+            cur_el,
+            random_creation_rate=0.2,
+            crossover_rate=0.2,
+            mutation_rate=0.3,
+            elite_rate=0.3,
+            min_fitness=None,
+            max_generations=200,
+            stagnation_limit=None,
+            time_limit=None,
+            population_size=100
+        )
+        evaluator = SingleEvaluator(pn, cur_el)
         full_log_fitness = evaluator.get_replay_fitness()['log_fitness']
         
         results_top_n_filtering[eventlog_name] = {}
         results_random_filtering[eventlog_name] = {}
-        for p in filtering_percentages:
+        
+        for p in FILTERING_PERCENTAGES:
             # Top N filtering
-            filtered_eventlog = Filtering.filter_eventlog_by_top_percentage_unique(eventlog, p)
+            filtered_eventlog = Filtering.filter_eventlog_by_top_percentage_unique(cur_el, p, include_all_activities=False)
             pn = Discovery.run_discovery(
                 "Genetic Miner", 
                 filtered_eventlog,
@@ -66,19 +85,17 @@ def main():
                 elite_rate=0.3,
                 min_fitness=None,
                 max_generations=200,
-                stagnation_limit=200,
+                stagnation_limit=None,
                 time_limit=None,
-                population_size=100)
-            evaluator = SingleEvaluator(pn, eventlog)
+                population_size=100
+            )
+            evaluator = SingleEvaluator(pn, cur_el)
             fitness = evaluator.get_replay_fitness()['log_fitness']
             results_top_n_filtering[eventlog_name][p] = round(full_log_fitness - fitness, 4)
 
     # Export and visualize results
     export_results(os.path.join(OUTPUT_DIR, 'top_traces_filtering'), results_top_n_filtering)
-    export_results(os.path.join(OUTPUT_DIR, 'random_filtering'), results_random_filtering)
-
-    plot_results(results_top_n_filtering, os.path.join(OUTPUT_DIR, 'top_traces_filtering'), filtering_percentages)
-    plot_results(results_random_filtering, os.path.join(OUTPUT_DIR, 'random_filtering'), filtering_percentages)
+    plot_results(results_top_n_filtering, os.path.join(OUTPUT_DIR, 'top_traces_filtering'), FILTERING_PERCENTAGES)
 
 
 if __name__ == "__main__":

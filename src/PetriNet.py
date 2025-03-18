@@ -49,6 +49,21 @@ class Marking:
         marking = Marking({place: tokens for place, tokens in marking.places.items()})
         return marking
     
+    @classmethod
+    def from_pm4py(cls, pm4py_marking):
+        """
+        Converts a pm4py Marking object to a Python Marking object.
+        """
+        marking = cls({place.name: tokens for place, tokens in pm4py_marking.items()})
+        return marking
+    
+    def to_pm4py(self):
+        """
+        Converts the Python Marking object to a pm4py Marking object.
+        """
+        pm4py_marking = PM4PyMarking({place: tokens for place, tokens in self.places.items()})
+        return pm4py_marking
+    
 class Place:
     """
     Class representing a place in a Petri net.
@@ -365,7 +380,7 @@ class PetriNet:
             if len(outgoing_arcs) == 0:
                 self.arcs.append(Arc(transition.name, end_place.name))
 
-    def to_pm4py(self):
+    def to_pm4py(self, initial_marking=None, final_marking=None):
         """Convert our Petri net class to a pm4py Petri net and return it"""
         pm4py_pn = PM4PyPetriNet()
         pm4py_dict = {}
@@ -406,15 +421,23 @@ class PetriNet:
 
         source = pm4py_dict[self.get_start_place().name]
         target = pm4py_dict[self.get_end_place().name]
-        initial_marking = PM4PyMarking({source: 1})
-        final_marking = PM4PyMarking({target: 1})
         
+        # Set initial and final marking
+        if initial_marking is not None:
+            initial_marking = Marking.to_pm4py(initial_marking)
+        else:
+            initial_marking = PM4PyMarking({source: 1})
+        
+        if final_marking is not None:
+            final_marking = Marking.to_pm4py(final_marking)
+        else:
+            final_marking = PM4PyMarking({target: 1})
         
         return pm4py_pn, initial_marking, final_marking
 
     @classmethod
-    def from_pm4py(cls, pm4py_pn):
-        """Create a Petri net from a pm4py Petri net.
+    def from_pm4py(cls, pm4py_pn, initial_marking, final_marking):
+        """Create a Petri net from a pm4py Petri net and set initial and final marking.
 
         Args:
             pm4py_pn (_type_): petri net object from pm4py
@@ -443,6 +466,10 @@ class PetriNet:
 
         # Add token to start place
         converted_pn = cls(places, transitions, arcs)
+        
+        # Set initial and final marking
+        converted_pn.set_initial_marking(Marking.from_pm4py(initial_marking))
+        converted_pn.set_final_marking(Marking.from_pm4py(final_marking))
 
         return deepcopy(converted_pn)
 
