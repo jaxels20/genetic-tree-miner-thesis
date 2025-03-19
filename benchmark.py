@@ -11,7 +11,7 @@ from pm4py.algo.conformance.alignments.petri_net.algorithm import apply as align
 from pm4py.algo.discovery.inductive.algorithm import apply as pm4py_inductive_miner
 from pm4py.objects.conversion.process_tree import converter as pt_converter
 from src.SupressPrints import SuppressPrints
-from pyinstrument import Profiler
+# from pyinstrument import Profiler
 import numpy as np
 from pm4py.sim import play_out, generate_process_tree
 from src.Filtering import Filtering
@@ -223,32 +223,32 @@ def test_pm4py_alignment(num_traces=[]):
     return samples
 
 def real_life_evaluation():
-    eventlog_dir = "./real_life_datasets"
+    eventlog_dir = "./real_life_datasets/"
     data = {}
     num_data_points = 1
-
-    for filename in os.listdir(eventlog_dir):
-        if filename.endswith(".xes"):
-            print(f"Processing {filename}")
-            our_event_log = EventLog.load_xes(os.path.join(eventlog_dir, filename))
+    for folder in os.listdir(eventlog_dir):
+        if not os.path.isdir(eventlog_dir + folder):
+            continue
+        for filename in os.listdir(eventlog_dir + folder):
+            if filename.endswith(".xes"):
+                print(f"Processing {filename}")
+                our_event_log = EventLog.load_xes(os.path.join(eventlog_dir, folder, filename))
+                
+                # filter the traces
+                our_event_log = Filtering.filter_eventlog_by_top_percentage_unique(our_event_log, 1, include_all_activities=False)
+                
+                pm4py_event_log = our_event_log.to_pm4py()
+                pm4py_pt = pm4py_inductive_miner(pm4py_event_log)
+                pm4py_net, init, end = pt_converter.apply(pm4py_pt, variant=pt_converter.Variants.TO_PETRI_NET)
+                
+                our_net = PetriNet.from_pm4py(pm4py_net, init, end)
             
-            # filter the traces
-            our_event_log = Filtering.filter_eventlog_by_top_percentage_unique(our_event_log, 1)
-            
-            pm4py_event_log = our_event_log.to_pm4py()
-            pm4py_pt = pm4py_inductive_miner(pm4py_event_log)
-            pm4py_net, init, end = pt_converter.apply(pm4py_pt, variant=pt_converter.Variants.TO_PETRI_NET)
-            
-            our_net = PetriNet.from_pm4py(pm4py_net)
-            our_net.set_final_marking(Marking({"End": 1}))
-            our_net.set_initial_marking(Marking({"Start": 1}))
-        
-            data[filename] = {"FastTokenBasedReplay (without caching)": time_fast_token_based_replay_without_caching(our_event_log, our_net),
-                              #"pm4py": time_pm4py_token_based_replay(our_event_log, our_net),
-                              "FastTokenBasedReplay (with prefix caching)": time_fast_token_based_replay_with_prefix_caching(our_event_log, our_net),
-                              "FastTokenBasedReplay (with suffix caching)": time_fast_token_based_replay_with_suffix_caching(our_event_log, our_net),
-                              "FastTokenBasedReplay (with prefix and suffix caching)" : time_fast_token_based_replay_with_prefix_and_suffix_caching(our_event_log, our_net)
-                              }
+                data[filename] = {"FastTokenBasedReplay (without caching)": time_fast_token_based_replay_without_caching(our_event_log, our_net),
+                                "pm4py": time_pm4py_token_based_replay(our_event_log, our_net),
+                                "FastTokenBasedReplay (with prefix caching)": time_fast_token_based_replay_with_prefix_caching(our_event_log, our_net),
+                                "FastTokenBasedReplay (with suffix caching)": time_fast_token_based_replay_with_suffix_caching(our_event_log, our_net),
+                                "FastTokenBasedReplay (with prefix and suffix caching)" : time_fast_token_based_replay_with_prefix_and_suffix_caching(our_event_log, our_net)
+                                }
             
     
     
@@ -283,7 +283,8 @@ def real_life_evaluation():
 
     # Show plot
     plt.tight_layout()
-    plt.show()  
+    plt.show()
+    # fig.savefig('ftr_real_life_comparison.png')  
     
 def synthetic_evaluation():
     num_traces = [1_000, 5_000, 50_000, 100_000]

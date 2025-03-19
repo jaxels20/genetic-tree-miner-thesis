@@ -41,44 +41,7 @@ void initialize_tokens(PetriNet& net) {
     }
 }
 
-void finalize_tokens(PetriNet& net, HyperGraph& silent_graph, int& missing, int& consumed, int& produced) {
-    // Check if there are tokens in the final marking
-    // If not, try to use silent transitions before adding tokens manually
-
-    Marking final_marking = net.final_marking;
-    Marking curr_marking = net.get_current_marking();
-
-    // check if the final mrking is contained in the current marking
-    if (stop_condition_final_marking(curr_marking, final_marking)) {
-        return;
-    }
-
-    // Check if the final marking is reachable from the current marking
-    auto [reachable, sequence] = silent_graph.canReachTargetMarking(curr_marking, final_marking, 5);
-    if (reachable) {
-        net.fire_transition_sequence(sequence, &consumed, &produced);
-    }
-
-    // check if the final mrking is contained in the current marking
-    if (stop_condition_final_marking(curr_marking, final_marking)) {
-        return;
-    }
-
-    // Else create tokens in the places of the final markin
-
-    for (const auto& [place, tokens] : net.final_marking.places) {
-        Place* p = net.get_place(place);
-        if (!p) continue;
-
-        int32_t tokens_in_place = p->number_of_tokens();
-        if (tokens_in_place < tokens) {
-            p->add_tokens(tokens - tokens_in_place);
-            missing += tokens - tokens_in_place;
-        }
-    }
-}
-
-void finalize_tokens_v2(PetriNet& net, std::unordered_map<std::string, std::unordered_map<std::string, std::vector<std::string>>> silent_firing_sequences, int& missing, int& consumed, int& produced) {
+void finalize_tokens(PetriNet& net, std::unordered_map<std::string, std::unordered_map<std::string, std::vector<std::string>>> silent_firing_sequences, int& missing, int& consumed, int& produced) {
     // Check if there are tokens in the final marking
     // If not, try to use silent transitions before adding tokens manually
 
@@ -166,7 +129,7 @@ replay_trace_without_caching(
     PetriNet& net, 
     std::unordered_map<std::string, std::unordered_map<std::string,std::vector<std::string>>> silent_firing_sequences,
     ActivityCache& activity_cache) {   
-        int missing = 0;   // Count of missing tokens (tokens added to input places to enable transitions)
+    int missing = 0;   // Count of missing tokens (tokens added to input places to enable transitions)
     int remaining = 0; // Count of remaining tokens in the Petri net at the end
     int consumed = 0;  // Count of tokens consumed from input places
     int produced = 0;  // Count of tokens produced in output places
@@ -216,7 +179,7 @@ replay_trace_without_caching(
     consumed += net.final_marking.number_of_tokens();
 
     // Finalize the tokens in the Petri net
-    finalize_tokens_v2(net, silent_firing_sequences, missing, consumed, produced);
+    finalize_tokens(net, silent_firing_sequences, missing, consumed, produced);
 
     // Count the remaining tokens in the Petri net
     int32_t remaining_tokens = net.number_of_tokens() - net.final_marking.number_of_tokens();
@@ -298,7 +261,7 @@ replay_trace_with_prefix(
     }
 
     consumed += net.final_marking.number_of_tokens();
-    finalize_tokens_v2(net, silent_firing_sequences, missing, consumed, produced);
+    finalize_tokens(net, silent_firing_sequences, missing, consumed, produced);
 
     remaining += net.number_of_tokens() - net.final_marking.number_of_tokens();
 
@@ -366,7 +329,7 @@ replay_trace_with_suffix(
     }
 
     consumed += net.final_marking.number_of_tokens();
-    finalize_tokens_v2(net, silent_firing_sequences, missing, consumed, produced);
+    finalize_tokens(net, silent_firing_sequences, missing, consumed, produced);
 
     int32_t remaining_tokens = net.number_of_tokens() - net.final_marking.number_of_tokens();
     remaining += remaining_tokens;
@@ -444,7 +407,7 @@ replay_trace_with_prefix_and_suffix(
     consumed += net.final_marking.number_of_tokens();
 
     // Finalize the tokens in the Petri net
-    finalize_tokens_v2(net, silent_firing_sequences, missing, consumed, produced);
+    finalize_tokens(net, silent_firing_sequences, missing, consumed, produced);
 
     // Count the remaining tokens in the Petri net
     int32_t remaining_tokens = net.number_of_tokens() - net.final_marking.number_of_tokens();
@@ -465,13 +428,10 @@ calculate_fitness(const EventLog& log, const PetriNet& net, bool prefix_caching,
     int total_produced = 0;
     int total_consumed = 0;
 
-    HyperGraph silent_hyper_graph = create_silent_hyper_graph(net);
     PrefixTree prefix_cache;
     std::unordered_map<MarkingPostfixKey, std::vector<std::string>, MarkingPostfixKeyHasher> postfixCache;
     // Map to store computed values for unique traces
     std::unordered_map<Trace, std::tuple<int, int, int, int>> trace_cache;
-
-    Graph silent_graph = create_silent_graph(net);
 
     PetriNet net_copy = net;
     // A map to store the firing sequences for every place to every other place using silent transitions
