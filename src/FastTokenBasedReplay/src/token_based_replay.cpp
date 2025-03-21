@@ -319,19 +319,83 @@ replay_trace_with_prefix_and_suffix(
     PetriNet& net, 
     std::unordered_map<std::string, 
     std::unordered_map<std::string, std::vector<std::string>>> silent_firing_sequences, 
-    ActivityCache& activity_cache) {
+    ActivityCache& activity_cache,
+    PrefixTree& prefix_cache,
+    std::unordered_map<MarkingPostfixKey, std::vector<std::string>, MarkingPostfixKeyHasher>& postfixCache) {
+    
+    int missing = 0, remaining = 0, consumed = 0, produced = 0;
+    produced += net.initial_marking.number_of_tokens();
+    initialize_tokens(net);
 
-    int missing = 0;   // Count of missing tokens (tokens added to input places to enable transitions)
-    int remaining = 0; // Count of remaining tokens in the Petri net at the end
-    int consumed = 0;  // Count of tokens consumed from input places
-    int produced = 0;  // Count of tokens produced in output places
+    // Attempt to match prefix
+    std::vector<Event> matched_prefix;
+    std::shared_ptr<PrefixNode> prefix_node = prefix_cache.get_longest_matching_prefix(trace.events, matched_prefix);
+    
+    if (!matched_prefix.empty()) {
+        auto [cached_missing, cached_remaining, cached_produced, cached_consumed] = prefix_node->replay_data;
+        missing = cached_missing;
+        remaining = cached_remaining;
+        produced = cached_produced;
+        consumed = cached_consumed;
+        net.set_marking(prefix_node->marking);
+    }
 
-    return std::make_tuple(
-        static_cast<double>(missing), 
-        static_cast<double>(remaining), 
-        static_cast<double>(produced), 
-        static_cast<double>(consumed));
+    for (size_t i = matched_prefix.size(); i < trace.events.size(); i++) {
+        const auto& event = trace.events[i];
+        std::string postfix = computePostfix(trace, i);
+        MarkingPostfixKey key { net.get_current_marking(), postfix };
+        auto it = postfixCache.find(key);
+        
+        if (it != postfixCache.end()) {
+            net.fire_transition_sequence(it->second, &consumed, &produced);
+            break;
+        }
+
+        Transition* transition = net.get_transition(event.activity);
+        if (!transition) {
+            throw std::runtime_error("Transition not found: " + event.activity);
+        }
+
+        if (net.can_fire(*transition)) {
+            net.fire_transition(*transition, &consumed, &produced);
+        } else {
+            Marking current_marking = net.get_current_marking();
+            std::vector<std::string> cached_sequence = activity_cache.retrieve(current_marking, transition->name);
+            
+            if (!cached_sequence.empty()) {
+                net.fire_transition_sequence(cached_sequence, &consumed, &produced);
+            } else {
+                auto [reachable, sequence] = attempt_to_make_transition_enabled_by_firing_silent_transitions(net, transition, silent_firing_sequences);
+                
+                if (reachable) {
+                    net.fire_transition_sequence(sequence, &consumed, &produced);
+                    activity_cache.store(current_marking, transition->name, sequence);
+                } else {
+                    for (const auto& place : net.get_preset(*transition)) {
+                        Place* p = net.get_place(place.name);
+                        if (p && p->number_of_tokens() == 0) {
+                            p->add_tokens(1);
+                            missing += 1;
+                        }
+                    }
+                }
+                net.fire_transition(*transition, &consumed, &produced);
+            }
+        }
+        
+        std::vector<Event> prefix(trace.events.begin(), trace.events.begin() + i + 1);
+        auto new_prefix_node = prefix_cache.get_or_create_node(prefix);
+        new_prefix_node->replay_data = {missing, remaining, produced, consumed};
+        new_prefix_node->marking = net.get_current_marking();
+    }
+    
+    consumed += net.final_marking.number_of_tokens();
+    finalize_tokens(net, silent_firing_sequences, missing, consumed, produced);
+    remaining += net.number_of_tokens() - net.final_marking.number_of_tokens();
+    
+    return std::make_tuple(static_cast<double>(missing), static_cast<double>(remaining), static_cast<double>(produced), static_cast<double>(consumed));
 }
+
 
 double calculate_fitness(const EventLog& log, const PetriNet& net, bool prefix_caching, bool suffix_caching){
     int total_missing = 0;
@@ -358,7 +422,7 @@ double calculate_fitness(const EventLog& log, const PetriNet& net, bool prefix_c
             // If this trace has not been processed, do token replay
             PetriNet net_copy = net;
             if (prefix_caching && suffix_caching) {
-                trace_cache[trace] = replay_trace_with_prefix_and_suffix(trace, net_copy, silent_firing_sequences, activity_cache);
+                trace_cache[trace] = replay_trace_with_prefix_and_suffix(trace, net_copy, silent_firing_sequences, activity_cache, prefix_cache, postfixCache);
             } else if (prefix_caching) {
                 trace_cache[trace] = replay_trace_with_prefix(trace, net_copy, silent_firing_sequences, activity_cache,  prefix_cache);
             } else if (suffix_caching) {
