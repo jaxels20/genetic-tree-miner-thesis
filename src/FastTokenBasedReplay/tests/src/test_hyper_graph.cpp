@@ -147,3 +147,4 @@ TEST(HyperGraphTest, ConvertsSilentTransitionsCorrectly) {
     // Check if other transitions (like T1) are not included as hyperedges
     ASSERT_FALSE(silentGraph.hasEdge("T1"));
 }
+

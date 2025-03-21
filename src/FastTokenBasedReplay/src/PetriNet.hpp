@@ -215,6 +215,28 @@ class PetriNet {
             return fired_transitions;
         }
         
+        // Fire a sequence of transitions, stopping if a transition cannot fire returns the fired transitions
+        std::vector<std::string> partially_fire_transition_sequence(const std::vector<std::string>& transition_names, int* consumed, int* produced) {
+            std::vector<std::string> fired_transitions;
+            for (const auto& transition_name : transition_names) {
+                Transition* transition = get_transition(transition_name);
+                if (transition) {
+                    if (can_fire(*transition)) {
+                        fire_transition(*transition, consumed, produced);
+                        fired_transitions.push_back(transition_name);
+                    }
+                    else {
+                        return fired_transitions;
+                    }
+                }
+                else {
+                    return fired_transitions;
+                }
+            }
+            return fired_transitions;
+        }
+
+
         bool can_fire_transition_sequence(const std::vector<std::string>& transition_names) {
 
             // Make a copy of self 

@@ -29,20 +29,11 @@ include_directories(${GTEST_INCLUDE_DIRS})
 file(GLOB TEST_SOURCES tests/*.cpp)
 add_executable(run_tests ${TEST_SOURCES})
 
+# Build the main.cpp file
+add_executable(main src/main.cpp)
+
 # Link against GoogleTest
 target_link_libraries(run_tests PRIVATE ${GTEST_BOTH_LIBRARIES} pthread)
 
-# Register tests
-add_test(NAME MyTests COMMAND run_tests)
-
-# Custom target to build and run tests
-add_custom_target(run_tests_target
-    COMMAND run_tests
-    DEPENDS run_tests
-    COMMENT "Running tests..."
-)
-
-add_dependencies(run_tests_target run_tests)
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg -O2") # Enable profiling
+#set(CMAKE_BUILD_TYPE Debug) # Debug purposes
 

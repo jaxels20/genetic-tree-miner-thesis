@@ -53,19 +53,19 @@ void finalize_tokens(PetriNet& net, std::unordered_map<std::string, std::unorder
         return;
     }
 
-    // Check if the final marking is reachable from the current marking
-    // auto [reachable, sequence] = attempt_to_reach_final_marking_by_firing_silent_transitions(net, silent_firing_sequences, final_marking);
-    // if (reachable) {
-    //     net.fire_transition_sequence(sequence, &consumed, &produced);
-    // }
+    // Try to reach the final marking by firing silent transitions
+    auto [reachable, firing_sequence] = attempt_to_reach_final_marking_by_firing_silent_transitions(net, silent_firing_sequences, final_marking);
+
+    if (reachable) {
+        net.fire_transition_sequence(firing_sequence, &consumed, &produced);
+    }
 
     // check if the final mrking is contained in the current marking
     if (stop_condition_final_marking(curr_marking, final_marking)) {
         return;
     }
 
-    // Else create tokens in the places of the final markin
-
+    // Else create tokens in the places of the final marking
     for (const auto& [place, tokens] : net.final_marking.places) {
         Place* p = net.get_place(place);
         if (!p) continue;
@@ -76,43 +76,7 @@ void finalize_tokens(PetriNet& net, std::unordered_map<std::string, std::unorder
             missing += tokens - tokens_in_place;
         }
     }
-}
 
-HyperGraph create_silent_hyper_graph(const PetriNet& net) {
-    HyperGraph hypergraph;
-    PetriNet net_copy = net;
-    // Add places as nodes in the hypergraph
-    for (const auto& place : net_copy.places) {
-        hypergraph.addNode(place.name, place.tokens);
-    }
-
-    // Add silent transitions as hyperedges in the hypergraph
-    for (const auto& transition : net_copy.transitions) {
-        if (transition.is_silent()) {
-            // Identify the input places (sources) and output places (targets) for the silent transition
-            std::vector<std::string> sourcePlaces;
-            std::vector<std::string> targetPlaces;
-
-            // Gather input places (sources)
-            for (const auto& arc : net_copy.arcs) {
-                if (arc.target == transition.name) {
-                    sourcePlaces.push_back(arc.source);
-                }
-            }
-
-            // Gather output places (targets)
-            for (const auto& arc : net_copy.arcs) {
-                if (arc.source == transition.name) {
-                    targetPlaces.push_back(arc.target);
-                }
-            }
-
-            // Add the hyperedge to the hypergraph
-            hypergraph.addEdge(transition.name, sourcePlaces, targetPlaces);
-        }
-    }
-
-    return hypergraph;
 }
 
 std::string computePostfix(const Trace& trace, size_t currentIndex) {
@@ -362,58 +326,6 @@ replay_trace_with_prefix_and_suffix(
     int consumed = 0;  // Count of tokens consumed from input places
     int produced = 0;  // Count of tokens produced in output places
 
-    produced += net.initial_marking.number_of_tokens();
-
-    // Initialize the tokens in the Petri net
-    initialize_tokens(net);
-
-    // Iterate over the events in the trace
-    for (const auto& event : trace.events) {
-        
-        // Find the transition corresponding to the event
-        Transition* transition = net.get_transition(event.activity);
-        if (!transition) {
-            throw std::runtime_error("Transition not found: " + event.activity);
-        }
-
-        if (net.can_fire(*transition)) {
-            net.fire_transition(*transition, &consumed, &produced);
-        } else {
-            Marking current_marking = net.get_current_marking();
-            std::vector<std::string> cached_sequence = activity_cache.retrieve(current_marking, transition->name);
-            
-            if (!cached_sequence.empty()) {
-                net.fire_transition_sequence(cached_sequence, &consumed, &produced);
-            } else {
-                auto [reachable, sequence] = attempt_to_make_transition_enabled_by_firing_silent_transitions(net, transition, silent_firing_sequences);
-                
-                if (reachable) {
-                    net.fire_transition_sequence(sequence, &consumed, &produced);
-                    activity_cache.store(current_marking, transition->name, sequence);
-                } else {
-                    for (const auto& place : net.get_preset(*transition)) {
-                        Place* p = net.get_place(place.name);
-                        if (p && p->number_of_tokens() == 0) {
-                            p->add_tokens(1);
-                            missing += 1;
-                        }
-                    }
-                }
-                net.fire_transition(*transition, &consumed, &produced);
-            }
-        }
-    }
-
-    consumed += net.final_marking.number_of_tokens();
-
-    // Finalize the tokens in the Petri net
-    finalize_tokens(net, silent_firing_sequences, missing, consumed, produced);
-
-    // Count the remaining tokens in the Petri net
-    int32_t remaining_tokens = net.number_of_tokens() - net.final_marking.number_of_tokens();
-
-    remaining += remaining_tokens;
-
     return std::make_tuple(
         static_cast<double>(missing), 
         static_cast<double>(remaining), 
@@ -421,8 +333,7 @@ replay_trace_with_prefix_and_suffix(
         static_cast<double>(consumed));
 }
 
-double 
-calculate_fitness(const EventLog& log, const PetriNet& net, bool prefix_caching, bool suffix_caching){
+double calculate_fitness(const EventLog& log, const PetriNet& net, bool prefix_caching, bool suffix_caching){
     int total_missing = 0;
     int total_remaining = 0;
     int total_produced = 0;
@@ -471,7 +382,6 @@ calculate_fitness(const EventLog& log, const PetriNet& net, bool prefix_caching,
 
     return fitness;
 }
-
 
 
 

@@ -32,7 +32,10 @@ class Marking {
     
         bool contains(const Marking& target) const {
             for (const auto& [place, tokens] : target.places) {
-                if (places.at(place) < tokens) return false;
+                auto it = places.find(place);
+                if (it == places.end() || it->second < tokens) {
+                    return false;
+                }
             }
             return true;
         }
