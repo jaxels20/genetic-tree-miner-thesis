@@ -191,6 +191,7 @@ class Mutator(MutatorBase):
         return new_tree
     
     def generate_new_population(self, old_population: Population) -> Population:
+        assert self.random_creation_rate + self.crossover_rate + self.mutation_rate + self.elite_rate == 1.0, "Rates must sum to 1.0"
         new_population = Population([])
         population_size = len(old_population.get_population())
         
@@ -216,7 +217,7 @@ class Mutator(MutatorBase):
     
         return new_population
     
-    def tournament_population_generation(self, old_population: Population) -> ProcessTree:
+    def tournament_population_generation(self, old_population: Population) -> Population:
         new_population = Population([])
         population_size = len(old_population.get_population())
         
@@ -236,6 +237,10 @@ class Mutator(MutatorBase):
         for _ in range(int(self.mutation_rate * population_size)):
             tree = random.choice(mutation_population)
             new_population.add_tree(self.mutation(tree))
+            
+        # Random creation
+        random_population = self.random_creation(int(self.random_creation_rate * population_size))
+        new_population.add_trees(random_population)
         
         return new_population
     

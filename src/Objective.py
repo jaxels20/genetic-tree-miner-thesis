@@ -33,6 +33,9 @@ class ObjectiveBaseClass:
             simplicity_value = simplicity(self.pm4py_pn)
         return simplicity_value
     
+    def refined_simplicity(self):
+        return len(self.pm4py_pn.get_places())
+    
     def generalization(self):
         with SuppressPrints():
             generalization_value = generalization(self.event_log_pm4py, self.pm4py_pn, self.inital_marking, self.final_marking)
@@ -82,7 +85,8 @@ class SimpleWeightedScore(ObjectiveBaseClass):
         
         if weights is None:
             weights = {
-                "simplicity": 50,
+                "simplicity": 200,
+                "refined_simplicity": 200,
                 "generalization": 50,
                 "average_trace_fitness": 100,
                 "precision": 50,
@@ -92,6 +96,7 @@ class SimpleWeightedScore(ObjectiveBaseClass):
     def fitness(self):
         scores = {
             "simplicity": self.simplicity(),
+            "refined_simplicity": self.refined_simplicity(),
             "generalization": self.generalization(),
             "average_trace_fitness": self.ftr_fitness(),
             "precision": self.precision(),

@@ -11,6 +11,12 @@ class Population:
         """
         return self.trees
     
+    def get_largest_tree(self) -> ProcessTree:
+        """
+        Returns the largest tree in the population
+        """
+        return max(self.trees, key=lambda tree: tree.get_size())
+    
     def add_tree(self, tree: ProcessTree):
         """
         Adds a tree to the population

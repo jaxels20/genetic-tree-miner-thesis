@@ -120,6 +120,9 @@ class ProcessTree:
         gviz = vis_process_tree.apply(pm4py_tree)
         vis_process_tree.view(gviz) 
     
+    def get_size(self) -> int:
+        return 1 + sum(child.get_size() for child in self.children)
+    
     def is_valid(self) -> bool:
         """
         Checks if a process tree is valid according to the definition of a process tree.
@@ -137,6 +140,10 @@ class ProcessTree:
         
         # Check that internal nodes are operators
         if not isinstance(self.operator, Operator):
+            return False
+        
+        # Check that the maximum depth is not exceeded
+        if self.get_size() > 20:
             return False
         
         child_count = len(self.children)
