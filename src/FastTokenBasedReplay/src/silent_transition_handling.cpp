@@ -1,6 +1,5 @@
 #pragma once
 
-#include <iostream>
 #include <unordered_map>
 #include <vector>
 #include <string>
@@ -63,7 +62,6 @@ std::set<std::string> compute_lambda_set(const Marking& current_marking, const M
     return lambda_set;
 }
 
-
 std::set<std::vector<std::string>, CompareVectorLength> 
 get_possible_firing_sequences(
     const std::unordered_map<std::string, std::unordered_map<std::string, std::vector<std::string>>>& firing_sequences, 
@@ -86,7 +84,6 @@ get_possible_firing_sequences(
     return possible_firing_sequences;
 }
 
-
 std::tuple<bool, std::vector<std::string>> 
 attempt_to_make_transition_enabled_by_firing_silent_transitions(PetriNet& net, Transition* transition, std::unordered_map<std::string, std::unordered_map<std::string, std::vector<std::string>>> firing_sequences) {
     PetriNet net_copy = net;
@@ -97,7 +94,7 @@ attempt_to_make_transition_enabled_by_firing_silent_transitions(PetriNet& net, T
     std::set<std::string> lambda_set = compute_lambda_set(current_marking, target_marking);
     std::set<std::vector<std::string>, CompareVectorLength> possible_firing_sequences = get_possible_firing_sequences(firing_sequences, delta_set, lambda_set);
     
-    size_t max_iterations = 20;
+    size_t max_iterations = 10;
     size_t iterations = 0;
 
     while (!delta_set.empty()){
@@ -106,32 +103,34 @@ attempt_to_make_transition_enabled_by_firing_silent_transitions(PetriNet& net, T
             break;
         }
         for (const auto& sequence : possible_firing_sequences) {
-            // Check if the sequence can be fired
-            if (net_copy.can_fire_transition_sequence(sequence)) {
-                net_copy.fire_transition_sequence(sequence, nullptr, nullptr);
-                
-                // append the sequence to the final firing sequence
-                final_firing_sequence.insert(final_firing_sequence.end(), sequence.begin(), sequence.end());
-
-                // check the T transition is enabled
-                if (net_copy.can_fire(*transition)) {
-                    return std::make_tuple(true, final_firing_sequence);
-                }
-                
-                // update the current marking
-                current_marking = net_copy.get_current_marking();
-                delta_set = compute_delta_set(current_marking, target_marking);
-                lambda_set = compute_lambda_set(current_marking, target_marking);
-                possible_firing_sequences = get_possible_firing_sequences(firing_sequences, delta_set, lambda_set);
-                break; // break the for loop to start the while loop again
+            // Partially fire the sequence 
+            std::vector<std::string> fired_transitions = net_copy.partially_fire_transition_sequence(sequence, nullptr, nullptr);
+            
+            // if no transitions were fired, continue to the next sequence
+            if (fired_transitions.empty()) {
+                continue;
             }
+            
+            // append the sequence to the final firing sequence
+            final_firing_sequence.insert(final_firing_sequence.end(), fired_transitions.begin(), fired_transitions.end());
+
+            // check the T transition is enabled
+            if (net_copy.can_fire(*transition)) {
+                return std::make_tuple(true, final_firing_sequence);
+            }
+            
+            // update the current marking
+            current_marking = net_copy.get_current_marking();
+            delta_set = compute_delta_set(current_marking, target_marking);
+            lambda_set = compute_lambda_set(current_marking, target_marking);
+            possible_firing_sequences = get_possible_firing_sequences(firing_sequences, delta_set, lambda_set);
+            break; // break the for loop to start the while loop again
         }
     }
     // No sequence found to enable the transition
     return std::make_tuple(false, std::vector<std::string>());
 
 };
-
 
 std::tuple<bool, std::vector<std::string>>
 attempt_to_reach_final_marking_by_firing_silent_transitions(PetriNet& net, std::unordered_map<std::string, std::unordered_map<std::string, std::vector<std::string>>> firing_sequences, Marking final_marking) {
@@ -146,10 +145,42 @@ attempt_to_reach_final_marking_by_firing_silent_transitions(PetriNet& net, std::
     std::set<std::string> lambda_set = compute_lambda_set(current_marking, final_marking);
     std::set<std::vector<std::string>, CompareVectorLength> possible_firing_sequences = get_possible_firing_sequences(firing_sequences, delta_set, lambda_set);
 
+    size_t max_iterations = 10;
+    size_t iterations = 0;
 
-    return std::make_tuple(reachable_by_silent_transitions, final_firing_sequence);
+     while (!delta_set.empty()){
+        iterations++;
+        if (iterations >= max_iterations) {
+            break;
+        }
+        for (const auto& sequence : possible_firing_sequences) {
+            // Partially fire the sequence 
+            std::vector<std::string> fired_transitions = net_copy.partially_fire_transition_sequence(sequence, nullptr, nullptr);
+            
+            // if no transitions were fired, continue to the next sequence
+            if (fired_transitions.empty()) {
+                continue;
+            }
+            // append the sequence to the final firing sequence
+            final_firing_sequence.insert(final_firing_sequence.end(), fired_transitions.begin(), fired_transitions.end());
+
+            // check the we have reached the final marking
+            if (net_copy.get_current_marking().contains(final_marking)) {
+                return std::make_tuple(true, final_firing_sequence);
+            }
+            
+            // update the current marking
+            current_marking = net_copy.get_current_marking();
+            delta_set = compute_delta_set(current_marking, target_marking);
+            lambda_set = compute_lambda_set(current_marking, target_marking);
+            possible_firing_sequences = get_possible_firing_sequences(firing_sequences, delta_set, lambda_set);
+            break; // break the for loop to start the while loop again
+        }
+    }
+    // No sequence found to get to the final marking
+    return std::make_tuple(false, std::vector<std::string>());
+
 };
-
 
 void get_places_shortest_path(
     PetriNet& net,
@@ -198,3 +229,4 @@ std::unordered_map<std::string, std::unordered_map<std::string, std::vector<std:
     }
     return places_shortest_path;
 }
+

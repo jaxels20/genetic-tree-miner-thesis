@@ -16,9 +16,8 @@
 #include "src/test_no_caching.cpp"
 #include "src/test_suffix.cpp"
 #include "src/test_prefix_and_suffix.cpp"
-// #include "src/test_suffix_tree.cpp"
-// #include "src/test_prefix_tree.cpp"
-// #include "src/test_hyper_graph.cpp"
+#include "src/test_suffix_tree.cpp"
+#include "src/test_prefix_tree.cpp"
 #include "src/test_silent_graph.cpp"
 #include "src/test_silent_transition_handling.cpp"
 
