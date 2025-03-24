@@ -4,7 +4,7 @@ import os
 
 INPUT_DIR = "./controlled_scenarios/"
 OUTPUT_DIR = "./controlled_scenarios_results/" 
-METHODS = ["Inductive Miner", "Genetic Miner"]
+METHODS = ["Genetic Miner"]
 NUM_WORKERS = 1
 
 if __name__ == "__main__":
@@ -23,17 +23,18 @@ if __name__ == "__main__":
     
     #Create and evaluate the MultiEvaluator
     multi_evaluator = MultiEvaluator(
-        eventlogs, 
+        eventlogs,
         methods=METHODS,
+        population_size=100,
+        max_generations=100,
         random_creation_rate=0.2,
-        crossover_rate=0.2,
-        mutation_rate=0.3,
-        elite_rate=0.3,
+        crossover_rate=0.75,
+        mutation_rate=0.2,
+        elite_rate=0.05,
+        tournament_size=0.25,
         min_fitness=None,
-        max_generations=500,
-        stagnation_limit=200,
+        stagnation_limit=None,
         time_limit=None,
-        population_size=200
     )
     
     results_df = multi_evaluator.evaluate_all(num_cores=NUM_WORKERS)
