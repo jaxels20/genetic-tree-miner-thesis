@@ -87,10 +87,8 @@ class GeneticAlgorithm:
                 break
                
             # Generate a new population
-            # population = self.mutator.generate_new_population(population)
-            population = self.mutator.tournament_population_generation(population)
+            population = self.mutator.generate_new_population(population)
+            # population = self.mutator.tournament_population_generation(population)
         
-            print(f"Largest tree: {population.get_largest_tree()}")
-            
         return self.best_tree
     

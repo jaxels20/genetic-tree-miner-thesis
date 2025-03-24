@@ -4,7 +4,7 @@ import os
 
 INPUT_DIR = "./controlled_scenarios/"
 OUTPUT_DIR = "./controlled_scenarios_results/" 
-METHODS = ["Genetic Miner"]
+METHODS = ["Inductive Miner", "Genetic Miner"]
 NUM_WORKERS = 1
 
 if __name__ == "__main__":
@@ -26,11 +26,11 @@ if __name__ == "__main__":
         eventlogs,
         methods=METHODS,
         population_size=100,
-        max_generations=200,
+        max_generations=100,
         random_creation_rate=0.2,
         crossover_rate=0.2,
-        mutation_rate=0.55,
-        elite_rate=0.05,
+        mutation_rate=0.3,
+        elite_rate=0.3,
         tournament_size=0.25,
         min_fitness=None,
         stagnation_limit=None,
