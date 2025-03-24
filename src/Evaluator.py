@@ -143,6 +143,7 @@ class MultiEvaluator:
         # and values a dict of event log names and PetriNet objects
         for method in methods:
             for event_log_name, event_log in self.event_logs.items():
+                print("Running discovery for", method, "on", event_log_name)
                 pn_result = Discovery.run_discovery(method, event_log, **kwargs)
                 self.petri_nets[method][event_log_name] = pn_result
         

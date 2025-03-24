@@ -15,27 +15,25 @@ if __name__ == "__main__":
     loader = BatchFileLoader(cpu_count=NUM_WORKERS)
     
     for dataset_dir in dataset_dirs:
+        if dataset_dir not in ['BPI_Challenge_2013_open_problems', 'BPI_Challenge_2013_closed_problems']:
+            continue
         temp_eventlogs = loader.load_all_eventlogs(f"{INPUT_DIR}{dataset_dir}")
-        
         # check that there is only one event log in the directory
-        assert len(temp_eventlogs) == 1, f"Expected one event log in {dataset_dir}, got {len(temp_eventlogs)}"
         for eventlog in temp_eventlogs.values():
-            eventlog = Filtering.filter_eventlog_by_top_percentage_unique(eventlog, 0.1)
             eventlogs[dataset_dir] = eventlog
     
     #Create and evaluate the MultiEvaluator
     multi_evaluator = MultiEvaluator(
         eventlogs, 
         methods=METHODS,
-        random_creation_rate=0.2,
-        crossover_rate=0.2,
-        mutation_rate=0.3,
-        elite_rate=0.3,
+        max_generations=100,
+        population_size=100,
+        crossover_rate=0.75,
+        mutation_rate=0.2,
+        elite_rate=0.05,
         min_fitness=None,
-        max_generations=200,
-        stagnation_limit=80,
+        stagnation_limit=None,
         time_limit=None,
-        population_size=100
     )
     
     results_df = multi_evaluator.evaluate_all(num_cores=NUM_WORKERS)
