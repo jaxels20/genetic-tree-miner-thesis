@@ -11,6 +11,12 @@ class Population:
         """
         return self.trees
     
+    def get_largest_tree(self) -> ProcessTree:
+        """
+        Returns the largest tree in the population
+        """
+        return max(self.trees, key=lambda tree: tree.get_size())
+    
     def add_tree(self, tree: ProcessTree):
         """
         Adds a tree to the population
@@ -29,21 +35,40 @@ class Population:
         """
         self.trees.remove(tree)
     
-    def get_elite(self, num_elite: int) -> List[ProcessTree]:
+    def get_population_interval(self, lower_percentile: float, upper_percentile: float) -> List[ProcessTree]:
         """
-        Returns the top `num_elite` of the population
+        Returns the trees in the population that fall within the specified fitness percentile range.
+        """
+        
+        if not (0 <= lower_percentile <= 1 and 0 <= upper_percentile <= 1):
+            raise ValueError("Percentiles must be between 0 and 1")
+        
+        if lower_percentile > upper_percentile:
+            raise ValueError("Upper percentile must be greater than lower percentile")
+        
+        sorted_trees = sorted(self.trees, key=lambda tree: tree.get_fitness())
+        n = len(sorted_trees)
+        
+        lower_index = int(lower_percentile * n)
+        upper_index = int(upper_percentile * n)
+        
+        return sorted_trees[lower_index:upper_index]
+    
+    def get_best_trees(self, num_best_trees: int) -> List[ProcessTree]:
+        """
+        Returns the top `num_best_trees` of the population
         """
         # check if the number of elite trees is greater than the population size
-        if num_elite > len(self.trees):
+        if num_best_trees > len(self.trees):
             raise ValueError("Number of elite trees is greater than the population size")
         
-        return sorted(self.trees, key=lambda tree: tree.get_fitness(), reverse=True)[:num_elite]
+        return sorted(self.trees, key=lambda tree: tree.get_fitness(), reverse=True)[:num_best_trees]
     
     def get_best_tree(self) -> ProcessTree:
         """
         Returns the best tree in the population
         """
-        return self.get_elite(1)[0]
+        return self.get_best_trees(1)[0]
     
     def get_worst_tree(self) -> ProcessTree:
         """

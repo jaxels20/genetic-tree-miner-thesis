@@ -54,9 +54,7 @@ def main():
     
     for dataset_dir in dataset_dirs:
         temp_eventlogs = loader.load_all_eventlogs(f"{INPUT_DIR}{dataset_dir}")
-        # check that there is only one event log in the directory
-        # assert len(temp_eventlogs) == 1, f"Expected one event log in {dataset_dir}, got {len(temp_eventlogs)}"
-        if dataset_dir not in ['BPI_Challenge_2013_open_problems']:
+        if dataset_dir not in ['BPI_Challenge_2013_open_problems', 'BPI_Challenge_2013_closed_problems']:
             continue
         
         for eventlog in temp_eventlogs.values():

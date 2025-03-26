@@ -9,13 +9,13 @@ from src.PetriNet import PetriNet
 class Discovery:
     @staticmethod
     def genetic_algorithm(event_log: EventLog, random_creation_rate, crossover_rate, mutation_rate, 
-                       elite_rate, min_fitness, max_generations, stagnation_limit, 
+                       tournament_size, elite_rate, min_fitness, max_generations, stagnation_limit, 
                        time_limit, population_size):
         """
         A wrapper for the genetic algorithm.
         """        
         mutator = Mutator(event_log, random_creation_rate=random_creation_rate, crossover_rate=crossover_rate,
-                      mutation_rate=mutation_rate, elite_rate=elite_rate)
+                      mutation_rate=mutation_rate, tournament_size=tournament_size, elite_rate=elite_rate)
 
         ga = GeneticAlgorithm(mutator, min_fitness=min_fitness, max_generations=max_generations, 
                           stagnation_limit=stagnation_limit, time_limit=time_limit, 

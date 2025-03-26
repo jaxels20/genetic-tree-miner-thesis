@@ -49,3 +49,20 @@ class Monitor:
             fitness_str = f"Fitness: {tree.get_fitness():.4f}".rjust(max_fitness_len + 9)  # Align fitness values
             print(f"{gen_str}  {tree_str}  {fitness_str}")
 
+    def plot_largest_tree_size(self):
+        # tree_sizes = [max([len(str(tree)) for tree in population]) for population in self.populations]
+        tree_sizes = [max([tree.get_size() for tree in population]) for population in self.populations]
+        plt.plot(self.generations, tree_sizes)
+        plt.xlabel("Generation")
+        plt.ylabel("Largest tree size")
+        plt.title("Largest tree size over generations")
+        plt.show()
+        
+    def plot_size_of_best_tree(self):
+        tree_sizes = [best_tree.get_size() for best_tree in self.best_trees]
+        plt.plot(self.generations, tree_sizes)
+        plt.xlabel("Generation")
+        plt.ylabel("Size of best tree")
+        plt.title("Size of best tree over generations")
+        plt.show()
+        

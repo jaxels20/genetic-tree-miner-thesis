@@ -14,12 +14,13 @@ class MutatorBase:
 
 
 class Mutator(MutatorBase):
-    def __init__(self, EventLog: EventLog, random_creation_rate: float, crossover_rate: float, mutation_rate: float, elite_rate: float):
+    def __init__(self, EventLog: EventLog, random_creation_rate: float, crossover_rate: float, mutation_rate: float, elite_rate: float, tournament_size: float):
         super().__init__(EventLog)
         self.random_creation_rate = random_creation_rate
         self.crossover_rate = crossover_rate
         self.mutation_rate = mutation_rate
         self.elite_rate = elite_rate 
+        self.tournament_size = tournament_size
         
     def random_creation(self, num_new_trees: int) -> List[ProcessTree]:
         generator = BottomUpBinaryTreeGenerator()
@@ -33,7 +34,6 @@ class Mutator(MutatorBase):
         Parameters:
             parent1 (ProcessTree): The first parent process tree.
             parent2 (ProcessTree): The second parent process tree.
-            max_attempts (int, optional): Maximum number of attempts to find a valid crossover point. Defaults to 5.
 
         Returns:
             ProcessTree: A new process tree produced by the crossover operation, or a randomly
@@ -60,7 +60,6 @@ class Mutator(MutatorBase):
                 # Ensure that the tree is strictly valid
                 candidate.remove_duplicate_activities()
                 candidate.if_missing_insert_activities(self.EventLog.unique_activities())
-                
                 return candidate
             except ValueError:
                 continue   # remove_duplicate_activities raise an error, i.e. not possible to remove duplicate activities without breaking the tree
@@ -192,11 +191,12 @@ class Mutator(MutatorBase):
         return new_tree
     
     def generate_new_population(self, old_population: Population) -> Population:
+        assert self.random_creation_rate + self.crossover_rate + self.mutation_rate + self.elite_rate == 1.0, "Rates must sum to 1.0"
         new_population = Population([])
         population_size = len(old_population.get_population())
         
         # Add elite trees
-        elite = old_population.get_elite(int(population_size * self.elite_rate))
+        elite = old_population.get_best_trees(int(population_size * self.elite_rate))
         new_population.add_trees(elite)
 
         # Add random trees
@@ -217,6 +217,32 @@ class Mutator(MutatorBase):
     
         return new_population
     
+    def tournament_population_generation(self, old_population: Population) -> Population:
+        new_population = Population([])
+        population_size = len(old_population.get_population())
+        
+        # Elite selection
+        elite_population = old_population.get_best_trees(int(self.elite_rate * population_size))
+        new_population.add_trees(elite_population)
+
+        # Tournament selection
+        tournament_population = old_population.get_population_interval(0, self.tournament_size)
+        for _ in range(int(self.crossover_rate * population_size)):
+            random_sample = random.sample(tournament_population, k=6)
+            tree1, tree2 = sorted(random_sample, key=lambda tree: tree.get_fitness(), reverse=True)[:2]
+            new_population.add_tree(self.crossover(tree1, tree2))
+        
+        # Mutation selection
+        mutation_population = old_population.get_population_interval(self.elite_rate, 1)
+        for _ in range(int(self.mutation_rate * population_size)):
+            tree = random.choice(mutation_population)
+            new_population.add_tree(self.mutation(tree))
+            
+        # Random creation
+        random_population = self.random_creation(int(self.random_creation_rate * population_size))
+        new_population.add_trees(random_population)
+        
+        return new_population
     
 def deep_copy_tree(node: ProcessTree) -> 'ProcessTree':
     # Create root node
