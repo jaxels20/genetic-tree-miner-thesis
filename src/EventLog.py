@@ -60,6 +60,7 @@ class EventLog:
     """
     def __init__(self):
         self.traces = []
+        self._unique_activities = None
     
     @staticmethod
     def load_xes(xes_file: str):
@@ -367,11 +368,21 @@ class EventLog:
         """
         Get the set of unique activities in the event log.
         """
+        if self._unique_activities is not None:
+            return self._unique_activities
+        
         activities = set()
         for trace in self.traces:
             for event in trace.events:
                 activities.add(event.activity)
+        
         return activities
+    
+    def set_unique_activities(self, activities):
+        """
+        Set the unique activities of the event log.
+        """
+        self._unique_activities = activities
     
     def to_fast_token_based_replay(self):
         """

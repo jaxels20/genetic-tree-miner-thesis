@@ -7,20 +7,16 @@ from src.PetriNet import PetriNet
 from src.Filtering import Filtering
 import csv
 import pandas as pd
+from src.EventLog import EventLog
 
 if __name__ == "__main__":
-    # load csv file
-    with open('./filtering_analysis/top_traces_filtering.csv') as f:
-        reader = csv.reader(f)
-        data = list(reader)
-        
-    results = dict()
-    filtering_percentages = [float(x) for x in data[0][1:]]
-    for row in data[1:]:
-        eventlog_name = row[0]
-        results[eventlog_name] = dict()
-        for i in range(1, len(row)):
-            results[eventlog_name][filtering_percentages[i-1]] = float(row[i])
-            
+    el = EventLog.load_xes("real_life_datasets/BPI_Challenge_2013_closed_problems/BPI_Challenge_2013_closed_problems.xes")
+    print(f"Unique activities: {el.unique_activities()}")
+    print(f"Number of traces: {len(el.traces)}")
+    
+    filtered_log = Filtering.filter_eventlog_by_top_percentage_unique(el, 0.1, True)
+    print(f"Unique activities after filtering: {filtered_log.unique_activities()}")
+    print(f"Number of traces after filtering: {len(filtered_log.traces)}")
+    
             
     
