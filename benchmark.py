@@ -246,8 +246,8 @@ def real_life_evaluation():
                 data[filename] = {"FastTokenBasedReplay (without caching)": time_fast_token_based_replay_without_caching(our_event_log, our_net),
                                 "pm4py": time_pm4py_token_based_replay(our_event_log, our_net),
                                 "FastTokenBasedReplay (with prefix caching)": time_fast_token_based_replay_with_prefix_caching(our_event_log, our_net),
-                                "FastTokenBasedReplay (with suffix caching)": time_fast_token_based_replay_with_suffix_caching(our_event_log, our_net),
-                                "FastTokenBasedReplay (with prefix and suffix caching)" : time_fast_token_based_replay_with_prefix_and_suffix_caching(our_event_log, our_net)
+                                #"FastTokenBasedReplay (with suffix caching)": time_fast_token_based_replay_with_suffix_caching(our_event_log, our_net),
+                                #"FastTokenBasedReplay (with prefix and suffix caching)" : time_fast_token_based_replay_with_prefix_and_suffix_caching(our_event_log, our_net)
                                 }
             
     
@@ -284,7 +284,7 @@ def real_life_evaluation():
     # Show plot
     plt.tight_layout()
     plt.show()
-    # fig.savefig('ftr_real_life_comparison.png')  
+    fig.savefig('ftr_real_life_comparison.png')  
     
 def synthetic_evaluation():
     num_traces = [1_000, 5_000, 50_000, 100_000]
@@ -298,7 +298,7 @@ def synthetic_evaluation():
     
     print(f"FastTokenBasedReplay without caching: {[round(x * 1000, 2) for x in ftr_without_caching_times]}")
     print(f"FastTokenBasedReplay with prefix caching: {[round(x * 1000, 2) for x in ftr_with_prefix_caching_times]}")
-    print(f"FastTokenBasedReplay with suffix caching: {[round(x * 1000, 2) for x in ftr_with_suffix_caching_times]}")
+    #print(f"FastTokenBasedReplay with suffix caching: {[round(x * 1000, 2) for x in ftr_with_suffix_caching_times]}")
     #print(f"FastTokenBasedReplay with prefix and suffix caching: {[round(x * 1000, 2) for x in ftr_with_prefix_and_suffix_times]}")
     print(f"pm4py token based: {[round(x * 1000, 2) for x in pm4py_token_based_times]}")
     
