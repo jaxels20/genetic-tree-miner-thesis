@@ -3,6 +3,8 @@ from src.EventLog import EventLog
 from typing import List, Dict, Tuple, Set
 from src.ProcessTree import ProcessTree, Operator
 from src.Population import Population
+from src.Filtering import Filtering
+import pm4py
 
 
 class RandomTreeGeneratorBase:
@@ -124,6 +126,36 @@ class SequentialTreeGenerator:
         population = Population(trees)
         return population
 
+class InjectionTreeGenerator:
+    def __init__(self):
+        pass
+
+    def generate_injection_model(self, eventlog: EventLog, percentage: float) -> ProcessTree:
+        filtered_log = Filtering.filter_eventlog_random(eventlog, percentage, include_all_activities=True)
+        pm4py_log = filtered_log.to_pm4py()
+
+        # use pm4py to generate the process tree by inductive miner on the pm4py log
+        process_tree = pm4py.discover_process_tree_inductive(pm4py_log)
+        # convert pm4py process tree to our ProcessTree object
+        process_tree = ProcessTree.from_pm4py(process_tree)
+
+        return process_tree
+
+    def generate_population(self, event_log: EventLog, n: int, percentage: float) -> List[ProcessTree]:
+        """
+        Generates a population of process trees by injecting noise into the event log.
+        """
+        trees = []
+        for _ in range(n):
+            tree = self.generate_injection_model(event_log, percentage)
+            print(tree)
+            if tree not in trees:
+                # Ensure uniqueness of trees
+                trees.append(tree)
+        print(trees)
+
+        population = Population(trees)
+        return population
     
 if __name__ == "__main__":
     unique_activities = ["A", "B", "C"]
