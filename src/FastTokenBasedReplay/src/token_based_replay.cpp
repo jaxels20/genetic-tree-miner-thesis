@@ -379,7 +379,7 @@ replay_trace_with_prefix_and_suffix(
     // Initialize the tokens in the Petri net
     initialize_tokens(net);
 
-    // longest prefix firing sequence
+    // Find the longest prefix firing sequence and fire it
     std::vector<std::string> prefix_firing_sequence = find_longest_prefix_firing_sequence(trace, prefix_cache);
     if (!prefix_firing_sequence.empty()) {
         net.fire_transition_sequence(prefix_firing_sequence, &consumed, &produced);
@@ -393,7 +393,11 @@ replay_trace_with_prefix_and_suffix(
     }
                 
 
-    for (i = prefix_firing_sequence.size(); i < trace_length; i++) {
+    // Compute rest of the trace (and store the firing sequence in the cache)
+    // Iterate over the events in the trace
+    int i = 0;
+    for (i = prefix_firing_sequence.size(); i < trace.length(); i++) {
+        Event event = trace.events[i];
         // Find the transition corresponding to the event
         Transition* transition = net.get_transition(event.activity);
         if (!transition) {
@@ -402,6 +406,11 @@ replay_trace_with_prefix_and_suffix(
 
         if (net.can_fire(*transition)) {
             net.fire_transition(*transition, &consumed, &produced);
+            // append to the fired sequence
+            if (!fired_sequence.empty()) {
+                fired_sequence += ",";
+            }
+            fired_sequence += transition->name;
 
         } else {
             Marking current_marking = net.get_current_marking();
@@ -411,10 +420,16 @@ replay_trace_with_prefix_and_suffix(
                 net.fire_transition_sequence(cached_sequence, &consumed, &produced);
             } else {
                 auto [reachable, sequence] = attempt_to_make_transition_enabled_by_firing_silent_transitions(net, transition, silent_firing_sequences);
-                
                 if (reachable) {
                     net.fire_transition_sequence(sequence, &consumed, &produced);
                     activity_cache.store(current_marking, transition->name, sequence);
+                    // append to the fired sequence
+                    for (const auto& transition : sequence) {
+                        if (!fired_sequence.empty()) {
+                            fired_sequence += ",";
+                        }
+                        fired_sequence += transition;
+                    }
                 } else {
                     for (const auto& place : net.get_preset(*transition)) {
                         Place* p = net.get_place(place.name);
@@ -425,6 +440,15 @@ replay_trace_with_prefix_and_suffix(
                     }
                 }
                 net.fire_transition(*transition, &consumed, &produced);
+                // append to the fired sequence
+                if (!fired_sequence.empty()) {
+                    fired_sequence += ",";
+                }
+                fired_sequence += transition->name;
+                
+                // Store the firing sequence in the prefix cache
+                prefix_cache[fired_sequence] = {fired_sequence};
+
             }
         }
     }

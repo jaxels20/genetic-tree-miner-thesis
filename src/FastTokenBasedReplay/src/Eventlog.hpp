@@ -56,6 +56,11 @@ public:
         return events == other.events;
     }
 
+    // define the lenght of the trace
+    size_t length() const {
+        return events.size();
+    }
+
 };
 
 // Hash function for Trace (only considering events)
