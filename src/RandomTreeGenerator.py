@@ -148,11 +148,19 @@ class InjectionTreeGenerator:
         trees = []
         for _ in range(n):
             tree = self.generate_injection_model(event_log, percentage)
-            print(tree)
-            if tree not in trees:
+            if not any (trees[i].is_equal(tree) for i in range(len(trees))):
                 # Ensure uniqueness of trees
                 trees.append(tree)
-        print(trees)
+        
+        if len(trees) < n:
+            generator = BottomUpBinaryTreeGenerator()
+            unique_activities = event_log.unique_activities()
+
+        while(len(trees) < n):
+            tree = generator._generate_naive_binary_tree(unique_activities)
+            if not any (trees[i].is_equal(tree) for i in range(len(trees))):
+                # Ensure uniqueness of trees
+                trees.append(tree)
 
         population = Population(trees)
         return population
