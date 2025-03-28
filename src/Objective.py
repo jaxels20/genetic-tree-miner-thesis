@@ -13,110 +13,81 @@ from pm4py.algo.evaluation.generalization.variants.token_based import apply as g
 from pm4py.algo.evaluation.simplicity.variants.arc_degree import apply as simplicity
 
 
-class ObjectiveBaseClass:
-    def __init__(self, process_model: Union[ProcessTree, PetriNet], event_log: EventLog):
-        self.process_model = process_model
-        if isinstance(process_model, ProcessTree):
-            self.pm4py_pn, self.inital_marking, self.final_marking = process_model.to_pm4py_pn()
-        elif isinstance(process_model, PetriNet):
-            self.pm4py_pn, self.inital_marking, self.final_marking = process_model.to_pm4py()
-            
+
+class Objective:
+    def __init__(self, event_log: EventLog):        
+        # Initialize eventlog, pm4py_eventlog, and ftr_eventlog    
         self.eventlog = event_log
         self.event_log_pm4py = event_log.to_pm4py()
         self.ftr_eventlog = self.eventlog.to_fast_token_based_replay()
         
-        our_pn = PetriNet.from_pm4py(self.pm4py_pn, self.inital_marking, self.final_marking)
-        self.ftr_petri_net = our_pn.to_fast_token_based_replay()
-        
-    def simplicity(self):
+    def simplicity(self, pm4py_pn):
         with SuppressPrints():
-            simplicity_value = simplicity(self.pm4py_pn)
+            simplicity_value = simplicity(pm4py_pn)
         return simplicity_value
     
-    def refined_simplicity(self):
-        return -len(self.pm4py_pn.get_transitions()) 
+    def refined_simplicity(self, pm4py_pn):
+        max_places = 100
+        simplicity = len(pm4py_pn.get_places()) / max_places
+        simplicity = 1 - simplicity
+        simplicity = max(0, simplicity)
+        return simplicity 
     
-    def generalization(self):
+    def generalization(self, pm4py_pn, initial_marking, final_marking):
         with SuppressPrints():
-            generalization_value = generalization(self.event_log_pm4py, self.pm4py_pn, self.inital_marking, self.final_marking)
+            generalization_value = generalization(self.event_log_pm4py, pm4py_pn, initial_marking, final_marking)
         return generalization_value
     
-    def average_trace_fitness(self):
+    def average_trace_fitness(self, pm4py_pn, inital_marking, final_marking):
         with SuppressPrints():
-            fitness = replay_fitness(self.event_log_pm4py, self.pm4py_pn, self.inital_marking, self.final_marking)
+            fitness = replay_fitness(self.event_log_pm4py, pm4py_pn, inital_marking, final_marking)
         return fitness['average_trace_fitness']
 
-    def perc_fit_traces(self):
+    def perc_fit_traces(self, pm4py_pn, inital_marking, final_marking):
         with SuppressPrints():
-            fitness = replay_fitness(self.event_log_pm4py, self.pm4py_pn, self.inital_marking, self.final_marking)
+            fitness = replay_fitness(self.event_log_pm4py, pm4py_pn, inital_marking, final_marking)
         return fitness['perc_fit_traces']
         
-    def log_fitness(self):
+    def log_fitness(self, pm4py_pn, inital_marking, final_marking):
         with SuppressPrints():
-            fitness = replay_fitness(self.event_log_pm4py, self.pm4py_pn, self.inital_marking, self.final_marking)
+            fitness = replay_fitness(self.event_log_pm4py, pm4py_pn, inital_marking, final_marking)
         return fitness['log_fitness']
           
-    def percentage_of_fitting_traces(self):
+    def percentage_of_fitting(self, pm4py_pn, inital_marking, final_marking):
         with SuppressPrints():
-            fitness = replay_fitness(self.event_log_pm4py, self.pm4py_pn, self.inital_marking, self.final_marking)
+            fitness = replay_fitness(self.event_log_pm4py, pm4py_pn, inital_marking, final_marking)
         return fitness['perc_fit_traces']
 
-    def precision(self):
+    def precision(self, pm4py_pn, inital_marking, final_marking):
         with SuppressPrints():
-            precision_value = precision(self.event_log_pm4py, self.pm4py_pn, self.inital_marking, self.final_marking)
+            precision_value = precision(self.event_log_pm4py, pm4py_pn, inital_marking, final_marking)
         return precision_value
     
-    def ftr_fitness(self):
-        fitness = FastTokenBasedReplay.calculate_fitness(self.ftr_eventlog, self.ftr_petri_net, False, False)
+    def ftr_fitness(self, ftr_petri_net):
+        fitness = FastTokenBasedReplay.calculate_fitness(self.ftr_eventlog, ftr_petri_net, False, False)
         return fitness
     
-    def fitness(self) -> float:
-        raise NotImplementedError
-    
-    def evaluate_population(population: Population, event_log: EventLog, num_processes: int = 1):
-        raise NotImplementedError
-
-class SimpleWeightedScore(ObjectiveBaseClass):
-    def __init__(self, process_model: Union[ProcessTree, PetriNet], event_log: EventLog):
-        super().__init__(process_model, event_log)
-    
-    def weighted_score(self, scores: dict[str, float], weights: dict[str, float] = None) -> float:
-        # Only works if the scores and weights have the same keys 
-        
-        if weights is None:
-            weights = {
-                "simplicity": 25,
-                "refined_simplicity": 25,
-                "generalization": 50,
-                "average_trace_fitness": 300,
-                "precision": 50,
-            }
-        return sum(scores[key] * weights[key] for key in scores.keys())
-
-    def fitness(self):
-        scores = {
-            "simplicity": self.simplicity(),
-            "refined_simplicity": self.refined_simplicity(),
-            "generalization": self.generalization(),
-            "average_trace_fitness": self.ftr_fitness(),
-            "precision": self.precision(),
+    def fitness(self, process_tree: ProcessTree) -> float:
+        weights = {
+            "simplicity": 25,
+            "refined_simplicity": 25,
+            # "generalization": 50,
+            "average_trace_fitness": 300,
+            # "precision": 50,
         }
-        return self.weighted_score(scores)
-
-
-    @staticmethod
-    def _evaluate_trees(event_log: EventLog, trees: list[ProcessTree], process_tree_register: ProcessTreeRegister):
-        for tree in trees:
-            if str(tree) not in process_tree_register.fitness_values:
-                tree.fitness = SimpleWeightedScore(tree, event_log).fitness()
-                # Store the fitness value in the register
-                process_tree_register[str(tree)] = tree.fitness
-            else:
-                tree.fitness = process_tree_register[str(tree)]
+        
+        pm4py_pn, initial_marking, final_marking = process_tree.to_pm4py_pn()
+        ftr_pn = PetriNet.from_pm4py(pm4py_pn, initial_marking, final_marking).to_fast_token_based_replay()
+        scores = {
+            "simplicity": self.simplicity(pm4py_pn),
+            "refined_simplicity": self.refined_simplicity(pm4py_pn),
+            # "generalization": self.generalization(pm4py_pn, initial_marking, final_marking),
+            "average_trace_fitness": self.ftr_fitness(ftr_pn),
+            # "precision": self.precision(pm4py_pn, initial_marking, final_marking),
+        }
+        return sum(scores[key] * weights[key] for key in scores.keys())
     
-    @staticmethod
-    def evaluate_population(population: Population, event_log: EventLog, process_tree_register: ProcessTreeRegister, num_processes: int = 1):
-        """Evaluates a population of process trees, using multiple processes if specified."""
-        # Split trees into approximately equal chunks
-        SimpleWeightedScore._evaluate_trees(event_log, population.trees, process_tree_register)
+    def evaluate_population(self, population: Population):
+        for tree in population.trees:
+            tree.fitness = self.fitness(tree)
     

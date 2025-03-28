@@ -3,10 +3,13 @@ import matplotlib.pyplot as plt
 import subprocess
 import os
 import tempfile
+from time import time
 
 from src.EventLog import EventLog
 from src.Discovery import Discovery
 from src.PetriNet import PetriNet
+from src.Objective import Objective
+from src.ProcessTree import ProcessTree
 
 import pm4py.write as pm4py_write
 from pm4py.algo.evaluation.replay_fitness.variants.token_replay import apply as replay_fitness
@@ -15,6 +18,7 @@ from pm4py.algo.evaluation.generalization.variants.token_based import apply as g
 from pm4py.algo.evaluation.simplicity.variants.arc_degree import apply as simplicity
 from matplotlib.backends.backend_pdf import PdfPages
 from concurrent.futures import ProcessPoolExecutor
+from pm4py.convert import convert_to_process_tree as convert_to_pt
 
 
 # This class can evaluate a discovered process model against an event log (only one!)
@@ -33,7 +37,8 @@ class SingleEvaluator:
             "generalization": self.get_generalization(),
             **self.get_replay_fitness(),
             "precision": self.get_precision(),
-            "exact_matching_precision": self.get_exact_matching(type="precision"),
+            "objective_fitness": self.get_objective_fitness(),
+            #"exact_matching_precision": self.get_exact_matching(type="precision"),
         }
         data["f1_score"] = self.get_f1_score(data["precision"], data["log_fitness"])
         return data    
@@ -53,6 +58,12 @@ class SingleEvaluator:
     def get_precision(self):
         precision_value = precision(self.event_log_pm4py, self.pm4py_pn, self.init_marking, self.final_marking)
         return precision_value
+    
+    def get_objective_fitness(self):
+        pm4py_pt = convert_to_pt(self.pm4py_pn, self.init_marking, self.final_marking )
+        our_pt = ProcessTree.from_pm4py(pm4py_pt)
+        calculator = Objective(self.eventlog)
+        return calculator.fitness(our_pt)
     
     def get_exact_matching(self, type):
         """Runs the jbpt library to calculate the entropy-based precision metric.
@@ -116,7 +127,7 @@ class SingleEvaluator:
         return f1_score
 
 # Define a helper function that will handle evaluation for a single Petri net and event log pair
-def evaluate_single(miner: str, dataset: str, petri_net, event_log: EventLog):
+def evaluate_single(miner: str, dataset: str, petri_net: PetriNet, event_log: EventLog):
     evaluator = SingleEvaluator(petri_net, event_log)
     
     # Get metrics and round to 4 decimal places
@@ -134,52 +145,39 @@ class MultiEvaluator:
         Initialize with dictionaries of Petri nets and event logs.
         Args:
         - event_logs (dict): A dictionary where keys are event log names and values are EventLog objects.
-        
         - methods (list): A list of strings representing the discovery methods to use. can be "alpha", "heuristic", "inductive", "GNN"
-        
         """
         self.event_logs = event_logs # dictionary of event logs with keys as event log names and values as EventLog objects
         self.petri_nets = {method: {} for method in methods} # dictionary of Petri nets with keys as discovery methods 
+        self.times = {method: {} for method in methods} # dictionary of times with keys as discovery methods
         # and values a dict of event log names and PetriNet objects
         for method in methods:
             for event_log_name, event_log in self.event_logs.items():
                 print("Running discovery for", method, "on", event_log_name)
+                start = time()
                 pn_result = Discovery.run_discovery(method, event_log, **kwargs)
+                discovery_time = time() - start
                 self.petri_nets[method][event_log_name] = pn_result
+                self.times[method][event_log_name] = discovery_time
         
-    def evaluate_all(self, num_cores=None):
-            """
-            Evaluate all Petri nets against their corresponding event logs using multiprocessing,
-            and return a DataFrame with metrics.
-            """
-            results = []
-            
-            # Use ProcessPoolExecutor for multiprocessing
-            with ProcessPoolExecutor(max_workers=num_cores) as executor:
-                futures = []
-                
-                # Iterate through each miner type and dataset in petri_nets
-                for miner, datasets in self.petri_nets.items():
-                    for dataset, pn in datasets.items():
-                        if dataset in self.event_logs:
-                            event_log = self.event_logs[dataset]
-                            futures.append(
-                                executor.submit(evaluate_single, 
-                                                miner, 
-                                                dataset, 
-                                                pn,
-                                                event_log)
-                            )
-                
-                # Collect the results as they complete
-                for future in futures:
-                    try:
-                        results.append(future.result())
-                    except Exception as e:
-                        print(f"Error evaluating Petri net: {e}")
-            
-            # Convert the list of dictionaries to a DataFrame
-            return pd.DataFrame(results)
+    def evaluate_all(self):
+        """
+        Evaluate all Petri nets against their corresponding event logs using multiprocessing,
+        and return a DataFrame with metrics.
+        """
+        results = []
+        # Iterate through each miner type and dataset in petri_nets
+        for miner, datasets in self.petri_nets.items():
+            for dataset, pn in datasets.items():
+                if dataset in self.event_logs:
+                    event_log = self.event_logs[dataset]
+                    res = evaluate_single(miner, dataset, pn, event_log)
+                    results.append(res)
+        for dataset in results:
+            dataset_name = dataset['dataset']
+            dataset["time"] = self.times[dataset["miner"]][dataset_name]
+        
+        return pd.DataFrame(results)
 
     def export_petri_nets(self, output_dir, format="png"):
         """
@@ -199,37 +197,33 @@ class MultiEvaluator:
         Save the DataFrame to a single PDF figure with all datasets grouped.
         """
         table_data = []
-        column_headers = ["Dataset", "Method", "F1-Score", "Fitness", "Precision", "Generalization", "Simplicity", "Entropy Precision"]
+        column_headers = ["Dataset", "Method", "Replay Fitness", "Precision", "Generalization", "Simplicity", "Objective fitness", "Time"]
         grouped = df.groupby('dataset')
         
+        # Assing colors per dataset
+        dataset_colors = ['#d9d9d9', '#ffffff']  # Light grey and white
+        color_map = {}  # To store the color for each dataset
+        current_color_index = 0
+
         for dataset, group in grouped:
-            # Add the dataset name in the first row
+            color_map[dataset] = dataset_colors[current_color_index]
+            current_color_index = 1 - current_color_index  # Alternate colors
+
             for i, (_, row) in enumerate(group.iterrows()):
-                if i == 0:
-                    table_data.append([
-                        dataset,  # Dataset name printed only in the first row
-                        row['miner'],
-                        f"{row['f1_score']:.3f}",
-                        f"{row['log_fitness']:.3f}",
-                        f"{row['precision']:.3f}",
-                        f"{row['generalization']:.3f}",
-                        f"{row['simplicity']:.3f}",
-                        f"{row['exact_matching_precision']:.3f}"
-                    ])
-                else:
-                    table_data.append([
-                        "",  # Empty dataset name for subsequent rows
-                        row['miner'],
-                        f"{row['f1_score']:.3f}",
-                        f"{row['log_fitness']:.3f}",
-                        f"{row['precision']:.3f}",
-                        f"{row['generalization']:.3f}",
-                        f"{row['simplicity']:.3f}",
-                        f"{row['exact_matching_precision']:.3f}",
-                    ])
+                table_data.append([
+                    dataset if i == 0 else "",  # Show dataset name only in first row
+                    row['miner'],
+                    f"{row['log_fitness']:.3f}",
+                    f"{row['precision']:.3f}",
+                    f"{row['generalization']:.3f}",
+                    f"{row['simplicity']:.3f}",
+                    f"{row['objective_fitness']:.3f}",
+                    # f"{row['exact_matching_precision']:.3f}",
+                    f"{row['time']:.3f}",
+                ])
 
         # Create the figure and add the table
-        fig, ax = plt.subplots(figsize=(12, len(table_data) * 0.3))
+        fig, ax = plt.subplots(figsize=(12, 6))
         ax.axis('off')
 
         # Add the table to the figure
@@ -243,8 +237,29 @@ class MultiEvaluator:
 
         # Style the table
         table.auto_set_font_size(False)
-        table.set_fontsize(10)
+        table.set_fontsize(8)
         table.auto_set_column_width(col=list(range(len(column_headers))))
+        
+        # Make header bold
+        for i, col in enumerate(column_headers):
+            cell = table[0, i]
+            cell.set_text_props(weight='bold')
+        
+        # Adjust row heights
+        row_heights = 0.06  # Adjust this value to control row height
+        for i in range(len(table_data) + 1):  # +1 for header row
+            for j in range(len(column_headers)):
+                cell = table[i, j]
+                cell.set_height(row_heights)
+        
+        # Color the rows by dataset
+        row_index = 1  # Start after header row
+        for dataset, group in grouped:
+            color = color_map[dataset]
+            for _ in range(len(group)):
+                for col in range(len(column_headers)):
+                    table[row_index, col].set_facecolor(color)
+                row_index += 1
 
         # Save the figure to the PDF
         with PdfPages(pdf_path) as pdf:

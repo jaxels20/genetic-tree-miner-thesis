@@ -1,4 +1,5 @@
 from src.EventLog import EventLog, Trace
+from copy import deepcopy
 import random
 class Filtering:
     def __init__():
@@ -60,7 +61,8 @@ class Filtering:
                         if activity in [event.activity for event in trace.events]:
                             filtered_log.traces.append(trace)
                             break
-                
+        
+        filtered_log.set_unique_activities(filtered_log.unique_activities())
         return filtered_log
     
     @staticmethod

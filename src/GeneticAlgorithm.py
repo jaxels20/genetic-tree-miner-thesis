@@ -1,4 +1,4 @@
-from src.Objective import SimpleWeightedScore
+from src.Objective import Objective
 from src.RandomTreeGenerator import BottomUpBinaryTreeGenerator
 from src.RandomTreeGenerator import SequentialTreeGenerator
 from src.ProcessTree import ProcessTree
@@ -6,6 +6,7 @@ from src.EventLog import EventLog
 from src.Mutator import Mutator
 from src.Population import Population
 from src.Monitor import Monitor
+from src.Filtering import Filtering
 from src.ProcessTreeRegister import ProcessTreeRegister
 import tqdm
 import time
@@ -66,17 +67,23 @@ class GeneticAlgorithm:
         if self.best_tree is None or best_tree.get_fitness() > self.best_tree.get_fitness():
             self.best_tree = best_tree
     
-    def run(self, eventlog: EventLog) -> ProcessTree:
+    def run(self, eventlog: EventLog, percentage_of_log: float) -> ProcessTree:
         # Start the timer
         self.start_time = time.time()
         
+        # Filter the log
+        eventlog = Filtering.filter_eventlog_by_top_percentage_unique(eventlog, percentage_of_log, True)
+        
         # Initialize the population
-        generator = SequentialTreeGenerator()
-        population = generator.generate_population(eventlog, n=self.population_size)
+        #generator = SequentialTreeGenerator()
+        #population = generator.generate_population(eventlog, n=self.population_size)
+        generator = BottomUpBinaryTreeGenerator()
+        population = generator.generate_population(eventlog.unique_activities(), n=self.population_size)
+        evaluator = Objective(eventlog)
         
         for generation in tqdm.tqdm(range(self.max_generations), desc="Discovering process tree", unit="generation"):
             # Evaluate the fitness of each tree
-            SimpleWeightedScore.evaluate_population(population, eventlog, self.process_tree_register, num_processes=1)
+            evaluator.evaluate_population(population)
             
             # Observe the population
             self.monitor.observe(generation, population)
@@ -87,8 +94,8 @@ class GeneticAlgorithm:
                 break
                
             # Generate a new population
-            population = self.mutator.generate_new_population(population)
             # population = self.mutator.tournament_population_generation(population)
+            population = self.mutator.generate_new_population(population)
         
         return self.best_tree
     

@@ -10,7 +10,7 @@ class Discovery:
     @staticmethod
     def genetic_algorithm(event_log: EventLog, random_creation_rate, crossover_rate, mutation_rate, 
                        tournament_size, elite_rate, min_fitness, max_generations, stagnation_limit, 
-                       time_limit, population_size):
+                       time_limit, population_size, percentage_of_log) -> PetriNet:
         """
         A wrapper for the genetic algorithm.
         """        
@@ -21,13 +21,13 @@ class Discovery:
                           stagnation_limit=stagnation_limit, time_limit=time_limit, 
                           population_size=population_size)
 
-        best_tree = ga.run(event_log)
-        pm4py_net, init, end = best_tree.to_pm4py_pn()
+        our_pt = ga.run(event_log, percentage_of_log)
+        pm4py_net, init, end = our_pt.to_pm4py_pn()
         
         return PetriNet.from_pm4py(pm4py_net, init, end)
     
     @staticmethod
-    def inductive_miner(event_log: EventLog, **kwargs):
+    def inductive_miner(event_log: EventLog, **kwargs) -> PetriNet:
         """
         A wrapper for the inductive miner.
         """
@@ -62,7 +62,6 @@ class Discovery:
         if method is None:
             raise ValueError(f"Discovery method '{method_name}' not found.")
         
-        # Call the appropriate method, passing **kwargs for any extra arguments needed
         return method(event_log, **kwargs)
     
     
