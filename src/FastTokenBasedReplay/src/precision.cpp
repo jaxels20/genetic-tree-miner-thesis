@@ -60,13 +60,6 @@ std::tuple<int32_t, int32_t> replay_trace_precision(
         PetriNet net_copy = net;
         std::set<std::string> allowed_tasks_set = net_copy.get_visible_transitions_eventually_enabled();
 
-        // print the allowed tasks
-        std::cout << "Allowed tasks: ";
-        for (const auto& task : allowed_tasks_set) {
-            std::cout << task << " ";
-        }
-        std::cout << std::endl;
-
         allowed_tasks += allowed_tasks_set.size();
 
         std::set next_activity_after_prefix = prefixes[current_prefix];
@@ -152,8 +145,6 @@ double calculate_precision(const EventLog& log, const PetriNet& net){
         total_escaping_edges += escaped_edges;
         total_allowed_tasks += allowed_tasks;
     }
-    std::cout << "Total escaping edges: " << total_escaping_edges << std::endl;
-    std::cout << "Total allowed tasks: " << total_allowed_tasks << std::endl;
 
     if (total_allowed_tasks == 0) {
         return 0.0;

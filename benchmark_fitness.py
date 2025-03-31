@@ -283,8 +283,7 @@ def real_life_evaluation():
 
     # Show plot
     plt.tight_layout()
-    plt.show()
-    fig.savefig('ftr_real_life_comparison.png')  
+    fig.savefig('benchmark_results/fitness_comparison.png')  
     
 def synthetic_evaluation():
     num_traces = [1_000, 5_000, 50_000, 100_000]
@@ -316,13 +315,12 @@ def synthetic_evaluation():
     plt.show()
 
 
+
 if __name__ == "__main__":
     
     real_life_evaluation()
-    #synthetic_evaluation()
 
-    #test_fast_token_based_replay_with_prefix_caching([1_000])
-    #test_fast_token_based_replay_with_suffix_caching([1_000])
+    
     
     
     
