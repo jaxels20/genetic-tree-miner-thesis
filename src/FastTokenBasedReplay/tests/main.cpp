@@ -20,6 +20,7 @@
 #include "src/test_prefix_tree.cpp"
 #include "src/test_silent_graph.cpp"
 #include "src/test_silent_transition_handling.cpp"
+#include "src/test_precision.cpp"
 
 TEST(FastTokenBasedReplayTest, final_marking_condition) {
     Marking final_marking = Marking({{"p1", 1}});

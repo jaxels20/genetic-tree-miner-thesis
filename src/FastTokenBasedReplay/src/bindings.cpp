@@ -3,7 +3,7 @@
 #include "PetriNet.hpp"  // Include your PetriNet classes
 #include "Eventlog.hpp"  // Include your EventLog classes
 #include "token_based_replay.cpp"  // Include your token_based_replay function
-
+#include "precision.cpp"  // Include your precision function
 namespace py = pybind11;
 
 PYBIND11_MODULE(FastTokenBasedReplay, m) {
@@ -51,4 +51,5 @@ PYBIND11_MODULE(FastTokenBasedReplay, m) {
         .def("number_of_tokens", &Marking::number_of_tokens);
 
     m.def("calculate_fitness", &calculate_fitness);
+    m.def("calculate_precision", &calculate_precision);
 }

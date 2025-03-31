@@ -1,9 +1,35 @@
-#include "token_based_replay.cpp"
+
 #include "precision.cpp"
 #include "PetriNet.hpp"
 #include "Eventlog.hpp"
+#include "unordered_map"
+#include "set"
 
-int main() {
+#include "gtest/gtest.h"
+
+TEST(Precision, compute_prefixes) {
+    std::vector<std::string> trace_list = {"BC", "AC"};
+    EventLog eventlog = EventLog::from_trace_list(trace_list);
+
+    std::unordered_map<std::string, std::set<std::string>> result = compute_prefixes(eventlog);
+
+    std::unordered_map<std::string, std::set<std::string>> expected = {
+        {"B,", {"C"}},
+        {"BC,", {}},
+        {"A,", {"C"}},
+        {"AC,", {}},
+        {"", {"B", "A"}}
+    };
+    EXPECT_EQ(result.size(), expected.size());
+
+    for (const auto& [prefix, activities] : expected) {
+        EXPECT_EQ(result[prefix], activities);
+    }
+
+}
+
+
+TEST(Precision, precision_simple) {
     PetriNet net;
     net.add_place(Place("start", 0));
     net.add_place(Place("p1", 0));
@@ -28,7 +54,6 @@ int main() {
     EventLog eventlog = EventLog::from_trace_list(trace_list);
 
     auto precision = calculate_precision(eventlog, net);
+    EXPECT_EQ(precision, 1.0);
 
-
-    return 0;
 }

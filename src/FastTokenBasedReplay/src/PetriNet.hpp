@@ -275,4 +275,14 @@ class PetriNet {
             }
             return marking;
         }
+    
+        std::vector<std::string> get_enabled_transitions() {
+            std::vector<std::string> enabled_transitions;
+            for (const auto& transition : transitions) {
+                if (can_fire(transition)) {
+                    enabled_transitions.push_back(transition.name);
+                }
+            }
+            return enabled_transitions;
+        }
     };
