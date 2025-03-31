@@ -55,6 +55,33 @@ std::tuple<int32_t, int32_t> replay_trace_precision(
             throw std::runtime_error("Transition not found: " + event.activity);
         }
 
+        // DO THE BOOKKEEPING
+        // Count the number of allowed tasks, which is the number of enabled transitions
+        PetriNet net_copy = net;
+        std::set<std::string> allowed_tasks_set = net_copy.get_visible_transitions_eventually_enabled();
+
+        // print the allowed tasks
+        std::cout << "Allowed tasks: ";
+        for (const auto& task : allowed_tasks_set) {
+            std::cout << task << " ";
+        }
+        std::cout << std::endl;
+
+        allowed_tasks += allowed_tasks_set.size();
+
+        std::set next_activity_after_prefix = prefixes[current_prefix];
+
+        // Store result
+        std::vector<std::string> difference_result;
+        std::set_difference(
+            allowed_tasks_set.begin(), allowed_tasks_set.end(),
+            next_activity_after_prefix.begin(), next_activity_after_prefix.end(),
+            std::back_inserter(difference_result)
+        );
+
+        // Count the number of escaped edges
+        escaped_edges += difference_result.size();
+
         // if the transition is not enabled, we need to fire silent transitions to make it enabled
         if (!net.can_fire(*transition)) {
             Marking current_marking = net.get_current_marking();
@@ -71,29 +98,8 @@ std::tuple<int32_t, int32_t> replay_trace_precision(
             }
         }
 
-
         // Now we can fire the transition (if it is enabled)
         if (net.can_fire(*transition)) {
-            // Count the number of allowed tasks, which is the number of enabled transitions
-            std::vector<std::string> allowed_tasks_set = net.get_enabled_transitions();
-            allowed_tasks += allowed_tasks_set.size();
-
-            std::set next_activity_after_prefix = prefixes[current_prefix];
-
-            // Convert vector to set
-            std::set<std::string> allowed_tasks_set_as_set(allowed_tasks_set.begin(), allowed_tasks_set.end());
-
-            // Store result
-            std::vector<std::string> difference_result;
-            std::set_difference(
-                allowed_tasks_set_as_set.begin(), allowed_tasks_set_as_set.end(),
-                next_activity_after_prefix.begin(), next_activity_after_prefix.end(),
-                std::back_inserter(difference_result)
-            );
-
-            // Count the number of escaped edges
-            escaped_edges += difference_result.size();
-
             // count the number of escaped edges, which is the current prefix in the map differenced from the allowed tasks
             net.fire_transition(*transition, nullptr, nullptr);
 

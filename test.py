@@ -7,6 +7,7 @@ from src.RandomTreeGenerator import BottomUpBinaryTreeGenerator
 from src.ProcessTree import ProcessTree
 from pm4py.objects.process_tree.obj import ProcessTree, Operator
 from pm4py.objects.conversion.process_tree import converter as pt_converter
+from pm4py.conformance import precision_token_based_replay 
 
 
 
@@ -166,7 +167,7 @@ def test_simple_silent_transition():
     print(f"PM4Py fitness: {pm4py_fitness}")
     assert ftr_fitness == pm4py_fitness
 
-def giant_test():
+def giant_test_fitness():
     
     pop = BottomUpBinaryTreeGenerator().generate_population(["A", "B", "C", "D", "E"], n=100)
     eventlog = EventLog.from_trace_list(["AB"])
@@ -205,38 +206,53 @@ def giant_test():
             
             assert ftr_fitness == pm4py_fitness        
 
+def giant_test_precision():
+    
+    pop = BottomUpBinaryTreeGenerator().generate_population(["A", "B", "C", "D", "E",], n=500)
+    eventlog = EventLog.from_trace_list(["A"])
+    
+    for tree in pop:
+        pm4py_pn, init, final = tree.to_pm4py_pn()
+        our_pn = PetriNet.from_pm4py(pm4py_pn, init, final)
+                
+        try:
+            print(f"_______________PM4PY_______")
+            pm4py_precision = precision_token_based_replay(eventlog.to_pm4py(), pm4py_pn, init, final)
+            print(f"PM4Py precision: {pm4py_precision}")
+            print(f"_______________PM4PY - END_______")
+        except Exception as e:
+            print(f"PM4Py failed: {e}")
+            our_pn.visualize()
+            raise e
+        
+        try:
+            print(f"_______________FTR_______")
+            ftr_precision = FastTokenBasedReplay.calculate_precision(eventlog.to_fast_token_based_replay(), our_pn.to_fast_token_based_replay())
+            print(f"FastTokenBasedReplay Precision: {ftr_precision}")
+            print(f"_______________FTR - END_______")
+        except Exception as e:
+            print(f"FTR failed: {e}")
+            our_pn.visualize()
+            raise e
+        
+        if ftr_precision != pm4py_precision:
+            print(f"FastTokenBasedReplay precision: {ftr_precision}")
+            print(f"PM4Py precision: {pm4py_precision}")
+            # visualize the pn
+            our_pn.visualize()
+            
+            assert ftr_precision == pm4py_precision        
+
+
+
+
+
 if __name__ == "__main__":
     #test_simple_sequence()
     #test_simple_loop()
     #test_simple_loop_not_perfect()
     #test_simple_silent_transition()
-    #giant_test()
-
-
-    eventlog = EventLog.from_trace_list(["AC", "BC"])
+    giant_test_precision()
     
-    petri_net = PetriNet()
-    petri_net.empty()
-
-    petri_net.add_transition("A")
-    petri_net.add_transition("B")
-    petri_net.add_transition("C")
-
-    petri_net.add_place("Start", tokens=1)
-    petri_net.add_place("End")
-
-    petri_net.add_place("p1")
-
-    petri_net.add_arc("Start", "A")
-    petri_net.add_arc("Start", "B")
-    petri_net.add_arc("A", "p1")
-    petri_net.add_arc("B", "p1")
-    petri_net.add_arc("p1", "C")
-    petri_net.add_arc("C", "End")
-    
-    # replay fitness using pm4py
-    pm4py_fitness = replay_fitness(eventlog.to_pm4py(), *petri_net.to_pm4py())["log_fitness"]
-    
-    print(f"pm4py fitness: {pm4py_fitness}")
     
     

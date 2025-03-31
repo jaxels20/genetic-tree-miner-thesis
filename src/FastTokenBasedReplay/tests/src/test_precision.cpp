@@ -28,6 +28,32 @@ TEST(Precision, compute_prefixes) {
 
 }
 
+TEST(Precision, get_visible_transitions_eventually_enabled){
+    PetriNet net;
+    net.add_place(Place("start", 1));
+    net.add_place(Place("p1", 0));
+    net.add_place(Place("end", 0));
+
+    net.add_transition(Transition("A"));
+    net.add_transition(Transition("B"));
+    net.add_transition(Transition("tau_1"));
+
+    net.add_arc(Arc("start", "B"));
+    net.add_arc(Arc("B", "end"));
+    net.add_arc(Arc("start", "tau_1"));
+    net.add_arc(Arc("tau_1", "p1"));
+    net.add_arc(Arc("p1", "A"));
+    net.add_arc(Arc("A", "end"));
+
+
+    net.set_initial_marking(Marking({{"start", 1}}));
+    net.set_final_marking(Marking({{"end", 1}}));
+
+    std::set<std::string> expected = {"A", "B"};
+    std::set<std::string> result = net.get_visible_transitions_eventually_enabled();
+    EXPECT_EQ(result, expected);
+
+}
 
 TEST(Precision, precision_simple) {
     PetriNet net;
