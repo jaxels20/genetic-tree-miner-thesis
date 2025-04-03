@@ -235,7 +235,7 @@ def real_life_evaluation():
                 our_event_log = EventLog.load_xes(os.path.join(eventlog_dir, folder, filename))
                 
                 # filter the traces
-                our_event_log = Filtering.filter_eventlog_by_top_percentage_unique(our_event_log, 1, include_all_activities=False)
+                our_event_log = Filtering.filter_eventlog_by_top_percentage_unique(our_event_log, 0.1, include_all_activities=False)
                 
                 pm4py_event_log = our_event_log.to_pm4py()
                 pm4py_pt = pm4py_inductive_miner(pm4py_event_log)
@@ -245,9 +245,9 @@ def real_life_evaluation():
             
                 data[filename] = {"FastTokenBasedReplay (without caching)": time_fast_token_based_replay_without_caching(our_event_log, our_net),
                                 #"pm4py": time_pm4py_token_based_replay(our_event_log, our_net),
-                                #"FastTokenBasedReplay (with prefix caching)": time_fast_token_based_replay_with_prefix_caching(our_event_log, our_net),
+                                "FastTokenBasedReplay (with prefix caching)": time_fast_token_based_replay_with_prefix_caching(our_event_log, our_net),
                                 #"FastTokenBasedReplay (with suffix caching)": time_fast_token_based_replay_with_suffix_caching(our_event_log, our_net),
-                                "FastTokenBasedReplay (with prefix and suffix caching)" : time_fast_token_based_replay_with_prefix_and_suffix_caching(our_event_log, our_net)
+                                #"FastTokenBasedReplay (with prefix and suffix caching)" : time_fast_token_based_replay_with_prefix_and_suffix_caching(our_event_log, our_net)
                                 }
             
     
@@ -279,12 +279,11 @@ def real_life_evaluation():
     ax.legend()
     
     # apply log scale to y axis
-    ax.set_yscale('log')
+    #ax.set_yscale('log')
 
     # Show plot
     plt.tight_layout()
-    plt.show()
-    fig.savefig('ftr_real_life_comparison.png')  
+    fig.savefig('benchmark_results/fitness_comparison.png')  
     
 def synthetic_evaluation():
     num_traces = [1_000, 5_000, 50_000, 100_000]
@@ -316,13 +315,12 @@ def synthetic_evaluation():
     plt.show()
 
 
+
 if __name__ == "__main__":
     
     real_life_evaluation()
-    #synthetic_evaluation()
 
-    #test_fast_token_based_replay_with_prefix_caching([1_000])
-    #test_fast_token_based_replay_with_suffix_caching([1_000])
+    
     
     
     

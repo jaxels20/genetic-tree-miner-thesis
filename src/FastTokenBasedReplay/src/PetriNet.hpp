@@ -10,6 +10,7 @@
 #include <cstdint>
 #include "Marking.hpp"
 #include "Place.hpp"
+#include <set>
 
 
 class Transition {
@@ -275,4 +276,108 @@ class PetriNet {
             }
             return marking;
         }
+    
+        std::vector<std::string> get_enabled_transitions(bool include_silent = false) {
+            // Return the names of all enabled transitions (excluding silent transitions)
+            std::vector<std::string> enabled_transitions;
+            for (const auto& transition : transitions) {
+                if (transition.is_silent() && !include_silent) {
+                    continue;  // Skip silent transitions
+                }
+                if (can_fire(transition)) {
+                    enabled_transitions.push_back(transition.name);
+                }
+            }
+            return enabled_transitions;
+        }
+        
+        Marking fire_transition_without_changing_marking(const Transition& transition, const Marking& marking) {
+            // save the current marking
+            Marking old_marking = get_current_marking();
+            // set the marking to the new one
+            set_marking(marking);
+            // fire the transition
+            fire_transition(transition, nullptr, nullptr);
+            // get the new marking
+            Marking new_marking = get_current_marking();
+            // set the marking back to the original one
+            set_marking(old_marking);
+            return new_marking;
+        }
+
+        bool can_fire_transition_from_marking(Marking marking, const Transition& transition) {
+            // copy the current marking
+            Marking marking_copy = get_current_marking();
+
+            // set the marking to the new one
+            set_marking(marking);
+            bool is_transition_fireable = can_fire(transition);
+            // set the marking back to the original one
+            set_marking(marking_copy);
+            return is_transition_fireable;
+        }
+
+        std::vector<std::string> get_enabled_transitions_in_marking(const Marking& marking, bool include_silent = false) {
+            // old marking 
+            Marking old_marking = get_current_marking();
+            // set the marking to the new one
+            set_marking(marking);
+            // get the enabled transitions
+            auto enabled_transitions = get_enabled_transitions(include_silent);
+            // set the marking back to the original one
+            set_marking(old_marking);
+            // return the enabled transitions
+            return enabled_transitions;
+        }
+
+        std::set<std::string> get_visible_transitions_eventually_enabled() {
+            std::set<std::string> visible_transitions;
+            std::set<std::string> visited;
+            
+            // Start with the initially enabled transitions
+            std::vector<std::string> all_enabled_transitions = get_enabled_transitions(true);
+            std::unordered_map<std::string, Marking> transition_markings;
+            
+            for (const auto& t : all_enabled_transitions) {
+                transition_markings[t] = get_current_marking();
+            }
+        
+            size_t i = 0;
+            while (i < all_enabled_transitions.size()) {
+                std::string t = all_enabled_transitions[i];
+                Marking marking_copy = transition_markings[t];
+        
+                // Check if we've already visited this transition-marking combination
+                std::string key = t + marking_copy.to_string();
+                if (visited.find(key) == visited.end()) {
+                    Transition* transition = get_transition(t);
+                    if (!transition) {
+                        ++i;
+                        continue;
+                    }
+        
+                    if (!transition->is_silent()) {
+                        visible_transitions.insert(t);
+                    } else {
+                        if (can_fire_transition_from_marking(marking_copy, *transition)) {
+                            // Fire the transition without changing the marking
+                            Marking new_marking = fire_transition_without_changing_marking(*transition, marking_copy);
+                            std::vector<std::string> new_enabled_transitions = get_enabled_transitions_in_marking(new_marking, true);
+                            
+                            for (const auto& t2 : new_enabled_transitions) {
+                                if (transition_markings.find(t2) == transition_markings.end()) {
+                                    all_enabled_transitions.push_back(t2);
+                                    transition_markings[t2] = new_marking;
+                                }
+                            }
+                        }
+                    }
+                    visited.insert(key);
+                }
+                ++i;
+            }
+        
+            return visible_transitions;
+        }
+        
     };
