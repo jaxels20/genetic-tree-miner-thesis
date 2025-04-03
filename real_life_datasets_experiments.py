@@ -1,6 +1,8 @@
 from src.BatchFileLoader import BatchFileLoader
 from src.Evaluator import MultiEvaluator
 from src.Filtering import Filtering
+from src.Mutator import Mutator, TournamentMutator
+from src.RandomTreeGenerator import BottomUpBinaryTreeGenerator, SequentialTreeGenerator
 import os
 
 INPUT_DIR = "./real_life_datasets/"
@@ -20,23 +22,20 @@ if __name__ == "__main__":
         for eventlog in temp_eventlogs.values():
             eventlogs[dataset_dir] = eventlog
     
-    #Create and evaluate the MultiEvaluator
-    multi_evaluator = MultiEvaluator(
-        eventlogs, 
-        methods=METHODS,
-        percentage_of_log=0.1,
-        max_generations=100,
-        population_size=100,
-        tournament_size=0.25,
-        random_creation_rate=0.2,
-        crossover_rate=0.3,
-        mutation_rate=0.3,
-        elite_rate=0.2,
-        min_fitness=None,
-        stagnation_limit=None,
-        time_limit=None,
-    )
+    # Genetic algorithm kwargs
+    genetic_kwargs = {
+        "percentage_of_log": 0.1,
+        "mutator": Mutator(random_creation_rate=0.2, crossover_rate=0.3, mutation_rate=0.3, elite_rate=0.2),
+        "generator": BottomUpBinaryTreeGenerator(),
+        "max_generations": 100,
+        "population_size": 100,
+        "min_fitness": None,
+        "stagnation_limit": None,
+        "time_limit": None
+    }
     
+    #Create and evaluate the MultiEvaluator
+    multi_evaluator = MultiEvaluator(eventlogs, methods=METHODS, **genetic_kwargs)
     results_df = multi_evaluator.evaluate_all()
     multi_evaluator.save_df_to_pdf(results_df, OUTPUT_DIR + "results.pdf")
     multi_evaluator.export_petri_nets(OUTPUT_DIR)

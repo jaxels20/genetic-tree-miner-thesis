@@ -244,7 +244,7 @@ def real_life_evaluation():
                 our_net = PetriNet.from_pm4py(pm4py_net, init, end)
             
                 data[filename] = {"FastTokenBasedReplay (without caching)": time_fast_token_based_replay_without_caching(our_event_log, our_net),
-                                #"pm4py": time_pm4py_token_based_replay(our_event_log, our_net),
+                                "pm4py": time_pm4py_token_based_replay(our_event_log, our_net),
                                 "FastTokenBasedReplay (with prefix caching)": time_fast_token_based_replay_with_prefix_caching(our_event_log, our_net),
                                 #"FastTokenBasedReplay (with suffix caching)": time_fast_token_based_replay_with_suffix_caching(our_event_log, our_net),
                                 #"FastTokenBasedReplay (with prefix and suffix caching)" : time_fast_token_based_replay_with_prefix_and_suffix_caching(our_event_log, our_net)
@@ -307,13 +307,13 @@ def synthetic_evaluation():
     plt.plot(num_traces, ftr_with_suffix_caching_times, label="FastTokenBasedReplay with suffix caching")
     #plt.plot(num_traces, ftr_with_prefix_and_suffix_times, label="FastTokenBasedReplay with prefix and suffix caching")
     plt.plot(num_traces, pm4py_token_based_times, label="pm4py token based")
-    #plt.plot(num_traces, pm4py_alignment_times, label="pm4py alignment")
+    # plt.plot(num_traces, pm4py_alignment_times, label="pm4py alignment")
     
     plt.xlabel("Number of traces")
     plt.ylabel("Time (s)")
     plt.legend()
     plt.show()
-
+ 
 
 
 if __name__ == "__main__":

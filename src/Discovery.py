@@ -1,5 +1,5 @@
 from src.EventLog import EventLog
-from src.Mutator import Mutator
+from src.Mutator import Mutator, TournamentMutator
 from src.GeneticAlgorithm import GeneticAlgorithm
 from pm4py.algo.discovery.inductive.algorithm import apply as pm4py_inductive_miner
 from pm4py.objects.conversion.process_tree import converter as pt_converter
@@ -8,24 +8,26 @@ from src.PetriNet import PetriNet
 
 class Discovery:
     @staticmethod
-    def genetic_algorithm(event_log: EventLog, random_creation_rate, crossover_rate, mutation_rate, 
-                       tournament_size, elite_rate, min_fitness, max_generations, stagnation_limit, 
-                       time_limit, population_size, percentage_of_log) -> PetriNet:
+    def genetic_algorithm(event_log: EventLog, **kwargs) -> PetriNet:
         """
         A wrapper for the genetic algorithm.
-        """        
-        mutator = Mutator(event_log, random_creation_rate=random_creation_rate, crossover_rate=crossover_rate,
-                      mutation_rate=mutation_rate, tournament_size=tournament_size, elite_rate=elite_rate)
-
-        ga = GeneticAlgorithm(mutator, min_fitness=min_fitness, max_generations=max_generations, 
-                          stagnation_limit=stagnation_limit, time_limit=time_limit, 
-                          population_size=population_size)
-
-        our_pt = ga.run(event_log, percentage_of_log)
+        """
+        ga = GeneticAlgorithm(
+            min_fitness=kwargs.get("min_fitness", 0.9), 
+            max_generations=kwargs.get("max_generations", 100), 
+            stagnation_limit=kwargs.get("stagnation_limit", 10), 
+            time_limit=kwargs.get("time_limit", 300), 
+            population_size=kwargs.get("population_size", 50)
+        )
+        generator = kwargs.get("generator")
+        percentage_of_log = kwargs.get("percentage_of_log", 1.0)
+        mutator = kwargs.get("mutator")            
+        
+        our_pt = ga.run(event_log, mutator, generator, percentage_of_log)
         pm4py_net, init, end = our_pt.to_pm4py_pn()
         
         return PetriNet.from_pm4py(pm4py_net, init, end)
-    
+
     @staticmethod
     def inductive_miner(event_log: EventLog, **kwargs) -> PetriNet:
         """

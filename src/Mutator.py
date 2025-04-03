@@ -6,25 +6,27 @@ from src.EventLog import EventLog
 from src.Population import Population
 
 class MutatorBase:
-    def __init__(self, EventLog: EventLog):
-        self.EventLog = EventLog
+    def __init__(self):
+        pass
 
     def generate_new_population(self, old_population: List[ProcessTree], new_population_size: int) -> List[ProcessTree]:
         raise NotImplementedError
 
 
 class Mutator(MutatorBase):
-    def __init__(self, EventLog: EventLog, random_creation_rate: float, crossover_rate: float, mutation_rate: float, elite_rate: float, tournament_size: float):
-        super().__init__(EventLog)
+    def __init__(self, random_creation_rate: float, crossover_rate: float, mutation_rate: float, elite_rate: float):
+        self.event_log = None
         self.random_creation_rate = random_creation_rate
         self.crossover_rate = crossover_rate
         self.mutation_rate = mutation_rate
-        self.elite_rate = elite_rate 
-        self.tournament_size = tournament_size
+        self.elite_rate = elite_rate
+        
+    def set_event_log(self, event_log: EventLog):
+        self.event_log = event_log
         
     def random_creation(self, num_new_trees: int) -> List[ProcessTree]:
         generator = BottomUpBinaryTreeGenerator()
-        new_trees = generator.generate_population(self.EventLog.unique_activities(), num_new_trees)
+        new_trees = generator.generate_population(self.event_log.unique_activities(), num_new_trees)
         return new_trees.get_population()
         
     def crossover(self, parent1: ProcessTree, parent2: ProcessTree) -> ProcessTree:
@@ -59,7 +61,7 @@ class Mutator(MutatorBase):
             try:
                 # Ensure that the tree is strictly valid
                 candidate.remove_duplicate_activities()
-                candidate.if_missing_insert_activities(self.EventLog.unique_activities())
+                candidate.if_missing_insert_activities(self.event_log.unique_activities())
                 return candidate
             except ValueError:
                 continue   # remove_duplicate_activities raise an error, i.e. not possible to remove duplicate activities without breaking the tree
@@ -133,7 +135,7 @@ class Mutator(MutatorBase):
             
             # After succesfully removing subtree, generate random tree containing all missing activities
             generator = BottomUpBinaryTreeGenerator()
-            missing_activities = tree.get_missing_activities(self.EventLog.unique_activities())
+            missing_activities = tree.get_missing_activities(self.event_log.unique_activities())
             new_sub_tree = generator.generate_population(missing_activities, n=1)[0]
             
             # Insert the new subtree into the tree
@@ -216,8 +218,13 @@ class Mutator(MutatorBase):
             new_population.add_tree(self.mutation(parent))
     
         return new_population
-    
-    def tournament_population_generation(self, old_population: Population) -> Population:
+
+class TournamentMutator(Mutator):
+    def __init__(self, random_creation_rate: float, crossover_rate: float, mutation_rate: float, elite_rate: float, tournament_size: float):
+        super().__init__(random_creation_rate, crossover_rate, mutation_rate, elite_rate, tournament_size)
+        self.tournament_size = tournament_size
+
+    def generate_new_population(self, old_population: Population) -> Population:
         new_population = Population([])
         population_size = len(old_population.get_population())
         
@@ -243,7 +250,8 @@ class Mutator(MutatorBase):
         new_population.add_trees(random_population)
         
         return new_population
-    
+
+
 def deep_copy_tree(node: ProcessTree) -> 'ProcessTree':
     # Create root node
     new_node = ProcessTree(operator=node.operator, label=node.label)

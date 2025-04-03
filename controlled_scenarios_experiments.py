@@ -1,5 +1,7 @@
 from src.BatchFileLoader import BatchFileLoader
 from src.Evaluator import MultiEvaluator
+from src.Mutator import Mutator, TournamentMutator
+from src.RandomTreeGenerator import BottomUpBinaryTreeGenerator, SequentialTreeGenerator
 import os
 
 INPUT_DIR = "./controlled_scenarios/"
@@ -21,22 +23,17 @@ if __name__ == "__main__":
         assert len(temp_eventlogs) == 1, f"Expected one event log in {dataset_dir}, got {len(temp_eventlogs)}"
         eventlogs[dataset_dir] = next(iter(temp_eventlogs.values()))
     
-    #Create and evaluate the MultiEvaluator
-    multi_evaluator = MultiEvaluator(
-        eventlogs,
-        methods=METHODS,
-        population_size=100,
-        max_generations=100,
-        random_creation_rate=0.2,
-        crossover_rate=0.2,
-        mutation_rate=0.3,
-        elite_rate=0.3,
-        tournament_size=0.25,
-        min_fitness=None,
-        stagnation_limit=None,
-        time_limit=None,
-    )
-    
+    genetic_kwargs = {
+    "percentage_of_log": 0.1,
+    "mutator": Mutator(random_creation_rate=0.2, crossover_rate=0.3, mutation_rate=0.3, elite_rate=0.2),
+    "generator": BottomUpBinaryTreeGenerator(),
+    "max_generations": 100,
+    "population_size": 100,
+    "min_fitness": None,
+    "stagnation_limit": None,
+    "time_limit": None
+    }
+    multi_evaluator = MultiEvaluator(eventlogs, methods=METHODS, **genetic_kwargs)
     results_df = multi_evaluator.evaluate_all(num_cores=NUM_WORKERS)
     multi_evaluator.save_df_to_pdf(results_df, OUTPUT_DIR + "results.pdf")
     multi_evaluator.export_petri_nets(OUTPUT_DIR)

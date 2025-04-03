@@ -3,18 +3,17 @@ from src.RandomTreeGenerator import BottomUpBinaryTreeGenerator
 from src.RandomTreeGenerator import SequentialTreeGenerator
 from src.ProcessTree import ProcessTree
 from src.EventLog import EventLog
-from src.Mutator import Mutator
+from src.Mutator import Mutator, TournamentMutator
 from src.Population import Population
 from src.Monitor import Monitor
 from src.Filtering import Filtering
 from src.ProcessTreeRegister import ProcessTreeRegister
 import tqdm
 import time
-from pprint import pprint
-
+from typing import Union
 
 class GeneticAlgorithm:
-    def __init__(self, mutator: Mutator, min_fitness: float = None, max_generations: int = 100, stagnation_limit = None, time_limit = None, population_size = 100):
+    def __init__(self, min_fitness: float = None, max_generations: int = 100, stagnation_limit = None, time_limit = None, population_size = 100):
         """
         :param min_fitness: Minimum fitness level to stop the algorithm
         :param max_generations: Maximum number of generations
@@ -29,7 +28,6 @@ class GeneticAlgorithm:
         self.start_time = None
         self.population_size = population_size
 
-        self.mutator = mutator
         self.monitor = Monitor()
         self.process_tree_register = ProcessTreeRegister({})
         
@@ -67,18 +65,23 @@ class GeneticAlgorithm:
         if self.best_tree is None or best_tree.get_fitness() > self.best_tree.get_fitness():
             self.best_tree = best_tree
     
-    def run(self, eventlog: EventLog, percentage_of_log: float) -> ProcessTree:
+    def run(self, 
+            eventlog: EventLog, 
+            mutator: Union[Mutator, TournamentMutator], 
+            generator: Union[BottomUpBinaryTreeGenerator, SequentialTreeGenerator],
+            percentage_of_log: float
+        ) -> ProcessTree:
         # Start the timer
         self.start_time = time.time()
         
         # Filter the log
         eventlog = Filtering.filter_eventlog_by_top_percentage_unique(eventlog, percentage_of_log, True)
+        mutator.set_event_log(eventlog)
         
-        # Initialize the population
-        #generator = SequentialTreeGenerator()
-        #population = generator.generate_population(eventlog, n=self.population_size)
-        generator = BottomUpBinaryTreeGenerator()
+        # Generate initial population
         population = generator.generate_population(eventlog.unique_activities(), n=self.population_size)
+        
+        # Initialize the evaluator
         evaluator = Objective(eventlog)
         
         for generation in tqdm.tqdm(range(self.max_generations), desc="Discovering process tree", unit="generation"):
@@ -94,8 +97,7 @@ class GeneticAlgorithm:
                 break
                
             # Generate a new population
-            # population = self.mutator.tournament_population_generation(population)
-            population = self.mutator.generate_new_population(population)
+            population = mutator.generate_new_population(population)
         
         return self.best_tree
     
