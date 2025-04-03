@@ -6,7 +6,6 @@
 #include "Marking.hpp"
 #include <vector>
 #include "HyperGraph.hpp"
-#include "PrefixTree.hpp"
 #include "SuffixTree.hpp"
 #include <tuple>
 
@@ -17,7 +16,6 @@
 #include "src/test_suffix.cpp"
 #include "src/test_prefix_and_suffix.cpp"
 #include "src/test_suffix_tree.cpp"
-#include "src/test_prefix_tree.cpp"
 #include "src/test_silent_graph.cpp"
 #include "src/test_silent_transition_handling.cpp"
 #include "src/test_precision.cpp"

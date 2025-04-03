@@ -86,7 +86,7 @@ def real_life_evaluation():
     ax.legend()
     
     # apply log scale to y axis
-    ax.set_yscale('log')
+    #ax.set_yscale('log')
 
     # Show plot
     plt.tight_layout()
