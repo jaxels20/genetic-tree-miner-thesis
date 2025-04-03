@@ -25,6 +25,7 @@ if __name__ == "__main__":
     multi_evaluator = MultiEvaluator(
         eventlogs,
         methods=METHODS,
+        percentage_of_log=1.0,
         population_size=100,
         max_generations=100,
         random_creation_rate=0.2,
@@ -37,6 +38,6 @@ if __name__ == "__main__":
         time_limit=None,
     )
     
-    results_df = multi_evaluator.evaluate_all(num_cores=NUM_WORKERS)
+    results_df = multi_evaluator.evaluate_all()
     multi_evaluator.save_df_to_pdf(results_df, OUTPUT_DIR + "results.pdf")
     multi_evaluator.export_petri_nets(OUTPUT_DIR)
