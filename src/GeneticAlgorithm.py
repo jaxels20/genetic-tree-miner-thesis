@@ -1,6 +1,5 @@
 from src.Objective import Objective
-from src.RandomTreeGenerator import BottomUpBinaryTreeGenerator
-from src.RandomTreeGenerator import SequentialTreeGenerator
+from src.RandomTreeGenerator import BottomUpBinaryTreeGenerator, SequentialTreeGenerator, InjectionTreeGenerator
 from src.ProcessTree import ProcessTree
 from src.EventLog import EventLog
 from src.Mutator import Mutator, TournamentMutator
@@ -13,12 +12,20 @@ import time
 from typing import Union
 
 class GeneticAlgorithm:
-    def __init__(self, min_fitness: float = None, max_generations: int = 100, stagnation_limit = None, time_limit = None, population_size = 100):
+    def __init__(self, 
+            method_name, 
+            min_fitness: float = None, 
+            max_generations: int = 100, 
+            stagnation_limit = None, 
+            time_limit = None, 
+            population_size = 100
+        ):
         """
         :param min_fitness: Minimum fitness level to stop the algorithm
         :param max_generations: Maximum number of generations
         :param stagnation_limit: Maximum generations without improvement
         """
+        self.method_name = method_name
         self.min_fitness = min_fitness
         self.max_generations = max_generations
         self.stagnation_limit = stagnation_limit
@@ -65,10 +72,10 @@ class GeneticAlgorithm:
         if self.best_tree is None or best_tree.get_fitness() > self.best_tree.get_fitness():
             self.best_tree = best_tree
     
-    def run(self, 
+    def run(self,
             eventlog: EventLog, 
             mutator: Union[Mutator, TournamentMutator], 
-            generator: Union[BottomUpBinaryTreeGenerator, SequentialTreeGenerator],
+            generator: Union[BottomUpBinaryTreeGenerator, SequentialTreeGenerator, InjectionTreeGenerator],
             percentage_of_log: float
         ) -> ProcessTree:
         # Start the timer
@@ -79,7 +86,12 @@ class GeneticAlgorithm:
         mutator.set_event_log(eventlog)
         
         # Generate initial population
-        population = generator.generate_population(eventlog.unique_activities(), n=self.population_size)
+        if isinstance(generator, BottomUpBinaryTreeGenerator):
+            population = generator.generate_population(eventlog.unique_activities(), n=self.population_size)
+        elif isinstance(generator, SequentialTreeGenerator):
+            population = generator.generate_population(eventlog, n=self.population_size)
+        elif isinstance(generator, InjectionTreeGenerator):
+            population = generator.generate_population(eventlog, n=self.population_size, percentage=0.5)
         
         # Initialize the evaluator
         evaluator = Objective(eventlog)
@@ -98,6 +110,9 @@ class GeneticAlgorithm:
                
             # Generate a new population
             population = mutator.generate_new_population(population)
+        
+        print("teeeest", eventlog.name)
+        self.monitor.save_objective_results(eventlog.name, self.method_name)
         
         return self.best_tree
     

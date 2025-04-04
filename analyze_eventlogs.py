@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 from collections import defaultdict
-from src.BatchFileLoader import BatchFileLoader
+from src.FileLoader import BatchFileLoader
 from src.Discovery import Discovery
 from src.Evaluator import SingleEvaluator
 from src.Filtering import Filtering

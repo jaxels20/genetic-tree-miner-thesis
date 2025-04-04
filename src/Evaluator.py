@@ -4,6 +4,8 @@ import subprocess
 import os
 import tempfile
 from time import time
+import pickle
+from collections import defaultdict
 
 from src.EventLog import EventLog
 from src.Discovery import Discovery
@@ -140,25 +142,25 @@ def evaluate_single(miner: str, dataset: str, petri_net: PetriNet, event_log: Ev
 # This function discovers a process model from an event log 
 # and evaluates it against the event log (calculates the metrics)
 class MultiEvaluator:
-    def __init__(self, event_logs: dict, methods: list, **kwargs):
+    def __init__(self, event_logs: list[EventLog], methods_dict: dict):
         """
         Initialize with dictionaries of Petri nets and event logs.
         Args:
         - event_logs (dict): A dictionary where keys are event log names and values are EventLog objects.
         - methods (list): A list of strings representing the discovery methods to use. can be "alpha", "heuristic", "inductive", "GNN"
         """
-        self.event_logs = event_logs # dictionary of event logs with keys as event log names and values as EventLog objects
-        self.petri_nets = {method: {} for method in methods} # dictionary of Petri nets with keys as discovery methods 
-        self.times = {method: {} for method in methods} # dictionary of times with keys as discovery methods
+        self.event_logs = event_logs # list of event logs with keys as event log names and values as EventLog objects
+        self.petri_nets = {method: {} for method in methods_dict.keys()} # dictionary of Petri nets with keys as discovery methods 
+        self.times = {method: {} for method in methods_dict.keys()} # dictionary of times with keys as discovery methods
         # and values a dict of event log names and PetriNet objects
-        for method in methods:
-            for event_log_name, event_log in self.event_logs.items():
-                print("Running discovery for", method, "on", event_log_name)
+        for method, miner in methods_dict.items():
+            for event_log in self.event_logs:
+                print("Running discovery for", method, "on", event_log.name)
                 start = time()
-                pn_result = Discovery.run_discovery(method, event_log, **kwargs)
+                pn_result = miner(event_log)
                 discovery_time = time() - start
-                self.petri_nets[method][event_log_name] = pn_result
-                self.times[method][event_log_name] = discovery_time
+                self.petri_nets[method][event_log.name] = pn_result
+                self.times[method][event_log.name] = discovery_time
         
     def evaluate_all(self):
         """
@@ -169,10 +171,11 @@ class MultiEvaluator:
         # Iterate through each miner type and dataset in petri_nets
         for miner, datasets in self.petri_nets.items():
             for dataset, pn in datasets.items():
-                if dataset in self.event_logs:
-                    event_log = self.event_logs[dataset]
+                for i in range(len(self.event_logs)):
+                    event_log = self.event_logs[i]
                     res = evaluate_single(miner, dataset, pn, event_log)
                     results.append(res)
+        
         for dataset in results:
             dataset_name = dataset['dataset']
             dataset["time"] = self.times[dataset["miner"]][dataset_name]
@@ -268,4 +271,40 @@ class MultiEvaluator:
 
         print(f"PDF saved as {pdf_path}")
         
-    
+    @staticmethod
+    def plot_monitor_data(input_dir="./monitor_data/data/", output_dir="./monitor_data/plots/"):
+        # Load pickle data
+        pckl_files = []
+        subfolders = [f for f in os.listdir(input_dir) if os.path.isdir(os.path.join(input_dir, f))]
+        for subfolder in subfolders:
+            subfolder_path = os.path.join(input_dir, subfolder)
+            for file in os.listdir(subfolder_path):
+                if file.endswith(".pkl"):
+                    pckl_files.append(os.path.join(subfolder_path, file))
+        
+        # Unpack all data and prepare lines
+        lines = defaultdict(dict)
+        for pckl_file in pckl_files:
+            with open(pckl_file, "rb") as f:
+                eventlog_name, method_name, data = pickle.load(f)
+            lines[eventlog_name][method_name] = data
+
+        # Plot all data
+        for eventlog_name, data in lines.items():
+            fig, ax = plt.subplots(figsize=(10, 6))
+            for method_name, data in data.items():
+                x = list(data.keys())
+                y = list(data.values())
+                ax.plot(x, y, label=f"{eventlog_name} - {method_name}", linewidth=2)
+            
+            # Custom plot for each event log
+            ax.set_title("Fitness Evalution", fontsize=16)
+            ax.set_xlabel("Generation", fontsize=12)
+            ax.set_ylabel("Fitness", fontsize=12)
+            ax.grid(True, linestyle='--', alpha=0.6)
+            ax.legend(title="Method", fontsize=10)
+            plt.tight_layout()
+            
+            # Save it
+            os.makedirs(os.path.join(output_dir, eventlog_name), exist_ok=True)
+            fig.savefig(os.path.join(output_dir, eventlog_name, "monitor.png"))

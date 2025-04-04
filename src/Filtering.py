@@ -63,6 +63,7 @@ class Filtering:
                             break
         
         filtered_log.set_unique_activities(filtered_log.unique_activities())
+        filtered_log.set_eventlog_name(eventlog.name)
         return filtered_log
     
     @staticmethod

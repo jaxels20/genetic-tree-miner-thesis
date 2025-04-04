@@ -13,14 +13,15 @@ class Discovery:
         A wrapper for the genetic algorithm.
         """
         ga = GeneticAlgorithm(
-            min_fitness=kwargs.get("min_fitness", 0.9), 
-            max_generations=kwargs.get("max_generations", 100), 
-            stagnation_limit=kwargs.get("stagnation_limit", 10), 
-            time_limit=kwargs.get("time_limit", 300), 
-            population_size=kwargs.get("population_size", 50)
+            method_name=kwargs.get("method_name"),
+            min_fitness=kwargs.get("min_fitness"), 
+            max_generations=kwargs.get("max_generations"), 
+            stagnation_limit=kwargs.get("stagnation_limit"), 
+            time_limit=kwargs.get("time_limit"), 
+            population_size=kwargs.get("population_size")
         )
         generator = kwargs.get("generator")
-        percentage_of_log = kwargs.get("percentage_of_log", 1.0)
+        percentage_of_log = kwargs.get("percentage_of_log")
         mutator = kwargs.get("mutator")            
         
         our_pt = ga.run(event_log, mutator, generator, percentage_of_log)

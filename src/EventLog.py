@@ -61,6 +61,7 @@ class EventLog:
     def __init__(self):
         self.traces = []
         self._unique_activities = None
+        self.name = None
     
     @staticmethod
     def load_xes(xes_file: str):
@@ -383,6 +384,12 @@ class EventLog:
         Set the unique activities of the event log.
         """
         self._unique_activities = activities
+        
+    def set_eventlog_name(self, name):
+        """
+        Set the name of the event log.
+        """
+        self.name = name
     
     def to_fast_token_based_replay(self):
         """

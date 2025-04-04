@@ -73,9 +73,9 @@ class Objective:
     
     def fitness(self, process_tree: ProcessTree) -> float:
         weights = {
-            "simplicity": 25,
-            "refined_simplicity": 25,
-            "average_trace_fitness": 300
+            "simplicity": 10,
+            "refined_simplicity": 10,
+            "average_trace_fitness": 80
             # "generalization": 50,
             # "precision": 50,
         }
