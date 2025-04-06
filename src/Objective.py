@@ -67,12 +67,16 @@ class Objective:
         fitness = FastTokenBasedReplay.calculate_fitness(self.ftr_eventlog, ftr_petri_net, False, False)
         return fitness
     
+    def ftr_precision(self, ftr_petri_net):
+        precision = FastTokenBasedReplay.calculate_precision(self.ftr_eventlog, ftr_petri_net)
+        return precision
+    
     def fitness(self, process_tree: ProcessTree) -> float:
         weights = {
-            "simplicity": 25,
-            "refined_simplicity": 25,
+            "simplicity": 10,
+            "refined_simplicity": 10,
+            "average_trace_fitness": 80
             # "generalization": 50,
-            "average_trace_fitness": 300,
             # "precision": 50,
         }
         
@@ -81,9 +85,9 @@ class Objective:
         scores = {
             "simplicity": self.simplicity(pm4py_pn),
             "refined_simplicity": self.refined_simplicity(pm4py_pn),
+            "average_trace_fitness": self.ftr_fitness(ftr_pn)
             # "generalization": self.generalization(pm4py_pn, initial_marking, final_marking),
-            "average_trace_fitness": self.ftr_fitness(ftr_pn),
-            # "precision": self.precision(pm4py_pn, initial_marking, final_marking),
+            # "precision": self.ftr_precision(ftr_pn)
         }
         return sum(scores[key] * weights[key] for key in scores.keys())
     
