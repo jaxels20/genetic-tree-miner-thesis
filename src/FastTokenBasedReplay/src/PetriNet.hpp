@@ -237,7 +237,6 @@ class PetriNet {
             return fired_transitions;
         }
 
-
         bool can_fire_transition_sequence(const std::vector<std::string>& transition_names) {
 
             // Make a copy of self 
@@ -333,6 +332,8 @@ class PetriNet {
         std::set<std::string> get_visible_transitions_eventually_enabled() {
             std::set<std::string> visible_transitions;
             std::set<std::string> visited;
+
+            size_t max_iterations = 20;
             
             // Start with the initially enabled transitions
             std::vector<std::string> all_enabled_transitions = get_enabled_transitions(true);
@@ -344,6 +345,11 @@ class PetriNet {
         
             size_t i = 0;
             while (i < all_enabled_transitions.size()) {
+
+                if (i >= max_iterations) {
+                    break;
+                }
+
                 std::string t = all_enabled_transitions[i];
                 Marking marking_copy = transition_markings[t];
         
@@ -376,7 +382,6 @@ class PetriNet {
                 }
                 ++i;
             }
-        
             return visible_transitions;
         }
         

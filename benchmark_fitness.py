@@ -235,26 +235,66 @@ def real_life_evaluation():
                 our_event_log = EventLog.load_xes(os.path.join(eventlog_dir, folder, filename))
                 
                 # filter the traces
-                our_event_log = Filtering.filter_eventlog_by_top_percentage_unique(our_event_log, 0.1, include_all_activities=False)
+                our_event_log = Filtering.filter_eventlog_by_top_percentage_unique(our_event_log, 0.5, include_all_activities=False)
                 
                 pm4py_event_log = our_event_log.to_pm4py()
                 pm4py_pt = pm4py_inductive_miner(pm4py_event_log)
                 pm4py_net, init, end = pt_converter.apply(pm4py_pt, variant=pt_converter.Variants.TO_PETRI_NET)
                 
                 our_net = PetriNet.from_pm4py(pm4py_net, init, end)
-            
+                # sort the our_event_log traces by length longest to shortest
+                our_event_log.traces.sort(key=lambda x: len(x.events), reverse=True)
+                
                 data[filename] = {"FastTokenBasedReplay (without caching)": time_fast_token_based_replay_without_caching(our_event_log, our_net),
                                 #"pm4py": time_pm4py_token_based_replay(our_event_log, our_net),
                                 "FastTokenBasedReplay (with prefix caching)": time_fast_token_based_replay_with_prefix_caching(our_event_log, our_net),
-                                #"FastTokenBasedReplay (with suffix caching)": time_fast_token_based_replay_with_suffix_caching(our_event_log, our_net),
-                                #"FastTokenBasedReplay (with prefix and suffix caching)" : time_fast_token_based_replay_with_prefix_and_suffix_caching(our_event_log, our_net)
+                                "FastTokenBasedReplay (with suffix caching)": time_fast_token_based_replay_with_suffix_caching(our_event_log, our_net),
+                                "FastTokenBasedReplay (with prefix and suffix caching)" : time_fast_token_based_replay_with_prefix_and_suffix_caching(our_event_log, our_net),
                                 }
-            
+        
+    # Plot configuration
+    datasets = list(data.keys())
+    methods = [m for m in next(iter(data.values())).keys() if 'without' not in m]
+    baseline_key = 'FastTokenBasedReplay (without caching)'
+
+    # Compute speedups
+    speedups = {
+        method: [data[ds][baseline_key] / data[ds][method] for ds in datasets]
+        for method in methods
+    }
     
+    # Plotting
+    bar_width = 0.2
+    index = np.arange(len(datasets))
+    hatches = ['//', '\\\\', 'xx']  # One for each method
+
+    plt.figure(figsize=(12, 6))
+    ax = plt.gca()
+
+    # Plot each method
+    for i, (method, hatch) in enumerate(zip(methods, hatches)):
+        ax.bar(index + i * bar_width, speedups[method], bar_width, label=method, hatch=hatch, color='white', edgecolor='black')
+
+    # Labels and ticks
+    ax.set_xlabel("Event Logs", fontsize=12)
+    ax.set_ylabel("Speedup over no caching", fontsize=12)
+    ax.set_title("Speedup of Caching Methods Compared to No Caching", fontsize=13)
+    ax.set_xticks(index + bar_width * (len(methods) / 2 - 0.5))
+    ax.set_xticklabels(datasets, rotation=45, ha='right', fontsize=10)
+    ax.legend(fontsize=10)
+
+    # Make the y-axis to per
     
-    # Extracting keys and values
+
+    # Grid and layout
+    ax.grid(True, which='major', linestyle='--', linewidth=0.5, axis='y')
+    plt.tight_layout()
+
+    # Save as high-resolution PNG
+    plt.savefig('benchmark_results/fitness_speedup_speed_up.png', dpi=300, bbox_inches='tight')
+    
     datasets = list(data.keys())  # X-axis labels (event logs)
-    methods = list(next(iter(data.values())).keys())  # Different methods
+    methods = [m for m in next(iter(data.values())).keys()]
 
     # Extracting values
     values = {method: [data[ds][method] for ds in datasets] for method in methods}
@@ -279,12 +319,12 @@ def real_life_evaluation():
     ax.legend()
     
     # apply log scale to y axis
-    #ax.set_yscale('log')
+    # ax.set_yscale('log')
 
     # Show plot
     plt.tight_layout()
-    fig.savefig('benchmark_results/fitness_comparison.png')  
-    
+    fig.savefig('benchmark_results/fitness_comparison_absolute.png')  
+        
 def synthetic_evaluation():
     num_traces = [1_000, 5_000, 50_000, 100_000]
     ftr_without_caching_times = test_fast_token_based_replay_without_caching(num_traces)

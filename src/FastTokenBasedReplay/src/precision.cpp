@@ -9,6 +9,7 @@
 #include "silent_transition_handling.cpp"
 #include "ActivityCache.hpp"
 #include "token_based_replay.cpp"
+#include "chrono"
 
 
 std::unordered_map<std::string, std::set<std::string>> compute_prefixes(const EventLog& log) {
@@ -38,7 +39,9 @@ std::tuple<int32_t, int32_t> replay_trace_precision(
     PetriNet& net, 
     std::unordered_map<std::string, std::unordered_map<std::string,std::vector<std::string>>> silent_firing_sequences,
     ActivityCache& activity_cache,
-    std::unordered_map<std::string, std::set<std::string>> prefixes){
+    std::unordered_map<std::string, std::set<std::string>>& prefixes,
+    std::unordered_map<Marking, std::set<std::string>, MarkingHasher>& visible_transitions_eventually_enabled_cache
+    ){
     int32_t escaped_edges = 0;
     int32_t allowed_tasks = 0;
     std::string current_prefix;
@@ -58,13 +61,27 @@ std::tuple<int32_t, int32_t> replay_trace_precision(
         // DO THE BOOKKEEPING
         // Count the number of allowed tasks, which is the number of enabled transitions
         PetriNet net_copy = net;
-        std::set<std::string> allowed_tasks_set = net_copy.get_visible_transitions_eventually_enabled();
+        // Get the current marking
+        Marking current_marking = net_copy.get_current_marking();
+        
+        std::set<std::string> allowed_tasks_set;
+
+        // Check if the marking is already computed in the cache
+        auto it = visible_transitions_eventually_enabled_cache.find(current_marking);
+        if (it != visible_transitions_eventually_enabled_cache.end()) {
+            // If found, use the cached value
+            allowed_tasks_set = it->second;
+        } else {
+            // If not found, compute the allowed tasks and store in the cache
+            allowed_tasks_set = net_copy.get_visible_transitions_eventually_enabled();
+            visible_transitions_eventually_enabled_cache[current_marking] = allowed_tasks_set;
+        }
 
         allowed_tasks += allowed_tasks_set.size();
 
         std::set next_activity_after_prefix = prefixes[current_prefix];
 
-        // Store result
+        // // Store result
         std::vector<std::string> difference_result;
         std::set_difference(
             allowed_tasks_set.begin(), allowed_tasks_set.end(),
@@ -100,7 +117,7 @@ std::tuple<int32_t, int32_t> replay_trace_precision(
             current_prefix += event.activity + ",";
 
         } else {
-            // For the precision we stop of the trace cannot be replayed
+            // For the precision we stop if the trace cannot be replayed
             break;
         }
 
@@ -111,16 +128,19 @@ std::tuple<int32_t, int32_t> replay_trace_precision(
 
 
 
-
 double calculate_precision(const EventLog& log, const PetriNet& net){
 
     auto prefixes = compute_prefixes(log);
+
     double precision = 0.0;
     int32_t total_escaping_edges = 0;
     int32_t total_allowed_tasks = 0;
 
     // Map to store computed values for unique traces
     std::unordered_map<Trace, std::tuple<int32_t, int32_t>> trace_cache;
+
+    // Map to store visible transitions eventually enabled for the net
+    std::unordered_map<Marking, std::set<std::string>, MarkingHasher> visible_transitions_eventually_enabled_cache;
 
     PetriNet net_copy = net;
     // A map to store the firing sequences for every place to every other place using silent transitions
@@ -129,21 +149,19 @@ double calculate_precision(const EventLog& log, const PetriNet& net){
 
     // Activity cache to store the precomputed values
     ActivityCache activity_cache;
-
+    
     // Iterate over the traces in the event log
     for (const auto& trace : log.traces) {
         if (trace_cache.find(trace) == trace_cache.end()) {
             // If this trace has not been processed, do token replay
             PetriNet net_copy = net;
-            trace_cache[trace] = replay_trace_precision(trace, net_copy, silent_firing_sequences, activity_cache, prefixes);
+            trace_cache[trace] = replay_trace_precision(trace, net_copy, silent_firing_sequences, activity_cache, prefixes, visible_transitions_eventually_enabled_cache);
         }
 
         // Get the replay result for the trace
-        std::tuple<int, int> replay_result = trace_cache[trace];
-        int32_t escaped_edges = std::get<0>(replay_result);
-        int32_t allowed_tasks = std::get<1>(replay_result);
-        total_escaping_edges += escaped_edges;
-        total_allowed_tasks += allowed_tasks;
+        auto [ee, at] = trace_cache[trace];
+        total_escaping_edges += ee;
+        total_allowed_tasks += at;
     }
 
     if (total_allowed_tasks == 0) {
