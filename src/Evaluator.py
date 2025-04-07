@@ -272,7 +272,7 @@ class MultiEvaluator:
         print(f"PDF saved as {pdf_path}")
         
     @staticmethod
-    def plot_monitor_data(input_dir="./monitor_data/data/", output_dir="./monitor_data/plots/"):
+    def plot_monitor_data(input_dir="./monitor_analysis/data/", output_dir="./monitor_analysis/plots/"):
         # Load pickle data
         pckl_files = []
         subfolders = [f for f in os.listdir(input_dir) if os.path.isdir(os.path.join(input_dir, f))]

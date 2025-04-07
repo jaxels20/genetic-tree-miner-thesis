@@ -22,13 +22,12 @@ class Monitor:
         self.best_trees.append(best_tree)
         self.best_fitnesses.append(best_tree.get_fitness())
     
-    def save_objective_results(self, dataset_name, method_name) -> None:
+    def save_objective_results(self, save_dir, dataset_name, method_name) -> None:
         result_dict = {}
         for generation, best_tree_fitness in zip(self.generations, self.best_fitnesses):
             result_dict[generation] = best_tree_fitness
         
-        os.makedirs(f"./monitor_data/data/{dataset_name}", exist_ok=True)
-        with open(f"./monitor_data/data/{dataset_name}/{method_name}.pkl", "wb") as f:
+        with open(os.path.join(save_dir, dataset_name, method_name) + ".pkl", "wb") as f:
             pickle.dump((dataset_name, method_name, result_dict), f)       
     
     def plot_fitness(self) -> None:

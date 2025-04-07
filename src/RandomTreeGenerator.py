@@ -66,15 +66,12 @@ class BottomUpBinaryTreeGenerator(RandomTreeGeneratorBase):
         
 class SequentialTreeGenerator:
     def __init__(self):
-        pass
+        self.footprint_matrix = None
+        self.unique_activities = None 
 
-    def generate_sequential_model(self, eventlog: EventLog) -> ProcessTree:
-        footprint_matrix = eventlog.get_footprint_matrix()             
-
-        unique_activities = eventlog.unique_activities()
-
+    def generate_sequential_model(self) -> ProcessTree:
         root = ProcessTree(operator=Operator.SEQUENCE)
-        available_activities = list(unique_activities)
+        available_activities = list(self.unique_activities)
         random.shuffle(available_activities)
 
         pairs = []
@@ -93,8 +90,8 @@ class SequentialTreeGenerator:
                 root.add_child(ProcessTree(label=pair[0]))
             else:
                 a, b = pair
-                forward_relation = footprint_matrix.get((a, b))
-                backward_relation = footprint_matrix.get((b, a))
+                forward_relation = self.footprint_matrix.get((a, b))
+                backward_relation = self.footprint_matrix.get((b, a))
                 
                 if forward_relation == '>':
                     operator_node = ProcessTree(operator=Operator.SEQUENCE)
@@ -117,10 +114,12 @@ class SequentialTreeGenerator:
 
         return root
 
-    def generate_population(self, event_log: EventLog, n: int) -> List[ProcessTree]:
+    def generate_population(self, eventlog: EventLog, n: int) -> List[ProcessTree]:
         trees = []
+        self.footprint_matrix = eventlog.get_footprint_matrix()             
+        self.unique_activities = eventlog.unique_activities()
         for _ in range(n):
-            tree = self.generate_sequential_model(event_log)
+            tree = self.generate_sequential_model()
             trees.append(tree)
 
         population = Population(trees)

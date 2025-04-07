@@ -57,7 +57,6 @@ class Mutator(MutatorBase):
                     idx = node.children.index(swap_from)
                     node.children[idx] = swap_to
                     node.children[idx].parent = node
-                
             try:
                 # Ensure that the tree is strictly valid
                 candidate.remove_duplicate_activities()
@@ -166,14 +165,14 @@ class Mutator(MutatorBase):
             new_loop = random.choice(leaves)
             
             # Replace the leaf node with a loop node
-            actvity = new_loop.label
+            activity = new_loop.label
             new_loop.label = None
             new_loop.operator = Operator.LOOP
             
             # Add tau node to new_loop
-            tau = ProcessTree(parent=new_loop, operator = None, label = None)
+            tau = ProcessTree(parent=new_loop, operator=None, label=None)
             new_loop.add_child(tau)
-            new_loop.add_child(ProcessTree(parent=new_loop, label=actvity))
+            new_loop.add_child(ProcessTree(parent=new_loop, label=activity))
             random.shuffle(new_loop.children)
             
             return tree
