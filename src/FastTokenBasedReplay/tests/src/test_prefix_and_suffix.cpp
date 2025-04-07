@@ -55,8 +55,6 @@ TEST(PrefixAndSuffixCaching, SimpleLoop) {
     std::vector<std::string> trace_list = {"AC", "ABC", "ABBC"};
     EventLog eventlog = EventLog::from_trace_list(trace_list);
 
-
-
     double fitness = calculate_fitness(eventlog, net, true, true);
 
     EXPECT_EQ(fitness, 1.0);
