@@ -26,7 +26,7 @@ if __name__ == "__main__":
             raise ValueError("More than one xes file in the directory")
 
     methods_dict = {
-        "Genetic_Miner": lambda log: Discovery.genetic_algorithm(
+        "Genetic_Miner_1": lambda log: Discovery.genetic_algorithm(
             log,
             method_name="Genetic_Miner_Random",
             mutator=Mutator(random_creation_rate=0.2, crossover_rate=0.3, mutation_rate=0.3, elite_rate=0.2),
