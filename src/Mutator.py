@@ -61,9 +61,11 @@ class Mutator(MutatorBase):
                 # Ensure that the tree is strictly valid
                 candidate.remove_duplicate_activities()
                 candidate.if_missing_insert_activities(self.event_log.unique_activities())
-                return candidate
             except ValueError:
                 continue   # remove_duplicate_activities raise an error, i.e. not possible to remove duplicate activities without breaking the tree
+            
+            if candidate.is_valid():
+                return candidate
         
         # If no valid crossover point was found, return a random parent
         return deep_copy_tree(random.choice([parent1, parent2]))

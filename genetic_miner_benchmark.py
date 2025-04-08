@@ -15,9 +15,6 @@ if __name__ == "__main__":
     eventlogs = []
 
     for dataset_dir in dataset_dirs:
-        if not dataset_dir == "BPI_Challenge_2013_closed_problems":
-            continue
-        
         # Assume only one file per directory
         xes_file = [f for f in os.listdir(f"{INPUT_DIR}{dataset_dir}") if f.endswith(".xes")]
         if len(xes_file) == 0:

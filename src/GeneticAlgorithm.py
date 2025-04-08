@@ -91,7 +91,7 @@ class GeneticAlgorithm:
         elif isinstance(generator, SequentialTreeGenerator):
             population = generator.generate_population(eventlog, n=self.population_size)
         elif isinstance(generator, InjectionTreeGenerator):
-            population = generator.generate_population(eventlog, n=self.population_size, percentage=0.5)
+            population = generator.generate_population(eventlog, n=self.population_size, percentage=0.1)
         
         # Initialize the evaluator
         evaluator = Objective(eventlog)
@@ -111,8 +111,7 @@ class GeneticAlgorithm:
             # Generate a new population
             population = mutator.generate_new_population(population)
         
-        print("teeeest", eventlog.name)
-        self.monitor.save_objective_results(eventlog.name, self.method_name)
+        self.monitor.save_objective_results("./monitor_analysis/data/", eventlog.name, self.method_name)
         
         return self.best_tree
     

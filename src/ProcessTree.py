@@ -146,11 +146,14 @@ class ProcessTree:
         if self.get_size() > 20:
             return False
         
-        child_count = len(self.children)
-        
+        # Avoid subtrees with only tau nodes for seq and xor
+        child_count = len([c for c in self.children if c.operator or c.label is not None])
         if self.operator in [Operator.SEQUENCE, Operator.XOR] and child_count < 1:
             return False
-        elif self.operator in [Operator.OR, Operator.LOOP, Operator.PARALLEL] and child_count < 2:
+        
+        # Avoid subtrees with only tau nodes for or, loop and parallel. Require at least non-tau child
+        tau_children_count = len([c for c in self.children if c.operator and c.label is None])
+        if self.operator in [Operator.OR, Operator.LOOP, Operator.PARALLEL] and (child_count + tau_children_count < 2 or child_count == 0):
             return False
         
         return all(child.is_valid() for child in self.children)

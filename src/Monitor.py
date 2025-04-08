@@ -27,6 +27,7 @@ class Monitor:
         for generation, best_tree_fitness in zip(self.generations, self.best_fitnesses):
             result_dict[generation] = best_tree_fitness
         
+        os.makedirs(os.path.join(save_dir, dataset_name), exist_ok=True)
         with open(os.path.join(save_dir, dataset_name, method_name) + ".pkl", "wb") as f:
             pickle.dump((dataset_name, method_name, result_dict), f)       
     
