@@ -222,7 +222,7 @@ class Mutator(MutatorBase):
 
 class TournamentMutator(Mutator):
     def __init__(self, random_creation_rate: float, crossover_rate: float, mutation_rate: float, elite_rate: float, tournament_size: float):
-        super().__init__(random_creation_rate, crossover_rate, mutation_rate, elite_rate, tournament_size)
+        super().__init__(random_creation_rate, crossover_rate, mutation_rate, elite_rate)
         self.tournament_size = tournament_size
 
     def generate_new_population(self, old_population: Population) -> Population:
