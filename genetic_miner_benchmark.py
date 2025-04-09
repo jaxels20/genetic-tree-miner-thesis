@@ -16,6 +16,8 @@ if __name__ == "__main__":
 
     for dataset_dir in dataset_dirs:
         # Assume only one file per directory
+        if dataset_dir == "Road_Traffic_Fine_Management":
+            continue
         xes_file = [f for f in os.listdir(f"{INPUT_DIR}{dataset_dir}") if f.endswith(".xes")]
         if len(xes_file) == 0:
             continue
@@ -26,7 +28,7 @@ if __name__ == "__main__":
             raise ValueError("More than one xes file in the directory")
 
     methods_dict = {
-        "Genetic_Miner_1": lambda log: Discovery.genetic_algorithm(
+        "Genetic Miner (Random Initial - Tournament)": lambda log: Discovery.genetic_algorithm(
             log,
             method_name="Genetic Miner (Random Initial - Tournament)",
             mutator=TournamentMutator(random_creation_rate=0.2, crossover_rate=0.3, mutation_rate=0.3, elite_rate=0.2, tournament_size=0.5),
@@ -79,6 +81,7 @@ if __name__ == "__main__":
 
     multi_evaluator = MultiEvaluator(eventlogs, methods_dict)
     results_df = multi_evaluator.evaluate_all()
+    results_df.to_csv(OUTPUT_DIR + "results.csv", index=False)
     multi_evaluator.save_df_to_pdf(results_df, OUTPUT_DIR + "results.pdf")
     multi_evaluator.export_petri_nets(OUTPUT_DIR)
     multi_evaluator.plot_monitor_data("./monitor_data/data", "./monitor_data/plots")
