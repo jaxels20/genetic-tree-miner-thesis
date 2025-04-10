@@ -126,11 +126,11 @@ class SequentialTreeGenerator:
         return population
 
 class InjectionTreeGenerator:
-    def __init__(self):
-        pass
+    def __init__(self, log_filtering: float):
+        self.log_filtering = log_filtering
 
-    def generate_injection_model(self, eventlog: EventLog, percentage: float) -> ProcessTree:
-        filtered_log = Filtering.filter_eventlog_random(eventlog, percentage, include_all_activities=True)
+    def generate_injection_model(self, eventlog: EventLog) -> ProcessTree:
+        filtered_log = Filtering.filter_eventlog_random(eventlog, self.log_filtering, include_all_activities=True)
         pm4py_log = filtered_log.to_pm4py()
 
         # use pm4py to generate the process tree by inductive miner on the pm4py log
@@ -140,13 +140,13 @@ class InjectionTreeGenerator:
 
         return process_tree
 
-    def generate_population(self, event_log: EventLog, n: int, percentage: float) -> List[ProcessTree]:
+    def generate_population(self, event_log: EventLog, n: int) -> List[ProcessTree]:
         """
         Generates a population of process trees by injecting noise into the event log.
         """
         trees = []
         for _ in range(n):
-            tree = self.generate_injection_model(event_log, percentage)
+            tree = self.generate_injection_model(event_log)
             if not any (trees[i].is_equal(tree) for i in range(len(trees))):
                 # Ensure uniqueness of trees
                 trees.append(tree)

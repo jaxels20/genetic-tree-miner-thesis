@@ -1,6 +1,5 @@
 from src.ProcessTree import ProcessTree, Operator
 from src.EventLog import EventLog
-from src.ProcessTreeRegister import ProcessTreeRegister
 from src.SupressPrints import SuppressPrints
 from src.Population import Population
 from src.PetriNet import PetriNet
@@ -15,8 +14,39 @@ from pm4py.algo.evaluation.simplicity.variants.arc_degree import apply as simpli
 
 
 class Objective:
-    def __init__(self, event_log: EventLog):        
-        # Initialize eventlog, pm4py_eventlog, and ftr_eventlog    
+    """
+    metric_weights: A dictionary with metric names as keys and float weights as values.
+        Valid keys include:
+        - 'simplicity'
+        - 'refined_simplicity'
+        - 'generalization'
+        - 'average_trace_fitness'
+        - 'log_fitness'
+        - 'perc_fit_traces'
+        - 'precision'
+        - 'ftr_fitness'
+        - 'ftr_precision'
+    """
+    def __init__(self, metric_weights: dict[str, float]):
+        self.eventlog = None
+        self.event_log_pm4py = None
+        self.ftr_eventlog = None
+        self.metric_weights = metric_weights
+
+        # Dictionary mapping metric names to the actual evaluation functions
+        self.metric_functions = {
+            "simplicity": self.simplicity,
+            "refined_simplicity": self.refined_simplicity,
+            "generalization": self.generalization,
+            "average_trace_fitness": self.average_trace_fitness,
+            "log_fitness": self.log_fitness,
+            "perc_fit_traces": self.percentage_of_fitting,
+            "precision": self.precision,
+            "ftr_fitness": self.ftr_fitness,
+            "ftr_precision": self.ftr_precision,
+        }
+        
+    def set_event_log(self, event_log: EventLog):
         self.eventlog = event_log
         self.event_log_pm4py = event_log.to_pm4py()
         self.ftr_eventlog = self.eventlog.to_fast_token_based_replay()
@@ -71,23 +101,28 @@ class Objective:
         precision = FastTokenBasedReplay.calculate_precision(self.ftr_eventlog, ftr_petri_net)
         return precision
     
-    def fitness(self, process_tree: ProcessTree) -> float:
-        weights = {
-            "simplicity": 10,
-            "refined_simplicity": 10,
-            "average_trace_fitness": 80,
-            "precision": 50,
-        }
-        
+    def fitness(self, process_tree: ProcessTree) -> float:        
         pm4py_pn, initial_marking, final_marking = process_tree.to_pm4py_pn()
         ftr_pn = PetriNet.from_pm4py(pm4py_pn, initial_marking, final_marking).to_fast_token_based_replay()
-        scores = {
-            "simplicity": self.simplicity(pm4py_pn),
-            "refined_simplicity": self.refined_simplicity(pm4py_pn),
-            "average_trace_fitness": self.ftr_fitness(ftr_pn),
-            "precision": self.ftr_precision(ftr_pn)
-        }
-        return sum(scores[key] * weights[key] for key in scores.keys())
+
+        total_fitness = 0.0
+
+        for metric_name, weight in self.metric_weights.items():
+            metric_func = self.metric_functions.get(metric_name)
+            if not metric_func:
+                raise ValueError(f"Unknown metric: {metric_name}")
+
+            # Dynamically decide what to pass based on the metric
+            if metric_name.startswith("ftr_"):
+                score = metric_func(ftr_pn)
+            elif metric_name in ["simplicity", "refined_simplicity"]:
+                score = metric_func(pm4py_pn)
+            else:
+                score = metric_func(pm4py_pn, initial_marking, final_marking)
+
+            total_fitness += weight * score
+
+        return total_fitness
     
     def evaluate_population(self, population: Population):
         for tree in population.trees:

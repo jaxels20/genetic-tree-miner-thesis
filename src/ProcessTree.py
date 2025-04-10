@@ -192,16 +192,36 @@ class ProcessTree:
         return self.fitness
 
     def __lt__(self, other):
-        return self.fitness < other.fitness
+        if isinstance(other, float):
+            return self.fitness < other
+        if isinstance(other, ProcessTree):
+            return self.fitness < other.fitness
+        else:
+            raise TypeError(f"Unsupported comparison between ProcessTree and {type(other)}")
     
     def __le__(self, other):
-        return self.fitness <= other.fitness
+        if isinstance(other, float):
+            return self.fitness <= other
+        if isinstance(other, ProcessTree):
+            return self.fitness <= other.fitness
+        else:
+            raise TypeError(f"Unsupported comparison between ProcessTree and {type(other)}")
     
     def __gt__(self, other):
-        return self.fitness > other.fitness
+        if isinstance(other, float):
+            return self.fitness > other
+        if isinstance(other, ProcessTree):
+            return self.fitness > other.fitness
+        else:
+            raise TypeError(f"Unsupported comparison between ProcessTree and {type(other)}")
     
     def __ge__(self, other):
-        return self.fitness >= other.fitness
+        if isinstance(other, float):
+            return self.fitness >= other
+        if isinstance(other, ProcessTree):
+            return self.fitness >= other.fitness
+        else:
+            raise TypeError(f"Unsupported comparison between ProcessTree and {type(other)}")
 
     def get_all_nodes(self) -> List['ProcessTree']:
         nodes = [self]

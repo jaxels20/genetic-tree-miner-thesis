@@ -14,17 +14,31 @@ class Discovery:
         """
         ga = GeneticAlgorithm(
             method_name=kwargs.get("method_name"),
-            min_fitness=kwargs.get("min_fitness"), 
-            max_generations=kwargs.get("max_generations"), 
-            stagnation_limit=kwargs.get("stagnation_limit"), 
-            time_limit=kwargs.get("time_limit"), 
-            population_size=kwargs.get("population_size")
         )
+        
+        # Args for the run algorithm
+        population_size=kwargs.get("population_size")
+        max_generations = kwargs.get("max_generations")
+        min_fitness=kwargs.get("min_fitness", None)
+        stagnation_limit=kwargs.get("stagnation_limit", None)
+        time_limit=kwargs.get("time_limit", None)
         generator = kwargs.get("generator")
         percentage_of_log = kwargs.get("percentage_of_log")
-        mutator = kwargs.get("mutator")            
+        mutator = kwargs.get("mutator")
+        objective = kwargs.get("objective")    
         
-        our_pt = ga.run(event_log, mutator, generator, percentage_of_log)
+        our_pt = ga.run(
+            eventlog=event_log, 
+            population_size=population_size,
+            mutator=mutator,
+            generator=generator, 
+            objective=objective, 
+            percentage_of_log=percentage_of_log, 
+            max_generations=max_generations, 
+            min_fitness=min_fitness,
+            stagnation_limit=stagnation_limit,
+            time_limit=time_limit
+        )
         pm4py_net, init, end = our_pt.to_pm4py_pn()
         
         return PetriNet.from_pm4py(pm4py_net, init, end)

@@ -39,8 +39,7 @@ class SingleEvaluator:
             "generalization": self.get_generalization(),
             **self.get_replay_fitness(),
             "precision": self.get_precision(),
-            "objective_fitness": self.get_objective_fitness(),
-            #"exact_matching_precision": self.get_exact_matching(type="precision"),
+            "objective_fitness": self.get_objective_fitness(metric_weights={"simplicity": 20, "refined_simplicity": 20, "ftr_fitness": 100, "ftr_precision": 50}),
         }
         data["f1_score"] = self.get_f1_score(data["precision"], data["log_fitness"])
         return data    
@@ -61,11 +60,12 @@ class SingleEvaluator:
         precision_value = precision(self.event_log_pm4py, self.pm4py_pn, self.init_marking, self.final_marking)
         return precision_value
     
-    def get_objective_fitness(self):
-        pm4py_pt = convert_to_pt(self.pm4py_pn, self.init_marking, self.final_marking )
+    def get_objective_fitness(self, metric_weights: dict[str, float]):
+        pm4py_pt = convert_to_pt(self.pm4py_pn, self.init_marking, self.final_marking)
         our_pt = ProcessTree.from_pm4py(pm4py_pt)
-        calculator = Objective(self.eventlog)
-        return calculator.fitness(our_pt)
+        objective = Objective(metric_weights)
+        objective.set_event_log(self.eventlog)
+        return objective.fitness(our_pt)
     
     def get_exact_matching(self, type):
         """Runs the jbpt library to calculate the entropy-based precision metric.
@@ -134,8 +134,6 @@ def evaluate_single(miner: str, dataset: str, petri_net: PetriNet, event_log: Ev
     
     # Get metrics and round to 4 decimal places
     metrics = {k: round(v, 3) for k, v in evaluator.get_evaluation_metrics().items()}
-    metrics['miner'] = miner
-    metrics['dataset'] = dataset
     
     return metrics
 
@@ -147,9 +145,9 @@ class MultiEvaluator:
         Initialize with dictionaries of Petri nets and event logs.
         Args:
         - event_logs (dict): A dictionary where keys are event log names and values are EventLog objects.
-        - methods (list): A list of strings representing the discovery methods to use. can be "alpha", "heuristic", "inductive", "GNN"
+        - methods (list): A list of strings representing the discovery methods to use.
         """
-        self.event_logs = event_logs # list of event logs with keys as event log names and values as EventLog objects
+        self.event_logs = event_logs # list of EventLog objects
         self.petri_nets = {method: {} for method in methods_dict.keys()} # dictionary of Petri nets with keys as discovery methods 
         self.times = {method: {} for method in methods_dict.keys()} # dictionary of times with keys as discovery methods
         # and values a dict of event log names and PetriNet objects
@@ -164,21 +162,18 @@ class MultiEvaluator:
         
     def evaluate_all(self):
         """
-        Evaluate all Petri nets against their corresponding event logs using multiprocessing,
-        and return a DataFrame with metrics.
+        Evaluate all Petri nets against their corresponding event logs and return a DataFrame with metrics.
         """
         results = []
-        # Iterate through each miner type and dataset in petri_nets
-        for miner, datasets in self.petri_nets.items():
-            for dataset, pn in datasets.items():
-                for i in range(len(self.event_logs)):
-                    event_log = self.event_logs[i]
-                    res = evaluate_single(miner, dataset, pn, event_log)
-                    results.append(res)
         
-        for dataset in results:
-            dataset_name = dataset['dataset']
-            dataset["time"] = self.times[dataset["miner"]][dataset_name]
+        # Iterate through each miner type and dataset in petri_nets
+        for miner, dataset_pn_pairs in self.petri_nets.items():
+            for dataset, pn in dataset_pn_pairs.items():
+                i = next((i for i, el in enumerate(self.event_logs) if el.name == dataset))
+                event_log = self.event_logs[i]
+                res = evaluate_single(miner, dataset, pn, event_log)
+                res["time"] = self.times[miner][dataset]   # add timing results
+                results.append(res)
         
         return pd.DataFrame(results)
 
