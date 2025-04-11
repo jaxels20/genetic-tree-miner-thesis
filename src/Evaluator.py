@@ -33,13 +33,13 @@ class SingleEvaluator:
         self.pm4py_pn, self.init_marking, self.final_marking = self.pn.to_pm4py()
         self.event_log_pm4py = self.eventlog.to_pm4py()
     
-    def get_evaluation_metrics(self):
+    def get_evaluation_metrics(self, objective_metric_weights: dict[str, float]):
         data = {
             "simplicity": self.get_simplicity(),
             "generalization": self.get_generalization(),
             **self.get_replay_fitness(),
             "precision": self.get_precision(),
-            "objective_fitness": self.get_objective_fitness(metric_weights={"simplicity": 20, "refined_simplicity": 20, "ftr_fitness": 100, "ftr_precision": 50}),
+            "objective_fitness": self.get_objective_fitness(objective_metric_weights),
         }
         data["f1_score"] = self.get_f1_score(data["precision"], data["log_fitness"])
         return data    
@@ -60,10 +60,10 @@ class SingleEvaluator:
         precision_value = precision(self.event_log_pm4py, self.pm4py_pn, self.init_marking, self.final_marking)
         return precision_value
     
-    def get_objective_fitness(self, metric_weights: dict[str, float]):
+    def get_objective_fitness(self, objective_metric_weights: dict[str, float]={"simplicity": 20, "refined_simplicity": 20, "ftr_fitness": 100, "ftr_precision": 50}):
         pm4py_pt = convert_to_pt(self.pm4py_pn, self.init_marking, self.final_marking)
         our_pt = ProcessTree.from_pm4py(pm4py_pt)
-        objective = Objective(metric_weights)
+        objective = Objective(objective_metric_weights)
         objective.set_event_log(self.eventlog)
         return objective.fitness(our_pt)
     
@@ -128,15 +128,6 @@ class SingleEvaluator:
             f1_score = 0.0
         return f1_score
 
-# Define a helper function that will handle evaluation for a single Petri net and event log pair
-def evaluate_single(miner: str, dataset: str, petri_net: PetriNet, event_log: EventLog):
-    evaluator = SingleEvaluator(petri_net, event_log)
-    
-    # Get metrics and round to 4 decimal places
-    metrics = {k: round(v, 3) for k, v in evaluator.get_evaluation_metrics().items()}
-    
-    return metrics
-
 # This function discovers a process model from an event log 
 # and evaluates it against the event log (calculates the metrics)
 class MultiEvaluator:
@@ -160,7 +151,7 @@ class MultiEvaluator:
                 self.petri_nets[method][event_log.name] = pn_result
                 self.times[method][event_log.name] = discovery_time
         
-    def evaluate_all(self):
+    def evaluate_all(self, objective_metric_weights: dict[str, float]=None):
         """
         Evaluate all Petri nets against their corresponding event logs and return a DataFrame with metrics.
         """
@@ -171,7 +162,10 @@ class MultiEvaluator:
             for dataset, pn in dataset_pn_pairs.items():
                 i = next((i for i, el in enumerate(self.event_logs) if el.name == dataset))
                 event_log = self.event_logs[i]
-                res = evaluate_single(miner, dataset, pn, event_log)
+                evaluator = SingleEvaluator(pn, event_log)
+                res = {k: round(v, 3) for k, v in evaluator.get_evaluation_metrics(objective_metric_weights).items()}
+                res["dataset"] = dataset
+                res["miner"] = miner
                 res["time"] = self.times[miner][dataset]   # add timing results
                 results.append(res)
         

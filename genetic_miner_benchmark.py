@@ -66,7 +66,7 @@ if __name__ == "__main__":
     }
 
     multi_evaluator = MultiEvaluator(eventlogs, methods_dict)
-    results_df = multi_evaluator.evaluate_all()
+    results_df = multi_evaluator.evaluate_all({"simplicity": 20, "refined_simplicity": 20, "ftr_fitness": 100, "ftr_precision": 50})
     results_df.to_csv(OUTPUT_DIR + "results.csv", index=False)
     multi_evaluator.save_df_to_pdf(results_df, OUTPUT_DIR + "results.pdf")
     multi_evaluator.export_petri_nets(OUTPUT_DIR)
