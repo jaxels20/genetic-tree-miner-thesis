@@ -4,7 +4,7 @@ from src.GeneticAlgorithm import GeneticAlgorithm
 from pm4py.algo.discovery.inductive.algorithm import apply as pm4py_inductive_miner
 from pm4py.objects.conversion.process_tree import converter as pt_converter
 from src.PetriNet import PetriNet
-
+import numpy as np
 
 class Discovery:
     @staticmethod
@@ -18,7 +18,7 @@ class Discovery:
         
         # Args for the run algorithm
         population_size=kwargs.get("population_size")
-        max_generations = kwargs.get("max_generations")
+        max_generations = kwargs.get("max_generations", 1_000_000_000)
         min_fitness=kwargs.get("min_fitness", None)
         stagnation_limit=kwargs.get("stagnation_limit", None)
         time_limit=kwargs.get("time_limit", None)

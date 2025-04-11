@@ -85,7 +85,7 @@ class GeneticAlgorithm:
         elif isinstance(generator, InjectionTreeGenerator):
             population = generator.generate_population(eventlog, n=population_size)
         
-        for generation in tqdm.tqdm(range(max_generations), desc="Discovering process tree", unit="generation"):
+        for generation in tqdm.tqdm(range(max_generations), desc="Discovering process tree", unit="generation"):   
             # Evaluate the fitness of each tree
             objective.evaluate_population(population)
             

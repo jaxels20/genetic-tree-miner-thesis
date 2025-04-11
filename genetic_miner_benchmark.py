@@ -36,33 +36,32 @@ if __name__ == "__main__":
             generator=BottomUpBinaryTreeGenerator(),
             objective=Objective(metric_weights={"simplicity": 20, "refined_simplicity": 20, "ftr_fitness": 100, "ftr_precision": 50}),
             percentage_of_log=0.1,
-            max_generations=100,
-            population_size=100,
-            stagnation_limit=10
+            population_size=5,
+            # stagnation_limit=10
         ),
-        "Genetic Miner (Sequencial Initial - NonTournament)": lambda log: Discovery.genetic_algorithm(
-            log,
-            method_name="Genetic Miner (Sequential Initial - NonTournament)",
-            mutator=Mutator(random_creation_rate=0.2, crossover_rate=0.3, mutation_rate=0.3, elite_rate=0.2),
-            generator=SequentialTreeGenerator(),
-            objective=Objective(metric_weights={"simplicity": 20, "refined_simplicity": 20, "ftr_fitness": 100, "ftr_precision": 50}),
-            percentage_of_log=0.1,
-            max_generations=100,
-            population_size=100,
-            stagnation_limit=10,
-        ),
-        "Genetic Miner (Injection Initial - NonTournament)": lambda log: Discovery.genetic_algorithm(
-            log,
-            method_name="Genetic Miner (Injection Initial - NonTournament)",
-            mutator=Mutator(random_creation_rate=0.2, crossover_rate=0.3, mutation_rate=0.3, elite_rate=0.2),
-            generator=InjectionTreeGenerator(log_filtering=0.05),
-            objective=Objective(metric_weights={"simplicity": 20, "refined_simplicity": 20, "ftr_fitness": 100, "ftr_precision": 50}),
-            percentage_of_log=0.1,
-            max_generations=100,
-            population_size=100,
-            stagnation_limit=10
-        ),
-        "Inductive Miner": lambda log: Discovery.inductive_miner(log),
+        # "Genetic Miner (Sequencial Initial - NonTournament)": lambda log: Discovery.genetic_algorithm(
+        #     log,
+        #     method_name="Genetic Miner (Sequential Initial - NonTournament)",
+        #     mutator=Mutator(random_creation_rate=0.2, crossover_rate=0.3, mutation_rate=0.3, elite_rate=0.2),
+        #     generator=SequentialTreeGenerator(),
+        #     objective=Objective(metric_weights={"simplicity": 20, "refined_simplicity": 20, "ftr_fitness": 100, "ftr_precision": 50}),
+        #     percentage_of_log=0.1,
+        #     max_generations=100,
+        #     population_size=100,
+        #     stagnation_limit=10,
+        # ),
+        # "Genetic Miner (Injection Initial - NonTournament)": lambda log: Discovery.genetic_algorithm(
+        #     log,
+        #     method_name="Genetic Miner (Injection Initial - NonTournament)",
+        #     mutator=Mutator(random_creation_rate=0.2, crossover_rate=0.3, mutation_rate=0.3, elite_rate=0.2),
+        #     generator=InjectionTreeGenerator(log_filtering=0.05),
+        #     objective=Objective(metric_weights={"simplicity": 20, "refined_simplicity": 20, "ftr_fitness": 100, "ftr_precision": 50}),
+        #     percentage_of_log=0.1,
+        #     max_generations=100,
+        #     population_size=100,
+        #     stagnation_limit=10
+        # ),
+        # "Inductive Miner": lambda log: Discovery.inductive_miner(log),
     }
 
     multi_evaluator = MultiEvaluator(eventlogs, methods_dict)
