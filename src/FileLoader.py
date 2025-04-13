@@ -52,6 +52,5 @@ class FileLoader:
         el = EventLog.load_xes(file_path)
         filename = os.path.basename(file_path)
         name_without_ext = os.path.splitext(filename)[0]
-        print(name_without_ext)
         el.set_eventlog_name(name_without_ext)
         return el

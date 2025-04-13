@@ -33,14 +33,13 @@ class SingleEvaluator:
         self.pm4py_pn, self.init_marking, self.final_marking = self.pn.to_pm4py()
         self.event_log_pm4py = self.eventlog.to_pm4py()
     
-    def get_evaluation_metrics(self):
+    def get_evaluation_metrics(self, objective_metric_weights: dict[str, float]):
         data = {
             "simplicity": self.get_simplicity(),
             "generalization": self.get_generalization(),
             **self.get_replay_fitness(),
             "precision": self.get_precision(),
-            "objective_fitness": self.get_objective_fitness(),
-            #"exact_matching_precision": self.get_exact_matching(type="precision"),
+            "objective_fitness": self.get_objective_fitness(objective_metric_weights),
         }
         data["f1_score"] = self.get_f1_score(data["precision"], data["log_fitness"])
         return data    
@@ -61,11 +60,12 @@ class SingleEvaluator:
         precision_value = precision(self.event_log_pm4py, self.pm4py_pn, self.init_marking, self.final_marking)
         return precision_value
     
-    def get_objective_fitness(self):
-        pm4py_pt = convert_to_pt(self.pm4py_pn, self.init_marking, self.final_marking )
+    def get_objective_fitness(self, objective_metric_weights: dict[str, float]={"simplicity": 20, "refined_simplicity": 20, "ftr_fitness": 100, "ftr_precision": 50}):
+        pm4py_pt = convert_to_pt(self.pm4py_pn, self.init_marking, self.final_marking)
         our_pt = ProcessTree.from_pm4py(pm4py_pt)
-        calculator = Objective(self.eventlog)
-        return calculator.fitness(our_pt)
+        objective = Objective(objective_metric_weights)
+        objective.set_event_log(self.eventlog)
+        return objective.fitness(our_pt)
     
     def get_exact_matching(self, type):
         """Runs the jbpt library to calculate the entropy-based precision metric.
@@ -128,17 +128,6 @@ class SingleEvaluator:
             f1_score = 0.0
         return f1_score
 
-# Define a helper function that will handle evaluation for a single Petri net and event log pair
-def evaluate_single(miner: str, dataset: str, petri_net: PetriNet, event_log: EventLog):
-    evaluator = SingleEvaluator(petri_net, event_log)
-    
-    # Get metrics and round to 4 decimal places
-    metrics = {k: round(v, 3) for k, v in evaluator.get_evaluation_metrics().items()}
-    metrics['miner'] = miner
-    metrics['dataset'] = dataset
-    
-    return metrics
-
 # This function discovers a process model from an event log 
 # and evaluates it against the event log (calculates the metrics)
 class MultiEvaluator:
@@ -147,9 +136,9 @@ class MultiEvaluator:
         Initialize with dictionaries of Petri nets and event logs.
         Args:
         - event_logs (dict): A dictionary where keys are event log names and values are EventLog objects.
-        - methods (list): A list of strings representing the discovery methods to use. can be "alpha", "heuristic", "inductive", "GNN"
+        - methods (list): A list of strings representing the discovery methods to use.
         """
-        self.event_logs = event_logs # list of event logs with keys as event log names and values as EventLog objects
+        self.event_logs = event_logs # list of EventLog objects
         self.petri_nets = {method: {} for method in methods_dict.keys()} # dictionary of Petri nets with keys as discovery methods 
         self.times = {method: {} for method in methods_dict.keys()} # dictionary of times with keys as discovery methods
         # and values a dict of event log names and PetriNet objects
@@ -162,23 +151,23 @@ class MultiEvaluator:
                 self.petri_nets[method][event_log.name] = pn_result
                 self.times[method][event_log.name] = discovery_time
         
-    def evaluate_all(self):
+    def evaluate_all(self, objective_metric_weights: dict[str, float]=None):
         """
-        Evaluate all Petri nets against their corresponding event logs using multiprocessing,
-        and return a DataFrame with metrics.
+        Evaluate all Petri nets against their corresponding event logs and return a DataFrame with metrics.
         """
         results = []
-        # Iterate through each miner type and dataset in petri_nets
-        for miner, datasets in self.petri_nets.items():
-            for dataset, pn in datasets.items():
-                for i in range(len(self.event_logs)):
-                    event_log = self.event_logs[i]
-                    res = evaluate_single(miner, dataset, pn, event_log)
-                    results.append(res)
         
-        for dataset in results:
-            dataset_name = dataset['dataset']
-            dataset["time"] = self.times[dataset["miner"]][dataset_name]
+        # Iterate through each miner type and dataset in petri_nets
+        for miner, dataset_pn_pairs in self.petri_nets.items():
+            for dataset, pn in dataset_pn_pairs.items():
+                i = next((i for i, el in enumerate(self.event_logs) if el.name == dataset))
+                event_log = self.event_logs[i]
+                evaluator = SingleEvaluator(pn, event_log)
+                res = {k: round(v, 3) for k, v in evaluator.get_evaluation_metrics(objective_metric_weights).items()}
+                res["dataset"] = dataset
+                res["miner"] = miner
+                res["time"] = self.times[miner][dataset]   # add timing results
+                results.append(res)
         
         return pd.DataFrame(results)
 

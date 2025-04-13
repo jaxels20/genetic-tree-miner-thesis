@@ -1,6 +1,13 @@
 simplicity,generalization,perc_fit_traces,average_trace_fitness,log_fitness,percentage_of_fitting_traces,precision,objective_fitness,f1_score,miner,dataset,time
+<<<<<<< HEAD
 0.708,0.765,0.0,0.497,0.444,0.0,0.501,75.537,0.471,Genetic Miner (Random Initial - Tournament),Sepsis,0.9410660266876221
 0.778,0.831,0.0,0.489,0.447,0.0,0.339,65.744,0.386,Genetic Miner (Random Initial - NonTournament),Sepsis,0.8952538967132568
 0.778,0.913,0.0,0.454,0.403,0.0,0.983,97.966,0.572,Genetic Miner (Sequential Initial - Tournament),Sepsis,0.5179860591888428
 0.8,0.896,0.0,0.458,0.435,0.0,0.986,100.606,0.604,Genetic Miner (Sequential Initial - NonTournament),Sepsis,0.5695230960845947
 0.622,0.902,100.0,1.0,1.0,100.0,0.275,94.864,0.431,Inductive Miner,Sepsis,0.24146795272827148
+=======
+0.833,0.962,35.531,0.926,0.933,35.531,0.983,176.529,0.958,Genetic Miner (Random Initial - NonTournament),BPI_Challenge_2013_open_problems,1.335616111755371
+0.867,0.961,43.223,0.87,0.856,43.223,0.995,168.824,0.92,Genetic Miner (Sequencial Initial - NonTournament),BPI_Challenge_2013_open_problems,0.5662190914154053
+0.733,0.929,47.375,0.906,0.888,47.375,0.958,172.754,0.922,Genetic Miner (Injection Initial - NonTournament),BPI_Challenge_2013_open_problems,1.9207220077514648
+0.692,0.933,100.0,1.0,1.0,100.0,0.907,158.528,0.951,Inductive Miner,BPI_Challenge_2013_open_problems,0.00584101676940918
+>>>>>>> 9b3ae41c53111ddf709763d1997f46fe5a2bdc83

@@ -20,6 +20,7 @@ class Mutator(MutatorBase):
         self.crossover_rate = crossover_rate
         self.mutation_rate = mutation_rate
         self.elite_rate = elite_rate
+        self.mutation_types_weights = None
         
     def set_event_log(self, event_log: EventLog):
         self.event_log = event_log
@@ -181,6 +182,14 @@ class Mutator(MutatorBase):
         
         pt_copy = deep_copy_tree(process_tree)
         mutation_type = random.choice(['loop_addition', 'operator_swap', 'subtree_removal', 'leaf_addition'])
+        
+        # define discrete distribution for mutation types
+        # mutation_type = random.choices(
+        #     ['loop_addition', 'operator_swap', 'subtree_removal', 'leaf_addition'],
+        #     weights=[0.25, 0.25, 0.25, 0.25]
+        # )[0]
+        
+        
 
         if mutation_type == 'operator_swap':
             new_tree = operator_swap(pt_copy)
@@ -194,10 +203,9 @@ class Mutator(MutatorBase):
         return new_tree
     
     def generate_new_population(self, old_population: Population) -> Population:
-        assert self.random_creation_rate + self.crossover_rate + self.mutation_rate + self.elite_rate == 1.0, "Rates must sum to 1.0"
         new_population = Population([])
         population_size = len(old_population.get_population())
-        
+
         # Add elite trees
         elite = old_population.get_best_trees(int(population_size * self.elite_rate))
         new_population.add_trees(elite)
@@ -217,7 +225,13 @@ class Mutator(MutatorBase):
         for _ in range(mutation_count):
             parent = random.choice(old_population.get_population())
             new_population.add_tree(self.mutation(parent))
-    
+            
+        # Ensure the new population size is the same as the old one
+        if len(new_population) < population_size:
+            missing_trees = population_size - len(new_population)
+            random_trees = self.random_creation(missing_trees)
+            new_population.add_trees(random_trees)
+            
         return new_population
 
 class TournamentMutator(Mutator):
@@ -249,6 +263,12 @@ class TournamentMutator(Mutator):
         # Random creation
         random_population = self.random_creation(int(self.random_creation_rate * population_size))
         new_population.add_trees(random_population)
+        
+        # Ensure the new population size is the same as the old one
+        if len(new_population) < population_size:
+            missing_trees = population_size - len(new_population)
+            random_trees = self.random_creation(missing_trees)
+            new_population.add_trees(random_trees)
         
         return new_population
 
