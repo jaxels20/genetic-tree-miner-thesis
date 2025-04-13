@@ -46,7 +46,7 @@ def real_life_evaluation():
                 our_event_log = EventLog.load_xes(os.path.join(eventlog_dir, folder, filename))
                 
                 # filter the traces
-                our_event_log = Filtering.filter_eventlog_by_top_percentage_unique(our_event_log, 0.01, include_all_activities=False)
+                our_event_log = Filtering.filter_eventlog_by_top_percentage_unique(our_event_log, 0.1, include_all_activities=False)
                 
                 pm4py_event_log = our_event_log.to_pm4py()
                 pm4py_pt = pm4py_inductive_miner(pm4py_event_log)
@@ -55,7 +55,7 @@ def real_life_evaluation():
                 our_net = PetriNet.from_pm4py(pm4py_net, init, end)
                 
                 data[filename] = {"FastTokenBasedReplay": time_fast_token_based_replay(our_event_log, our_net),
-                                "pm4py": time_pm4py(our_event_log, our_net),
+                                #"pm4py": time_pm4py(our_event_log, our_net),
                                 }
                 
             

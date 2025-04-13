@@ -333,7 +333,7 @@ class PetriNet {
             std::set<std::string> visible_transitions;
             std::set<std::string> visited;
 
-            size_t max_iterations = 20;
+            size_t max_iterations = 100;
             
             // Start with the initially enabled transitions
             std::vector<std::string> all_enabled_transitions = get_enabled_transitions(true);

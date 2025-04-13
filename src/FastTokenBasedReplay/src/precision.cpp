@@ -127,7 +127,6 @@ std::tuple<int32_t, int32_t> replay_trace_precision(
 }
 
 
-
 double calculate_precision(const EventLog& log, const PetriNet& net){
 
     auto prefixes = compute_prefixes(log);

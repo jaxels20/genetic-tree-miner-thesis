@@ -15,6 +15,7 @@ from src.SupressPrints import SuppressPrints
 import numpy as np
 from pm4py.sim import play_out, generate_process_tree
 from src.Filtering import Filtering
+import pandas as pd
 
 def time_fast_token_based_replay_without_caching(eventlog, petri_net):
     c_petri_net = petri_net.to_fast_token_based_replay()
@@ -225,8 +226,8 @@ def test_pm4py_alignment(num_traces=[]):
 def real_life_evaluation():
     eventlog_dir = "./real_life_datasets/"
     data = {}
-    num_data_points = 1
-    for folder in os.listdir(eventlog_dir):
+
+    for folder in os.listdir(eventlog_dir):        
         if not os.path.isdir(eventlog_dir + folder):
             continue
         for filename in os.listdir(eventlog_dir + folder):
@@ -235,7 +236,7 @@ def real_life_evaluation():
                 our_event_log = EventLog.load_xes(os.path.join(eventlog_dir, folder, filename))
                 
                 # filter the traces
-                our_event_log = Filtering.filter_eventlog_by_top_percentage_unique(our_event_log, 0.5, include_all_activities=False)
+                our_event_log = Filtering.filter_eventlog_by_top_percentage_unique(our_event_log, 0.1, include_all_activities=False)
                 
                 pm4py_event_log = our_event_log.to_pm4py()
                 pm4py_pt = pm4py_inductive_miner(pm4py_event_log)
@@ -354,12 +355,127 @@ def synthetic_evaluation():
     plt.legend()
     plt.show()
  
+def pm4py_reference_evaluation():
+    eventlog_dir = "./real_life_datasets/"
+    data = {}
+    num_data_points = 1
+    # Remeber to set the techinal paramtere inside pm4py to the same value
+    use_suffix_caching = False
+    
+    for folder in os.listdir(eventlog_dir):
+        if not os.path.isdir(eventlog_dir + folder):
+            continue
+        for filename in os.listdir(eventlog_dir + folder):
+            if filename.endswith(".xes"):
+                print(f"Processing {filename}")
+                our_event_log = EventLog.load_xes(os.path.join(eventlog_dir, folder, filename))
+                
+                # filter the traces
+                our_event_log = Filtering.filter_eventlog_by_top_percentage_unique(our_event_log, 1, include_all_activities=False)
+                
+                pm4py_event_log = our_event_log.to_pm4py()
+                pm4py_pt = pm4py_inductive_miner(pm4py_event_log)
+                pm4py_net, init, end = pt_converter.apply(pm4py_pt, variant=pt_converter.Variants.TO_PETRI_NET)
+                
+                our_net = PetriNet.from_pm4py(pm4py_net, init, end)
+                # sort the our_event_log traces by length longest to shortest
+                our_event_log.traces.sort(key=lambda x: len(x.events), reverse=True)
+                
+                times = [time_pm4py_token_based_replay(our_event_log, our_net) for _ in range(num_data_points)]
+                avg_time = np.mean(times)
+                if use_suffix_caching:
+                    data[filename] = {
+                                    "pm4py (suffix caching)": avg_time,
+                                    }
+                else:
+                    data[filename] = {
+                                    "pm4py (without caching)": avg_time,
+                                    }
+                
+        
+    # Create a dframe from the data
+    
+    df = pd.DataFrame(data)
+    print(df)
+    if use_suffix_caching:
+        filename = "pm4py_suffix_caching"
+    else:
+        filename = "pm4py_without_caching"
+    df.to_csv(f"benchmark_results/{filename}.csv", index=True)
 
+def analyze_pm4py_reference_evaluation():
+    df_without = pd.read_csv("benchmark_results/pm4py_without_caching.csv")
+    df_with = pd.read_csv("benchmark_results/pm4py_suffix_caching.csv")
+    
+    # remove the first column
+    df_without = df_without.iloc[:, 1:]
+    df_with = df_with.iloc[:, 1:]
+    
+    # for each column calculate the speed up compared to without caching
+    speedup = {}
+    for col in df_with.columns:
+        speedup[col] = df_without[col] / df_with[col]
+    # convert to a dataframe
+    speedup_df = pd.DataFrame(speedup)
+    
+    print(speedup_df.T)
+  
+def test_if_all_ftr_returns_the_same():
+    eventlog_dir = "./real_life_datasets/"
+    data = {}
 
+    for folder in os.listdir(eventlog_dir):        
+        if not os.path.isdir(eventlog_dir + folder):
+            continue
+        for filename in os.listdir(eventlog_dir + folder):
+            
+            if filename.endswith(".xes"):
+                print(f"Processing {filename}")
+                our_event_log = EventLog.load_xes(os.path.join(eventlog_dir, folder, filename))
+                
+                # filter the traces
+                our_event_log = Filtering.filter_eventlog_by_top_percentage_unique(our_event_log, 1, include_all_activities=False)
+                
+                pm4py_event_log = our_event_log.to_pm4py()
+                pm4py_pt = pm4py_inductive_miner(pm4py_event_log)
+                pm4py_net, init, end = pt_converter.apply(pm4py_pt, variant=pt_converter.Variants.TO_PETRI_NET)
+                
+                our_net = PetriNet.from_pm4py(pm4py_net, init, end)
+                # sort the our_event_log traces by length longest to shortest
+                our_event_log.traces.sort(key=lambda x: len(x.events), reverse=True)
+                
+                values = {}
+        
+                c_petri_net = our_net.to_fast_token_based_replay()
+                c_eventlog = our_event_log.to_fast_token_based_replay()
+                
+                values['Without Caching'] = ftr.calculate_fitness(c_eventlog, c_petri_net, False, False)
+                values['With Prefix Caching'] = ftr.calculate_fitness(c_eventlog, c_petri_net, True, False)
+                values['With Suffix Caching'] = ftr.calculate_fitness(c_eventlog, c_petri_net, False, True)
+                values['With Prefix and Suffix Caching'] = ftr.calculate_fitness(c_eventlog, c_petri_net, True, True)
+                values['pm4py'] = replay_fitness(pm4py_event_log, pm4py_net, init, end)['log_fitness']
+
+                
+                # check if all values are the same
+                all_same = all(value == values['Without Caching'] for value in values.values())
+                if all_same:
+                    print(f"All values are the same for {filename}")
+                else:
+                    print(f"Values are not the same for {filename}")
+                    print(values)
+                    raise Exception(f"Values are not the same for {filename}")
+                
+                
 if __name__ == "__main__":
     
     real_life_evaluation()
+    #analyze_pm4py_reference_evaluation()
+    #pm4py_reference_evaluation()
 
+    #test_if_all_ftr_returns_the_same()
+
+    
+    
     
     
     

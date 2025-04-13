@@ -11,6 +11,8 @@
 #include "silent_transition_handling.cpp"
 #include "ActivityCache.hpp"
 #include <sstream>
+#include <chrono>
+#include <thread>
 
 
 
@@ -93,26 +95,25 @@ get_longest_prefix(
     const std::unordered_map<std::string, std::tuple<std::tuple<int, int, int, int>, Marking>>& new_prefix_cache,
     const Trace& trace
 ) {
-    std::ostringstream prefix_key;
-    bool found_last = false;  // Tracks whether the previous step had a match
+    std::string prefix_key;
     std::optional<std::tuple<size_t, std::tuple<int, int, int, int>, Marking>> best_match = std::nullopt;
 
     for (size_t i = 0; i < trace.events.size(); ++i) {
-        if (i > 0) prefix_key << ",";  // Add a comma separator after the first element
-        prefix_key << trace.events[i].activity;
+        if (i > 0){
+            prefix_key += ",";  // Add a comma separator after the first element
+        }
+            prefix_key += trace.events[i].activity;
 
-        auto it = new_prefix_cache.find(prefix_key.str());
+        auto it = new_prefix_cache.find(prefix_key);
         if (it != new_prefix_cache.end()) {
             best_match = std::make_tuple(
                 i + 1,                     // Length of the longest prefix
                 std::get<0>(it->second),   // First element (std::tuple<int, int, int, int>)
                 std::get<1>(it->second)    // Second element (Marking)
             );
-            found_last = true;
-        } else if (!found_last) {
-            break; // No match at this step, and adding more won’t help
-        } else {
-            found_last = false; // Allow one more iteration in case there's a late match
+        }else{
+            // If no match is found, break the loop
+            break;
         }
     }
 
@@ -144,9 +145,8 @@ replay_trace_without_caching(
             throw std::runtime_error("Transition not found: " + event.activity);
         }
 
-        if (net.can_fire(*transition)) {
-            net.fire_transition(*transition, &consumed, &produced);
-        } else {
+        if (!net.can_fire(*transition)) {
+            // if the net cannot fire try to enable the transition by firing silent transitions
             Marking current_marking = net.get_current_marking();
             std::vector<std::string> cached_sequence = activity_cache.retrieve(current_marking, transition->name);
             
@@ -158,17 +158,25 @@ replay_trace_without_caching(
                 if (reachable) {
                     net.fire_transition_sequence(sequence, &consumed, &produced);
                     activity_cache.store(current_marking, transition->name, sequence);
-                } else {
-                    for (const auto& place : net.get_preset(*transition)) {
-                        Place* p = net.get_place(place.name);
-                        if (p && p->number_of_tokens() == 0) {
-                            p->add_tokens(1);
-                            missing += 1;
-                        }
-                    }
                 }
-                net.fire_transition(*transition, &consumed, &produced);
             }
+        }
+
+        if (!net.can_fire(*transition)) {
+            // if it still cant be fired, add tokens to the input places
+            for (const auto& place : net.get_preset(*transition)) {
+                Place* p = net.get_place(place.name);
+                if (p && p->number_of_tokens() == 0) {
+                    p->add_tokens(1);
+                    missing += 1;
+                }
+            }
+        }
+
+        if (net.can_fire(*transition)) {
+            net.fire_transition(*transition, &consumed, &produced);
+        }else{
+            throw std::runtime_error("Transition cannot be fired: " + event.activity);
         }
     }
 
@@ -195,13 +203,16 @@ replay_trace_with_prefix(
     PetriNet& net, 
     std::unordered_map<std::string, std::unordered_map<std::string,std::vector<std::string>>> silent_firing_sequences,
     ActivityCache& activity_cache,
-    std::unordered_map<std::string, std::tuple<std::tuple<int, int, int, int>, Marking>>& new_prefix_cache) {
+    std::unordered_map<std::string, std::tuple<std::tuple<int, int, int, int>, Marking>>& new_prefix_cache,
+    size_t max_prefix_length_to_be_considered) {
 
     int missing = 0;   // Count of missing tokens (tokens added to input places to enable transitions)
     int remaining = 0; // Count of remaining tokens in the Petri net at the end
     int consumed = 0;  // Count of tokens consumed from input places
     int produced = 0;  // Count of tokens produced in output places
     
+    std::chrono::duration<double, std::micro> total_elapsed_caching;
+
     std::string curr_prefix = "";
     size_t start_index = 0;
 
@@ -277,16 +288,19 @@ replay_trace_with_prefix(
             }
             curr_prefix += event.activity;
             // Store the current prefix and its replay data
-            new_prefix_cache[curr_prefix] = std::make_tuple(
-                std::make_tuple(missing, remaining, produced, consumed),
-                net.get_current_marking()
-            );
+            if (curr_prefix.length() < max_prefix_length_to_be_considered * 2) {
+                new_prefix_cache[curr_prefix] = std::make_tuple(
+                    std::make_tuple(missing, remaining, produced, consumed),
+                    net.get_current_marking()
+                );
+            }
 
         }else {
             throw std::runtime_error("Transition cannot be fired: " + event.activity);
         }
         
     }
+
 
     consumed += net.final_marking.number_of_tokens();
 
@@ -312,13 +326,15 @@ replay_trace_with_suffix(
     std::unordered_map<std::string, std::unordered_map<std::string, std::vector<std::string>>> silent_firing_sequences,
     ActivityCache& activity_cache, 
     std::unordered_map<MarkingPostfixKey, std::tuple<std::tuple<int, int, int, int>, Marking>, MarkingPostfixKeyHasher>& suffix_cache,
-    size_t max_suffix_length_to_be_considered = 5
+    size_t max_suffix_length_to_be_considered
 ) {
     int missing = 0, remaining = 0, consumed = 0, produced = 0;
 
     // The local cache for suffixes (which in the end is appended to the global cache)
     std::unordered_map<MarkingPostfixKey, std::tuple<std::tuple<int, int, int, int>, Marking>, MarkingPostfixKeyHasher> local_suffix_cache;
-    
+    // reserve the local cache for the max size
+    local_suffix_cache.reserve(trace.events.size() * max_suffix_length_to_be_considered);
+
     produced += net.initial_marking.number_of_tokens();    
     initialize_tokens(net);
 
@@ -337,7 +353,7 @@ replay_trace_with_suffix(
         // Compute the postfix and chech if it is already in the cache
         std::string postfix = computePostfix(trace, i);
         MarkingPostfixKey key = {net.get_current_marking(), postfix};
-        if (postfix.length() > max_suffix_length_to_be_considered) {
+        if (postfix.length() < max_suffix_length_to_be_considered) {
             auto it = suffix_cache.find(key);
             if (it != suffix_cache.end() && postfix.length() < max_suffix_length_to_be_considered) {
                 // If the postfix is found in the cache, consumed and produced tokens are already known
@@ -459,7 +475,8 @@ replay_trace_with_prefix_and_suffix(
     ActivityCache& activity_cache,
     std::unordered_map<std::string, std::tuple<std::tuple<int, int, int, int>, Marking>>& prefix_cache,
     std::unordered_map<MarkingPostfixKey, std::tuple<std::tuple<int, int, int, int>, Marking>, MarkingPostfixKeyHasher>& suffix_cache,
-    size_t max_suffix_length_to_be_considered = 5) 
+    size_t max_prefix_length_to_be_considered,
+    size_t max_suffix_length_to_be_considered) 
 {
     int missing = 0;
     int remaining = 0;
@@ -493,6 +510,8 @@ replay_trace_with_prefix_and_suffix(
 
     // Build up the current marking before suffix
     std::unordered_map<MarkingPostfixKey, std::tuple<std::tuple<int, int, int, int>, Marking>, MarkingPostfixKeyHasher> local_suffix_cache;
+    local_suffix_cache.reserve(trace.events.size() * max_suffix_length_to_be_considered);
+
 
     for (size_t i = start_index; i < trace.events.size(); ++i) {
         Event event = trace.events[i];
@@ -508,7 +527,7 @@ replay_trace_with_prefix_and_suffix(
         // Compute the postfix and chech if it is already in the cache
         std::string postfix = computePostfix(trace, i);
         MarkingPostfixKey key = {net.get_current_marking(), postfix};
-        if (postfix.length() > max_suffix_length_to_be_considered) {
+        if (postfix.length() < max_suffix_length_to_be_considered) {
             auto it = suffix_cache.find(key);
             if (it != suffix_cache.end()) {
                 // If the postfix is found in the cache, consumed and produced tokens are already known
@@ -595,6 +614,20 @@ replay_trace_with_prefix_and_suffix(
             consumed += local_consumed;
             missing += local_missing;
             remaining += local_remaining;
+
+            // Add the current event to the prefix
+            if (!curr_prefix.empty()) {
+                curr_prefix += ",";
+            }
+            curr_prefix += event.activity;
+            // Store the current prefix and its replay data
+            if (curr_prefix.length() < max_suffix_length_to_be_considered) {
+                prefix_cache[curr_prefix] = std::make_tuple(
+                    std::make_tuple(missing, remaining, produced, consumed),
+                    net.get_current_marking()
+                );
+            }
+
         }else {
             throw std::runtime_error("Transition cannot be fired: " + event.activity);
         }
@@ -625,20 +658,29 @@ double calculate_fitness(const EventLog& log, const PetriNet& net, bool prefix_c
 
     // Map to store computed values for unique traces
     std::unordered_map<Trace, std::tuple<int, int, int, int>> trace_cache; 
+    trace_cache.reserve(log.traces.size());
 
     PetriNet net_copy = net;
     // A map to store the firing sequences for every place to every other place using silent transitions
     std::unordered_map<std::string, std::unordered_map<std::string, std::vector<std::string>>> silent_firing_sequences;
-    silent_firing_sequences = get_places_shortest_path_by_hidden(net_copy, 5);
+    silent_firing_sequences = get_places_shortest_path_by_hidden(net_copy, 10);
 
     // Activity cache to store the precomputed values
     ActivityCache activity_cache;
 
-    // map of prefix and Marking + tuple with missing, remaining, produced, consumed
+    size_t max_suffix_length_to_be_considered = 5;
+    size_t max_prefix_length_to_be_considered = 10000;
+
     std::unordered_map<std::string, std::tuple<std::tuple<int, int, int, int>, Marking>> prefix_cache;
-    
-    // something suffix
     std::unordered_map<MarkingPostfixKey, std::tuple<std::tuple<int, int, int, int>, Marking>, MarkingPostfixKeyHasher> suffix_cache;
+    
+    if (prefix_caching) {
+        prefix_cache.reserve(log.traces.size() * max_prefix_length_to_be_considered);
+    }
+    if (suffix_caching) {
+        // time it
+        suffix_cache.reserve(log.traces.size() * max_suffix_length_to_be_considered);
+    }
 
     // Iterate over the traces in the event log
     for (const auto& trace : log.traces) {
@@ -646,11 +688,11 @@ double calculate_fitness(const EventLog& log, const PetriNet& net, bool prefix_c
             // If this trace has not been processed, do token replay
             //PetriNet net_copy = net;
             if (prefix_caching && suffix_caching) {
-                trace_cache[trace] = replay_trace_with_prefix_and_suffix(trace, net_copy, silent_firing_sequences, activity_cache , prefix_cache, suffix_cache, 5);
+                trace_cache[trace] = replay_trace_with_prefix_and_suffix(trace, net_copy, silent_firing_sequences, activity_cache , prefix_cache, suffix_cache, max_prefix_length_to_be_considered, max_suffix_length_to_be_considered);
             } else if (prefix_caching) {
-                trace_cache[trace] = replay_trace_with_prefix(trace, net_copy, silent_firing_sequences, activity_cache,  prefix_cache);
+                trace_cache[trace] = replay_trace_with_prefix(trace, net_copy, silent_firing_sequences, activity_cache,  prefix_cache, max_prefix_length_to_be_considered);
             } else if (suffix_caching) {
-                trace_cache[trace] = replay_trace_with_suffix(trace, net_copy, silent_firing_sequences, activity_cache, suffix_cache, 5);
+                trace_cache[trace] = replay_trace_with_suffix(trace, net_copy, silent_firing_sequences, activity_cache, suffix_cache, max_suffix_length_to_be_considered);
             } else {
                 trace_cache[trace] = replay_trace_without_caching(trace, net_copy, silent_firing_sequences, activity_cache);
             }
@@ -670,11 +712,4 @@ double calculate_fitness(const EventLog& log, const PetriNet& net, bool prefix_c
 
     return fitness;
 }
-
-
-
-
-
-
-
 

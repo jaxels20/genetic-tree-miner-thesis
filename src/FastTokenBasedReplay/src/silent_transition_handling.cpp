@@ -145,7 +145,7 @@ attempt_to_reach_final_marking_by_firing_silent_transitions(PetriNet& net, std::
     std::set<std::string> lambda_set = compute_lambda_set(current_marking, final_marking);
     std::set<std::vector<std::string>, CompareVectorLength> possible_firing_sequences = get_possible_firing_sequences(firing_sequences, delta_set, lambda_set);
 
-    size_t max_iterations = 10;
+    size_t max_iterations = 5;
     size_t iterations = 0;
 
      while (!delta_set.empty()){

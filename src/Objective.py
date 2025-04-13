@@ -63,12 +63,21 @@ class Objective:
             precision_value = precision(self.event_log_pm4py, pm4py_pn, inital_marking, final_marking)
         return precision_value
     
-    def ftr_fitness(self, ftr_petri_net):
-        fitness = FastTokenBasedReplay.calculate_fitness(self.ftr_eventlog, ftr_petri_net, False, False)
+    def ftr_fitness(self, ftr_petri_net, our_petri_net=None):
+        try:
+            fitness = FastTokenBasedReplay.calculate_fitness(self.ftr_eventlog, ftr_petri_net, False, False)
+        except Exception as e:
+            print(f"Unique activities: {self.eventlog.unique_activities()}")
+            our_petri_net.visualize()
+            raise e
+            
+            
+        
+        
         return fitness
     
     def ftr_precision(self, ftr_petri_net):
-        precision = FastTokenBasedReplay.calculate_precision(self.ftr_eventlog, ftr_petri_net)
+        precision = FastTokenBasedReplay.calculate_precision(self.ftr_eventlog, ftr_petri_net)        
         return precision
     
     def fitness(self, process_tree: ProcessTree) -> float:
@@ -80,11 +89,13 @@ class Objective:
         }
         
         pm4py_pn, initial_marking, final_marking = process_tree.to_pm4py_pn()
-        ftr_pn = PetriNet.from_pm4py(pm4py_pn, initial_marking, final_marking).to_fast_token_based_replay()
+        our_pn = PetriNet.from_pm4py(pm4py_pn, initial_marking, final_marking)
+        ftr_pn = our_pn.to_fast_token_based_replay() 
+
         scores = {
             "simplicity": self.simplicity(pm4py_pn),
             "refined_simplicity": self.refined_simplicity(pm4py_pn),
-            "average_trace_fitness": self.ftr_fitness(ftr_pn),
+            "average_trace_fitness": self.ftr_fitness(ftr_pn, our_pn),
             "precision": self.ftr_precision(ftr_pn)
         }
         return sum(scores[key] * weights[key] for key in scores.keys())
