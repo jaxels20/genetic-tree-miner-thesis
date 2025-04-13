@@ -112,18 +112,6 @@ class Objective:
     
     def fitness(self, process_tree: ProcessTree) -> float:        
         pm4py_pn, initial_marking, final_marking = process_tree.to_pm4py_pn()
-<<<<<<< HEAD
-        our_pn = PetriNet.from_pm4py(pm4py_pn, initial_marking, final_marking)
-        ftr_pn = our_pn.to_fast_token_based_replay() 
-
-        scores = {
-            "simplicity": self.simplicity(pm4py_pn),
-            "refined_simplicity": self.refined_simplicity(pm4py_pn),
-            "average_trace_fitness": self.ftr_fitness(ftr_pn, our_pn),
-            "precision": self.ftr_precision(ftr_pn)
-        }
-        return sum(scores[key] * weights[key] for key in scores.keys())
-=======
         ftr_pn = PetriNet.from_pm4py(pm4py_pn, initial_marking, final_marking).to_fast_token_based_replay()
 
         total_fitness = 0.0
@@ -144,7 +132,6 @@ class Objective:
             total_fitness += weight * score
 
         return total_fitness
->>>>>>> 9b3ae41c53111ddf709763d1997f46fe5a2bdc83
     
     def evaluate_population(self, population: Population):
         for tree in population.trees:

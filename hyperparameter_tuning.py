@@ -97,8 +97,11 @@ if __name__ == "__main__":
         data = []
 
         # Assume only one file per directory
-        # if dataset_dir != "BPI_Challenge_2013_open_problems":
-        #     continue
+        if dataset_dir != "BPI_Challenge_2013_open_problems" and dataset_dir != "BPI_Challenge_2013_closed_problems":
+            continue
+        
+        print(f"Loading dataset {dataset_dir}...")
+        
         xes_file = [f for f in os.listdir(f"{INPUT_DIR}{dataset_dir}") if f.endswith(".xes")]
         if len(xes_file) == 0:
             continue
@@ -108,7 +111,7 @@ if __name__ == "__main__":
         else:
             raise ValueError("More than one xes file in the directory")
 
-        for i in range(5):
+        for i in range(2):
             sampler = optuna.samplers.TPESampler()
             study = optuna.create_study(direction="maximize", sampler=sampler, storage="sqlite:///db.sqlite3")
             study.optimize(
@@ -125,11 +128,14 @@ if __name__ == "__main__":
                 {
                     **best_params,
                     "objective": best_value,
+                    "dataset": dataset_dir + f"_{i}",
                 }
             )
         
         df = pd.DataFrame(data)
-        df.to_csv(f"./best_params/{dataset_dir}-optuna-best-params.csv", index=False)
+        
+        
+        df.to_csv(f"./best_params/{dataset_dir}.csv", index=False)
 
         
 

@@ -74,11 +74,7 @@ class GeneticAlgorithm:
         
         # Filter the log
         eventlog = Filtering.filter_eventlog_by_top_percentage_unique(eventlog, percentage_of_log, True)
-<<<<<<< HEAD
-        print(f"Filtered event log: {eventlog.name} with Unique Activities: {eventlog.unique_activities()}")
-=======
         objective.set_event_log(eventlog)
->>>>>>> 9b3ae41c53111ddf709763d1997f46fe5a2bdc83
         mutator.set_event_log(eventlog)
         
         # Generate initial population
