@@ -7,6 +7,7 @@ from src.RandomTreeGenerator import BottomUpBinaryTreeGenerator, InjectionTreeGe
 from src.Evaluator import SingleEvaluator
 from src.Objective import Objective
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 hyper_parameters = {
     'random_creation_rate': 0.019132300011790924, 
@@ -61,11 +62,8 @@ def convert_json_to_hyperparamters(hyper_parameters: dict):
     
 
 if __name__ == "__main__":
-    
-    eventlog = EventLog.load_xes("real_life_datasets/BPI_Challenge_2013_open_problems/BPI_Challenge_2013_open_problems.xes")
-    
+            
     # convert the hyper parameters to a normalize 
-    
     hyper_parameters = convert_json_to_hyperparamters(hyper_parameters)
     
     hyper_parameters['objective'] = Objective({
@@ -74,70 +72,86 @@ if __name__ == "__main__":
         "ftr_fitness": 50,
         "ftr_precision": 30
     })
-    data = []
-    for i in range(10):
-        discovered_net = Discovery.genetic_algorithm(
-            eventlog,
-            time_limit=60*5,
-            stagnation_limit=15,
-            **hyper_parameters
-        )
-        
-        evaluator = SingleEvaluator(
-            discovered_net,
-            eventlog
-        )
-        
-        # Get the evaluation metrics
-        metrics = evaluator.get_evaluation_metrics({
-            "simplicity": 10,
-            "generalization": 10,
-            "ftr_fitness": 50,
-            "ftr_precision": 30
-        })
-        metrics['dataset'] = 'BPI_Challenge_2013_open_problems'
-        metrics['objective_fitness'] = metrics['objective_fitness'] / 100
-        data.append(metrics)
     
-    # Convert the data to a pandas DataFrame
-    df = pandas.DataFrame(data)
+    DATASET_DIR = "./real_life_datasets/"
+    dataset_dirs = os.listdir(DATASET_DIR)
+    dataset_dirs = [x for x in dataset_dirs if not os.path.isfile(f"{DATASET_DIR}{x}")]
+    overall_df = pandas.DataFrame()
+    for dataset_dir in dataset_dirs:
+        if dataset_dir != "2013-op" and dataset_dir != "2013-cp":
+            continue
+        
+        # Load the event log
+        eventlog = EventLog.load_xes(f"{DATASET_DIR}{dataset_dir}/{dataset_dir}.xes")
+
+        data = []
+        for i in range(10):
+            discovered_net = Discovery.genetic_algorithm(
+                eventlog,
+                time_limit=60*5,
+                stagnation_limit=15,
+                **hyper_parameters
+            )
+            
+            evaluator = SingleEvaluator(
+                discovered_net,
+                eventlog
+            )
+            
+            # Get the evaluation metrics
+            metrics = evaluator.get_evaluation_metrics({
+                "simplicity": 10,
+                "generalization": 10,
+                "ftr_fitness": 50,
+                "ftr_precision": 30
+            })
+            metrics['dataset'] = dataset_dir
+            metrics['objective_fitness'] = metrics['objective_fitness'] / 100
+            data.append(metrics)
+        
+        # Convert the data to a pandas DataFrame
+        cur__df = pandas.DataFrame(data)
+        # concatenate the curr ent DataFrame with the overall DataFrame
+        overall_df = pandas.concat([overall_df, cur__df], ignore_index=True)
     
-    # Prepare data for plotting
-    datasets = df['dataset'].unique()
-    positions = []
-    plot_data = []
-
-    spacing = 1  # space between datasets
-    width = 0.3  # space between metrics in same dataset
-    pos = 1
-
-    for dataset in datasets:
-        subset = df[df['dataset'] == dataset]
-        plot_data.append(subset['log_fitness'].values)
-        positions.append(pos)
-        pos += width
-        plot_data.append(subset['objective_fitness'].values)
-        positions.append(pos)
-        pos += spacing  # move to next dataset group
+     # Rename the columns
+    overall_df.rename(columns={
+        'log_fitness': 'Replay Fitness',
+        'objective_fitness': 'Objective Fitness',
+        'dataset': 'Dataset',
+        'precision': 'Precision',
+        'simplicity': 'Simplicity',
+        'generalization': 'Generalization',
+    }, inplace=True)
+        
+    # Melt the DataFrame for Seaborn
+    df_melted = overall_df.melt(id_vars='Dataset', 
+                        value_vars=['Replay Fitness', 'Objective Fitness', 'Precision', 'Simplicity', 'Generalization'],
+                        var_name='Metric', 
+                        value_name='Score')
+    
+    # Use a black and white style
+    sns.set_theme(style='whitegrid')
+    plt.figure(figsize=(10, 6))
 
     # Plot
-    fig, ax = plt.subplots(figsize=(10, 6))
-    parts = ax.violinplot(plot_data, positions=positions, showmeans=True, showmedians=True)
+    ax = sns.violinplot(
+        data=df_melted,
+        x='Dataset',
+        y='Score',
+        hue='Metric',
+        palette='gray',   # B/W color palette
+        cut=0
+    )
 
-    # Set x-ticks in the middle of each dataset group
-    dataset_positions = [positions[i] + width / 2 for i in range(0, len(positions), 2)]
-    ax.set_xticks(dataset_positions)
-    ax.set_xticklabels(datasets, rotation=45, ha='right')
-
-    # Y-axis between 0 and 1
+    # Final tweaks
     #ax.set_ylim(0, 1)
-
-    # Add legend manually
-    ax.legend([parts['bodies'][0], parts['bodies'][1]], ['log_fitness', 'objective_fitness'])
-
-    plt.title("Violin Plot of Metrics by Dataset")
+    plt.xticks(rotation=45, ha='right')
     plt.tight_layout()
-    plt.show()
+    plt.legend(title='Metric')
+
+    # Save the plot
+    plt.savefig('./experiment_2/variation_over_multiple_runs.pdf', dpi=300)
 
     
     
