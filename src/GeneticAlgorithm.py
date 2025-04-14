@@ -100,7 +100,7 @@ class GeneticAlgorithm:
             # Generate a new population
             population = mutator.generate_new_population(population)
         
-        self.monitor.save_objective_results("./monitor_analysis/data/", eventlog.name, self.method_name)
+        #self.monitor.save_objective_results("./monitor_analysis/data/", eventlog.name, self.method_name)
         
         return self.best_tree
     

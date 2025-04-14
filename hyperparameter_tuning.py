@@ -76,7 +76,7 @@ def objective(trial, event_log, fitness_weights=dict[str, float]):
         percentage_of_log=percentage_of_log,
         population_size=population_size,
         stagnation_limit=15,
-        time_limit=2,
+        time_limit=10,
     )
     end = time.time()
 
@@ -117,10 +117,11 @@ if __name__ == "__main__":
             study.optimize(
                 lambda trial: objective(trial, eventlog, FITNESS_WEIGHTS),
                 show_progress_bar=True, 
-                n_trials=3,
+                n_trials=None,
+                timeout=600,
                 n_jobs=1,
             )
-            
+                        
             best_params = study.best_params
             best_value = study.best_value
             
