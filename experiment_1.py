@@ -75,6 +75,10 @@ def load_hyperparameters_from_csv(path: str):
                 "ftr_precision": 30
             })
 
+    # THIS IS WRONG BUT FOR NOW !!!!!
+    hyper_parameters['log_filtering'] = 0.1
+
+
     return convert_json_to_hyperparamters(hyper_parameters)
 
 if __name__ == "__main__":
