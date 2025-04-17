@@ -11,13 +11,7 @@ class FileLoader:
     """
 
     def __init__(self, cpu_count: int = 1):
-        """
-        Initializes the loader with the number of CPUs to use for multiprocessing.
-
-        Args:
-            cpu_count (int): Number of processes to use for multiprocessing.
-        """
-        self.cpu_count = cpu_count
+        pass
 
     @staticmethod
     def load_petrinet(file_path: str):
@@ -38,10 +32,8 @@ class FileLoader:
 
         filename = os.path.basename(file_path)
         name_without_ext = os.path.splitext(filename)[0]
-        parts = name_without_ext.split("_")
-        file_id = parts[1] if len(parts) > 1 else name_without_ext
 
-        return file_id, pn
+        return name_without_ext, pn
 
     @staticmethod
     def load_eventlog(file_path: str):
