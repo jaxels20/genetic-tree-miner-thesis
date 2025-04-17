@@ -25,7 +25,8 @@ class Discovery:
         generator = kwargs.get("generator")
         percentage_of_log = kwargs.get("percentage_of_log")
         mutator = kwargs.get("mutator")
-        objective = kwargs.get("objective")    
+        objective = kwargs.get("objective")
+        export_monitor_path = kwargs.get("export_monitor_path", None)
         
         our_pt = ga.run(
             eventlog=event_log, 
@@ -37,7 +38,8 @@ class Discovery:
             max_generations=max_generations, 
             min_fitness=min_fitness,
             stagnation_limit=stagnation_limit,
-            time_limit=time_limit
+            time_limit=time_limit,
+            export_monitor_path=export_monitor_path,
         )
         pm4py_net, init, end = our_pt.to_pm4py_pn()
         

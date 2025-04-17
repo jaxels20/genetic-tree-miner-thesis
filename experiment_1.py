@@ -10,6 +10,7 @@ from src.Objective import Objective
 INPUT_DIR = "./real_life_datasets/"
 OUTPUT_DIR = "./experiment_1/"
 SPLIT_MINER_DIR = "./experiment_1/split_miner/"
+BEST_PARAMS = "./best_parameters.csv"
 
 def convert_json_to_hyperparamters(hyper_parameters: dict):
     total = hyper_parameters['random_creation_rate'] + hyper_parameters['mutation_rate'] + hyper_parameters['crossover_rate'] + hyper_parameters['elite_rate']
@@ -19,7 +20,7 @@ def convert_json_to_hyperparamters(hyper_parameters: dict):
     hyper_parameters['elite_rate'] = hyper_parameters['elite_rate'] / total
     
     # Convert the generator and mutator to objects
-    if hyper_parameters['generator'] == 'BottomUpBinary':
+    if hyper_parameters['generator'] == 'Buttom':
         hyper_parameters['generator'] = BottomUpBinaryTreeGenerator()
     elif hyper_parameters['generator'] == 'Sequential':
         hyper_parameters['generator'] = SequentialTreeGenerator()
@@ -69,7 +70,7 @@ def load_hyperparameters_from_csv(path: str):
             hyper_parameters['method_name'] = "Genetic Miner"
             hyper_parameters['objective'] = Objective({
                 "simplicity": 10,
-                "generalization": 10,
+                "refined_simplicity": 10,
                 "ftr_fitness": 50,
                 "ftr_precision": 30
             })
@@ -77,14 +78,13 @@ def load_hyperparameters_from_csv(path: str):
     return convert_json_to_hyperparamters(hyper_parameters)
 
 if __name__ == "__main__":
-    # Load event logs
     dataset_dirs = os.listdir(INPUT_DIR)
     dataset_dirs = [x for x in dataset_dirs if not os.path.isfile(f"{INPUT_DIR}{x}")]
     loader = FileLoader()
     eventlogs = []
 
     for dataset_dir in dataset_dirs:
-        if dataset_dir not in ["2013-o", "2013-cp"]:
+        if dataset_dir not in ["2013-op", "2013-cp"]:  # delete later
             continue
         xes_file = [f for f in os.listdir(f"{INPUT_DIR}{dataset_dir}") if f.endswith(".xes")]
         if len(xes_file) == 0:
@@ -96,18 +96,21 @@ if __name__ == "__main__":
             raise ValueError("More than one xes file in the directory")
     
     # Load the hyperparameters
-    hyperparams = load_hyperparameters_from_csv("./best_params/hyper_parameters.csv")
+    hyperparams = load_hyperparameters_from_csv(BEST_PARAMS)
 
     # Define the methods to be used
     methods_dict = {
         "Genetic Miner": lambda log: Discovery.genetic_algorithm(
             log,
-            stagnation_limit=10,
+            stagnation_limit=50,
+            time_limit=60*5,
             **hyperparams,
-        )
+        ),
+        "Inductive Miner": lambda log: Discovery.inductive_miner(log)
     }
     
     # Run the methods on each event log
     multi_evaluator = MultiEvaluator(eventlogs, methods_dict)
-    results_df = multi_evaluator.evaluate_all({"simplicity": 20, "refined_simplicity": 20, "ftr_fitness": 100, "ftr_precision": 50})
+    results_df = multi_evaluator.evaluate_all({"simplicity": 10, "refined_simplicity": 10, "ftr_fitness": 50, "ftr_precision": 30})
     results_df.to_csv(OUTPUT_DIR + "results.csv", index=False)
+    results_df[["miner","dataset", "simplicity","generalization","log_fitness","precision","objective_fitness","time"]].to_latex(OUTPUT_DIR + "results.tex", index=False, float_format="%.2f")

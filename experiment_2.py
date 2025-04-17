@@ -1,91 +1,39 @@
 import pandas
 import os
+from itertools import cycle
 from src.Discovery import Discovery
 from src.EventLog import EventLog 
-from src.Mutator import Mutator, TournamentMutator
-from src.RandomTreeGenerator import BottomUpBinaryTreeGenerator, InjectionTreeGenerator, SequentialTreeGenerator
 from src.Evaluator import SingleEvaluator
-from src.Objective import Objective
-import matplotlib.pyplot as plt
-import seaborn as sns
+import plotly.graph_objects as go
+import plotly.express as px
+from experiment_1 import load_hyperparameters_from_csv
 
-hyper_parameters = {
-    'random_creation_rate': 0.019132300011790924, 
-    'mutation_rate': 0.8677916440719196, 
-    'crossover_rate': 0.3741045790050315, 
-    'elite_rate': 0.31502212661512324, 
-    'population_size': 32, 
-    'percentage_of_log': 0.22147542851738136, 
-    'generator': 'Injection', 
-    'mutator': 'NonTournament', 
-    'log_filtering': 0.026817932672967698
-    }
-
-
-
-def convert_json_to_hyperparamters(hyper_parameters: dict):
-    total = hyper_parameters['random_creation_rate'] + hyper_parameters['mutation_rate'] + hyper_parameters['crossover_rate'] + hyper_parameters['elite_rate']
-    hyper_parameters['random_creation_rate'] = hyper_parameters['random_creation_rate'] / total
-    hyper_parameters['mutation_rate'] = hyper_parameters['mutation_rate'] / total
-    hyper_parameters['crossover_rate'] = hyper_parameters['crossover_rate'] / total
-    hyper_parameters['elite_rate'] = hyper_parameters['elite_rate'] / total
-    
-    # Convert the generator and mutator to objects
-    if hyper_parameters['generator'] == 'BottomUpBinary':
-        hyper_parameters['generator'] = BottomUpBinaryTreeGenerator()
-    elif hyper_parameters['generator'] == 'Sequential':
-        hyper_parameters['generator'] = SequentialTreeGenerator()
-    elif hyper_parameters['generator'] == 'Injection':
-        hyper_parameters['generator'] = InjectionTreeGenerator(hyper_parameters['log_filtering'])
-    else:
-        raise ValueError("Invalid generator type")
-    if hyper_parameters['mutator'] == 'Tournament':
-        hyper_parameters['mutator'] = TournamentMutator(
-            hyper_parameters['random_creation_rate'],
-            hyper_parameters['crossover_rate'],
-            hyper_parameters['mutation_rate'],
-            hyper_parameters['elite_rate'],
-            hyper_parameters['tournament_size']
-        )
-    elif hyper_parameters['mutator'] == 'NonTournament':
-        hyper_parameters['mutator'] = Mutator(
-            hyper_parameters['random_creation_rate'],
-            hyper_parameters['crossover_rate'],
-            hyper_parameters['mutation_rate'],
-            hyper_parameters['elite_rate']
-        )
-    else:
-        raise ValueError("Invalid mutator type")
-    
-    return hyper_parameters
-    
-    
+BEST_PARAMS = "./best_parameters.csv"
+DATASET_DIR = "./real_life_datasets/"
+NUM_DATA_POINTS = 10
+OBJECTIVE = {
+    "simplicity": 10,
+    "refined_simplicity": 10,
+    "ftr_fitness": 50,
+    "ftr_precision": 30
+}
 
 if __name__ == "__main__":
-            
-    # convert the hyper parameters to a normalize 
-    hyper_parameters = convert_json_to_hyperparamters(hyper_parameters)
+    # convert the hyper parameters to a normalize
+    hyper_parameters = load_hyperparameters_from_csv(BEST_PARAMS)
     
-    hyper_parameters['objective'] = Objective({
-        "simplicity": 10,
-        "generalization": 10,
-        "ftr_fitness": 50,
-        "ftr_precision": 30
-    })
-    
-    DATASET_DIR = "./real_life_datasets/"
     dataset_dirs = os.listdir(DATASET_DIR)
     dataset_dirs = [x for x in dataset_dirs if not os.path.isfile(f"{DATASET_DIR}{x}")]
     overall_df = pandas.DataFrame()
     for dataset_dir in dataset_dirs:
-        if dataset_dir != "2013-op" and dataset_dir != "2013-cp":
+        if dataset_dir != "2013-op" and dataset_dir != "2013-cp": # 
             continue
         
         # Load the event log
         eventlog = EventLog.load_xes(f"{DATASET_DIR}{dataset_dir}/{dataset_dir}.xes")
 
         data = []
-        for i in range(10):
+        for i in range(NUM_DATA_POINTS):
             discovered_net = Discovery.genetic_algorithm(
                 eventlog,
                 time_limit=60*5,
@@ -99,12 +47,7 @@ if __name__ == "__main__":
             )
             
             # Get the evaluation metrics
-            metrics = evaluator.get_evaluation_metrics({
-                "simplicity": 10,
-                "generalization": 10,
-                "ftr_fitness": 50,
-                "ftr_precision": 30
-            })
+            metrics = evaluator.get_evaluation_metrics(OBJECTIVE)
             metrics['dataset'] = dataset_dir
             metrics['objective_fitness'] = metrics['objective_fitness'] / 100
             data.append(metrics)
@@ -126,33 +69,48 @@ if __name__ == "__main__":
         
     # Melt the DataFrame for Seaborn
     df_melted = overall_df.melt(id_vars='Dataset', 
-                        value_vars=['Replay Fitness', 'Objective Fitness', 'Precision', 'Simplicity', 'Generalization'],
+                        value_vars=['Replay Fitness', 'Objective Fitness'],
                         var_name='Metric', 
                         value_name='Score')
-    
-    # Use a black and white style
-    sns.set_theme(style='whitegrid')
-    plt.figure(figsize=(10, 6))
+    df_melted.to_csv("./experiment_2/experiment_2.csv", index=False)
 
-    # Plot
-    ax = sns.violinplot(
-        data=df_melted,
-        x='Dataset',
-        y='Score',
-        hue='Metric',
-        palette='gray',   # B/W color palette
-        cut=0
+    fig = go.Figure()
+    colors = cycle(px.colors.qualitative.Pastel2)
+    
+   # Add one boxplot trace for each metric
+    for metric in ['Replay Fitness', 'Objective Fitness']:
+        metric_df = df_melted[df_melted['Metric'] == metric]
+        color = next(colors)
+        fig.add_trace(go.Box(
+            x=metric_df['Dataset'],
+            y=metric_df['Score'],
+            name=metric,
+            boxpoints='outliers',  # show all points
+            fillcolor=color,
+            line={'width': 1, 'color': 'black'}
+        ))
+
+    # Layout adjustments
+    fig.update_layout(
+        boxmode='group',  # group boxes of same x-axis value
+        font=dict(family='Arial', size=14),
+        legend=dict(
+            orientation='h',
+            yanchor='bottom',
+            xanchor='center',
+            y=1.05,        # slightly above the top of the plot
+            x=0.5
+        ),
+        xaxis_title='Dataset',
+        yaxis_title='Score',
+        margin=dict(l=60, r=30, t=50, b=60),
+        template='simple_white',
+        height=500,
+        width=900
     )
 
-    # Final tweaks
-    #ax.set_ylim(0, 1)
-    plt.xticks(rotation=45, ha='right')
-    plt.tight_layout()
-    plt.legend(title='Metric')
+    # Constrain y-axis
+    fig.update_yaxes(range=[0.8, 1])
 
-    # Save the plot
-    plt.savefig('./experiment_2/variation_over_multiple_runs.pdf', dpi=300)
-
-    
-    
-    
+    # save the plot
+    fig.write_image("./experiment_2/experiment_2.pdf")

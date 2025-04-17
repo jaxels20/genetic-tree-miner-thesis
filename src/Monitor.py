@@ -2,6 +2,7 @@ from src.Population import Population
 import matplotlib.pyplot as plt
 import pickle
 import os
+import time
 
 class Monitor:
     def __init__(self):
@@ -31,7 +32,7 @@ class Monitor:
         if not os.path.exists(os.path.join(save_dir, dataset_name)):
             os.makedirs(os.path.join(save_dir, dataset_name))
         
-        with open(os.path.join(save_dir, dataset_name, method_name) + ".pkl", "wb") as f:
+        with open(os.path.join(save_dir, dataset_name, method_name + str(time.time())) + ".pkl", "wb") as f:
             pickle.dump((dataset_name, method_name, result_dict), f)       
     
     def plot_fitness(self) -> None:

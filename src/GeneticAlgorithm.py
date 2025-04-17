@@ -9,7 +9,8 @@ from src.Filtering import Filtering
 import tqdm
 import time
 from typing import Union
-
+import os
+import time
 class GeneticAlgorithm:
     def __init__(self, method_name):
         """
@@ -68,6 +69,7 @@ class GeneticAlgorithm:
             min_fitness: float,
             stagnation_limit: int,
             time_limit: int, # Time limit in seconds
+            export_monitor_path: str,
         ) -> ProcessTree:
         # Start the timer
         self.start_time = time.time()
@@ -100,7 +102,8 @@ class GeneticAlgorithm:
             # Generate a new population
             population = mutator.generate_new_population(population)
         
-        #self.monitor.save_objective_results("./monitor_analysis/data/", eventlog.name, self.method_name)
+        if export_monitor_path is not None:
+            self.monitor.save_objective_results(export_monitor_path + f"/monitors", eventlog.name, self.method_name)
         
         return self.best_tree
     
