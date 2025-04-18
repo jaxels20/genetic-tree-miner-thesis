@@ -103,7 +103,7 @@ class GeneticAlgorithm:
             population = mutator.generate_new_population(population)
         
         if export_monitor_path is not None:
-            self.monitor.save_objective_results(export_monitor_path + f"/monitors", eventlog.name, self.method_name)
+            self.monitor.save_objective_results(export_monitor_path, eventlog.name, self.method_name)
         
         return self.best_tree
     

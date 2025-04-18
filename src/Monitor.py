@@ -30,9 +30,9 @@ class Monitor:
         
         # if the directory does not exist, create it
         if not os.path.exists(os.path.join(save_dir, dataset_name)):
-            os.makedirs(os.path.join(save_dir, dataset_name))
+            os.makedirs(os.path.join(save_dir, dataset_name, "monitors"))
         
-        with open(os.path.join(save_dir, dataset_name, method_name + "_" +  str(time.time())) + ".pkl", "wb") as f:
+        with open(os.path.join(save_dir, dataset_name, "monitors", method_name + "_" +  str(time.time())) + ".pkl", "wb") as f:
             pickle.dump((dataset_name, method_name, result_dict), f)       
     
     def plot_fitness(self) -> None:

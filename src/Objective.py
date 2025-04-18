@@ -12,7 +12,6 @@ from pm4py.algo.evaluation.generalization.variants.token_based import apply as g
 from pm4py.algo.evaluation.simplicity.variants.arc_degree import apply as simplicity
 
 
-
 class Objective:
     """
     metric_weights: A dictionary with metric names as keys and float weights as values.
@@ -100,10 +99,6 @@ class Objective:
             print(f"Unique activities: {self.eventlog.unique_activities()}")
             our_petri_net.visualize()
             raise e
-            
-            
-        
-        
         return fitness
     
     def ftr_precision(self, ftr_petri_net):
@@ -135,5 +130,7 @@ class Objective:
     
     def evaluate_population(self, population: Population):
         for tree in population.trees:
-            tree.fitness = self.fitness(tree)
-    
+            if tree.fitness is None:
+                tree.fitness = self.fitness(tree)
+            else:
+                continue

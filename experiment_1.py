@@ -64,6 +64,7 @@ def load_hyperparameters_from_csv(path: str):
             
             if hyper_parameters['mutator'] == 'Tournament':
                 hyper_parameters['tournament_size'] = float(row['tournament_size'])
+            
             if hyper_parameters['generator'] == 'Injection':
                 hyper_parameters['log_filtering'] = float(row['log_filtering'])
             
