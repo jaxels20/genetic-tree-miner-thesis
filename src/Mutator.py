@@ -188,8 +188,6 @@ class Mutator(MutatorBase):
         #     ['loop_addition', 'operator_swap', 'subtree_removal', 'leaf_addition'],
         #     weights=[0.25, 0.25, 0.25, 0.25]
         # )[0]
-        
-        
 
         if mutation_type == 'operator_swap':
             new_tree = operator_swap(pt_copy)
