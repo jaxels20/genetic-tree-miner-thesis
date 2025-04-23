@@ -2,7 +2,7 @@ from src.FileLoader import FileLoader
 from src.Evaluator import MultiEvaluator
 from src.Mutator import Mutator, TournamentMutator
 from src.Objective import Objective
-from src.RandomTreeGenerator import BottomUpBinaryTreeGenerator, SequentialTreeGenerator, InjectionTreeGenerator
+from src.RandomTreeGenerator import BottomUpRandomBinaryGenerator, FootprintGuidedSequentialGenerator, InductiveNoiseInjectionGenerator, InductiveMinerGenerator
 from src.Discovery import Discovery
 import os
 import pickle
@@ -23,16 +23,18 @@ STAGNATION_LIMIT = None
 MAX_GENERATIONS = 200
 colors = cycle(px.colors.qualitative.Pastel2)
 color_map = {
-    "Sequential": next(colors),
-    "BottomUp": next(colors),
-    "Injection": next(colors),
+    "FootprintGuidedSequentialGenerator": next(colors),
+    "BottomUpRandomBinaryGenerator": next(colors),
+    "InductiveNoiseInjectionGenerator": next(colors),
+    "InductiveMinerGenerator": next(colors),
     "Tourn.": next(colors),
     "NonTourn.": next(colors)
 }
 marker_map = {
-    "Sequential": "circle",
-    "BottomUp": "square",
-    "Injection": "triangle-up",
+    "FootprintGuidedSequentialGenerator": "circle",
+    "BottomUpRandomBinaryGenerator": "square",
+    "InductiveNoiseInjectionGenerator": "triangle-up",
+    "InductiveMinerGenerator": "hexagon",
     "Tourn.": "triangle-down",
     "NonTourn.": "star"
 }
@@ -48,7 +50,7 @@ def generate_monitors():
 
     for dataset_dir in dataset_dirs:
         # Assume only one file per directory
-        if dataset_dir not in ["2013-cp", "2013-op", "2013-i", "Sepsis"]:
+        if dataset_dir not in ["2013-cp"]:
             continue
           
         xes_file = [f for f in os.listdir(f"{INPUT_DIR}{dataset_dir}") if f.endswith(".xes")]
@@ -102,9 +104,9 @@ def generate_monitors():
     
     # Sequential
     curr_hyperparams2 = deepcopy(hyperparams)
-    curr_hyperparams2["generator"] = SequentialTreeGenerator()
-    curr_hyperparams2["method_name"] = "Sequential"
-    methods_dict["Sequential"] = lambda log: Discovery.genetic_algorithm(
+    curr_hyperparams2["generator"] = FootprintGuidedSequentialGenerator()
+    curr_hyperparams2["method_name"] = "FootprintGuidedSequentialGenerator"
+    methods_dict["FootprintGuidedSequentialGenerator"] = lambda log: Discovery.genetic_algorithm(
         log,
         export_monitor_path=f"{OUTPUT_DIR}",
         time_limit=TIME_LIMIT,
@@ -114,9 +116,9 @@ def generate_monitors():
     )
     # BottomUp
     curr_hyperparams3 = deepcopy(hyperparams)
-    curr_hyperparams3["generator"] = BottomUpBinaryTreeGenerator()
-    curr_hyperparams3["method_name"] = "BottomUp"
-    methods_dict["BottomUp"] = lambda log: Discovery.genetic_algorithm(
+    curr_hyperparams3["generator"] = BottomUpRandomBinaryGenerator()
+    curr_hyperparams3["method_name"] = "BottomUpRandomBinaryGenerator"
+    methods_dict["BottoBottomUpRandomBinaryGeneratormUp"] = lambda log: Discovery.genetic_algorithm(
         log,
         export_monitor_path=f"{OUTPUT_DIR}",
         time_limit=TIME_LIMIT,
@@ -126,15 +128,28 @@ def generate_monitors():
     )
     # Injection
     curr_hyperparams4 = deepcopy(hyperparams)
-    curr_hyperparams4["generator"] = InjectionTreeGenerator(curr_hyperparams4["log_filtering"])
-    curr_hyperparams4["method_name"] = "Injection"
-    methods_dict["Injection"] = lambda log: Discovery.genetic_algorithm(
+    curr_hyperparams4["generator"] = InductiveNoiseInjectionGenerator(curr_hyperparams4["log_filtering"])
+    curr_hyperparams4["method_name"] = "InductiveNoiseInjectionGenerator"
+    methods_dict["InductiveNoiseInjectionGenerator"] = lambda log: Discovery.genetic_algorithm(
         log,
         export_monitor_path=f"{OUTPUT_DIR}",
         time_limit=TIME_LIMIT,
         stagnation_limit=STAGNATION_LIMIT,
         max_generations=MAX_GENERATIONS,
         **curr_hyperparams4
+    )
+    
+    # Injection
+    curr_hyperparams5 = deepcopy(hyperparams)
+    curr_hyperparams5["generator"] = InductiveMinerGenerator()
+    curr_hyperparams5["method_name"] = "InductiveMinerGenerator"
+    methods_dict["InductiveMinerGenerator"] = lambda log: Discovery.genetic_algorithm(
+        log,
+        export_monitor_path=f"{OUTPUT_DIR}",
+        time_limit=TIME_LIMIT,
+        stagnation_limit=STAGNATION_LIMIT,
+        max_generations=MAX_GENERATIONS,
+        **curr_hyperparams5
     )
     
 

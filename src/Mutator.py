@@ -1,7 +1,7 @@
 import random
 from typing import List
 from src.ProcessTree import ProcessTree, Operator
-from src.RandomTreeGenerator import BottomUpBinaryTreeGenerator
+from src.RandomTreeGenerator import BottomUpRandomBinaryGenerator
 from src.EventLog import EventLog
 from src.Population import Population
 
@@ -26,7 +26,7 @@ class Mutator(MutatorBase):
         self.event_log = event_log
         
     def random_creation(self, num_new_trees: int) -> List[ProcessTree]:
-        generator = BottomUpBinaryTreeGenerator()
+        generator = BottomUpRandomBinaryGenerator()
         new_trees = generator.generate_population(self.event_log.unique_activities(), num_new_trees)
         return new_trees.get_population()
         
@@ -136,7 +136,7 @@ class Mutator(MutatorBase):
                 return tree
             
             # After succesfully removing subtree, generate random tree containing all missing activities
-            generator = BottomUpBinaryTreeGenerator()
+            generator = BottomUpRandomBinaryGenerator()
             missing_activities = tree.get_missing_activities(self.event_log.unique_activities())
             new_sub_tree = generator.generate_population(missing_activities, n=1)[0]
             

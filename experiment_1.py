@@ -2,7 +2,7 @@ import csv
 import os
 from src.Discovery import Discovery
 from src.Mutator import Mutator, TournamentMutator
-from src.RandomTreeGenerator import BottomUpBinaryTreeGenerator, InjectionTreeGenerator, SequentialTreeGenerator
+from src.RandomTreeGenerator import BottomUpRandomBinaryGenerator, FootprintGuidedSequentialGenerator, InductiveNoiseInjectionGenerator, InductiveMinerGenerator
 from src.Evaluator import MultiEvaluator, SingleEvaluator
 from src.FileLoader import FileLoader
 from src.Objective import Objective
@@ -20,12 +20,14 @@ def convert_json_to_hyperparamters(hyper_parameters: dict):
     hyper_parameters['elite_rate'] = hyper_parameters['elite_rate'] / total
     
     # Convert the generator and mutator to objects
-    if hyper_parameters['generator'] == 'Buttom':
-        hyper_parameters['generator'] = BottomUpBinaryTreeGenerator()
-    elif hyper_parameters['generator'] == 'Sequential':
-        hyper_parameters['generator'] = SequentialTreeGenerator()
-    elif hyper_parameters['generator'] == 'Injection':
-        hyper_parameters['generator'] = InjectionTreeGenerator(hyper_parameters['log_filtering'])
+    if hyper_parameters['generator'] == 'BottomUpRandomBinaryGenerator':
+        hyper_parameters['generator'] = BottomUpRandomBinaryGenerator()
+    elif hyper_parameters['generator'] == 'FootprintGuidedSequentialGenerator':
+        hyper_parameters['generator'] = FootprintGuidedSequentialGenerator()
+    elif hyper_parameters['generator'] == 'InductiveNoiseInjectionGenerator':
+        hyper_parameters['generator'] = InductiveNoiseInjectionGenerator(hyper_parameters['log_filtering'])
+    elif hyper_parameters['generator'] == 'InductiveMinerGenerator':
+        hyper_parameters['generator'] = InductiveMinerGenerator()
     else:
         raise ValueError("Invalid generator type")
     if hyper_parameters['mutator'] == 'Tournament':

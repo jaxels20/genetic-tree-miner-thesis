@@ -9,8 +9,8 @@ hyperparameters = pd.read_csv("./best_parameters_all_datasets.csv", index_col=0)
 df = hyperparameters.copy()
 
 df.loc[df['mutator'] == 'NonTournament', 'tournament_size'] = -1_000_000_000
-df.loc[df['generator'] == 'Sequential', 'log_filtering'] = 1_000_000_000
-df.loc[df['generator'] == 'Buttom', 'log_filtering'] = -1_000_000_000
+df.loc[df['generator'] == 'FootprintGuidedSequentialGenerator', 'log_filtering'] = 1_000_000_000
+df.loc[df['generator'] == 'BottomUpRandomBinaryGenerator', 'log_filtering'] = -1_000_000_000
 
 # Remove rows where 'objective' is NaN, since that's used for coloring
 df = df[df['objective'].notna()]
