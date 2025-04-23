@@ -48,7 +48,7 @@ def generate_monitors():
 
     for dataset_dir in dataset_dirs:
         # Assume only one file per directory
-        if dataset_dir not in ["2013-cp", "2013-op", "2013-i", "Sepsis", "RTF", "2012"]:
+        if dataset_dir not in ["2013-cp", "2013-op", "2013-i", "Sepsis"]:
             continue
           
         xes_file = [f for f in os.listdir(f"{INPUT_DIR}{dataset_dir}") if f.endswith(".xes")]
