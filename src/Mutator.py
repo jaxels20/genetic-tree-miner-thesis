@@ -1,7 +1,7 @@
 import random
 from typing import List
 from src.ProcessTree import ProcessTree, Operator
-from src.RandomTreeGenerator import BottomUpBinaryTreeGenerator
+from src.RandomTreeGenerator import BottomUpRandomBinaryGenerator
 from src.EventLog import EventLog
 from src.Population import Population
 
@@ -26,7 +26,7 @@ class Mutator(MutatorBase):
         self.event_log = event_log
         
     def random_creation(self, num_new_trees: int) -> List[ProcessTree]:
-        generator = BottomUpBinaryTreeGenerator()
+        generator = BottomUpRandomBinaryGenerator()
         new_trees = generator.generate_population(self.event_log.unique_activities(), num_new_trees)
         return new_trees.get_population()
         
@@ -136,7 +136,7 @@ class Mutator(MutatorBase):
                 return tree
             
             # After succesfully removing subtree, generate random tree containing all missing activities
-            generator = BottomUpBinaryTreeGenerator()
+            generator = BottomUpRandomBinaryGenerator()
             missing_activities = tree.get_missing_activities(self.event_log.unique_activities())
             new_sub_tree = generator.generate_population(missing_activities, n=1)[0]
             
@@ -233,8 +233,11 @@ class Mutator(MutatorBase):
         return new_population
 
 class TournamentMutator(Mutator):
-    def __init__(self, random_creation_rate: float, crossover_rate: float, mutation_rate: float, elite_rate: float, tournament_size: float):
-        super().__init__(random_creation_rate, crossover_rate, mutation_rate, elite_rate)
+    def __init__(self, random_creation_rate: float, elite_rate: float, tournament_size: float):
+        super().__init__(
+            random_creation_rate = random_creation_rate, 
+            elite_rate = elite_rate
+        )
         self.tournament_size = tournament_size
 
     def generate_new_population(self, old_population: Population) -> Population:
@@ -242,30 +245,26 @@ class TournamentMutator(Mutator):
         population_size = len(old_population.get_population())
         
         # Elite selection
-        elite_population = old_population.get_best_trees(int(self.elite_rate * population_size))
+        elite_count = int(self.elite_rate * population_size)
+        elite_population = old_population.get_best_trees(elite_count)
         new_population.add_trees(elite_population)
 
-        # Tournament selection
-        tournament_population = old_population.get_population_interval(0, self.tournament_size)
-        for _ in range(int(self.crossover_rate * population_size)):
-            random_sample = random.sample(tournament_population, k=6)
-            tree1, tree2 = sorted(random_sample, key=lambda tree: tree.get_fitness(), reverse=True)[:2]
-            new_population.add_tree(self.crossover(tree1, tree2))
-        
-        # Mutation selection
-        mutation_population = old_population.get_population_interval(self.elite_rate, 1)
-        for _ in range(int(self.mutation_rate * population_size)):
-            tree = random.choice(mutation_population)
-            new_population.add_tree(self.mutation(tree))
-            
         # Random creation
-        random_population = self.random_creation(int(self.random_creation_rate * population_size))
+        random_count = int(self.random_creation_rate * population_size)
+        random_population = self.random_creation(random_count)
         new_population.add_trees(random_population)
         
+        # Tournament selection 
+        for _ in range(population_size - elite_count - random_count):
+            random_sample = random.sample(old_population.get_population(), k=self.tournament_size)
+            tree1, tree2 = sorted(random_sample, key=lambda tree: tree.get_fitness(), reverse=True)[:2]
+            new_tree = self.crossover(tree1, tree2)
+            new_population.add_tree(new_tree)
+            new_population.add_tree(self.mutation(new_tree))
+            
         # Ensure the new population size is the same as the old one
         if len(new_population) < population_size:
-            missing_trees = population_size - len(new_population)
-            random_trees = self.random_creation(missing_trees)
+            random_trees = self.random_creation(population_size - len(new_population))
             new_population.add_trees(random_trees)
         
         return new_population

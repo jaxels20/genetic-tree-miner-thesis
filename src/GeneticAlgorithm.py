@@ -1,5 +1,5 @@
 from src.Objective import Objective
-from src.RandomTreeGenerator import BottomUpBinaryTreeGenerator, SequentialTreeGenerator, InjectionTreeGenerator
+from src.RandomTreeGenerator import BottomUpRandomBinaryGenerator, FootprintGuidedSequentialGenerator, InductiveNoiseInjectionGenerator, InductiveMinerGenerator
 from src.ProcessTree import ProcessTree
 from src.EventLog import EventLog
 from src.Mutator import Mutator, TournamentMutator
@@ -62,7 +62,7 @@ class GeneticAlgorithm:
             eventlog: EventLog,
             population_size: int,
             mutator: Union[Mutator, TournamentMutator], 
-            generator: Union[BottomUpBinaryTreeGenerator, SequentialTreeGenerator, InjectionTreeGenerator],
+            generator: Union[BottomUpRandomBinaryGenerator, FootprintGuidedSequentialGenerator, InductiveNoiseInjectionGenerator, InductiveMinerGenerator],
             objective: Objective,
             percentage_of_log: float,
             max_generations: int,
@@ -80,12 +80,17 @@ class GeneticAlgorithm:
         mutator.set_event_log(eventlog)
         
         # Generate initial population
-        if isinstance(generator, BottomUpBinaryTreeGenerator):
+        if isinstance(generator, BottomUpRandomBinaryGenerator):
             population = generator.generate_population(eventlog.unique_activities(), n=population_size)
-        elif isinstance(generator, SequentialTreeGenerator):
+        elif isinstance(generator, FootprintGuidedSequentialGenerator):
             population = generator.generate_population(eventlog, n=population_size)
-        elif isinstance(generator, InjectionTreeGenerator):
+        elif isinstance(generator, InductiveNoiseInjectionGenerator):
             population = generator.generate_population(eventlog, n=population_size)
+        elif isinstance(generator, InductiveMinerGenerator):
+            population = generator.generate_population(eventlog, n=population_size)
+        else:
+            raise ValueError("Invalid generator type. Must be one of: BottomUpRandomBinaryGenerator, FootprintGuidedSequentialGenerator, InductiveNoiseInjectionGenerator, InductiveMinerGenerator.")
+        
         
         for generation in tqdm.tqdm(range(max_generations), desc="Discovering process tree", unit="generation"):   
             # Evaluate the fitness of each tree

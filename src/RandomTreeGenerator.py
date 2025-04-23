@@ -15,7 +15,7 @@ class RandomTreeGeneratorBase:
         raise NotImplementedError
 
 
-class BottomUpBinaryTreeGenerator(RandomTreeGeneratorBase):
+class BottomUpRandomBinaryGenerator(RandomTreeGeneratorBase):
     def __init__(self):
         pass
     
@@ -64,7 +64,7 @@ class BottomUpBinaryTreeGenerator(RandomTreeGeneratorBase):
         population = Population(trees)
         return population
         
-class SequentialTreeGenerator:
+class FootprintGuidedSequentialGenerator:
     def __init__(self):
         self.footprint_matrix = None
         self.unique_activities = None 
@@ -125,7 +125,7 @@ class SequentialTreeGenerator:
         population = Population(trees)
         return population
 
-class InjectionTreeGenerator:
+class InductiveNoiseInjectionGenerator:
     def __init__(self, log_filtering: float):
         self.log_filtering = log_filtering
 
@@ -157,15 +157,36 @@ class InjectionTreeGenerator:
 
         while(len(trees) < n):
             tree = generator._generate_naive_binary_tree(unique_activities)
-            if not any (trees[i].is_equal(tree) for i in range(len(trees))):
-                # Ensure uniqueness of trees
-                trees.append(tree)
+            trees.append(tree)
 
         population = Population(trees)
         return population
-    
+
+class InductiveMinerGenerator:
+    def __init__(self):
+        pass
+
+    def generate_population(self, eventlog: EventLog, n: int) -> List[ProcessTree]:
+        """
+        Generates a population of process trees using the inductive miner algorithm.
+        """
+        pm4py_log = eventlog.to_pm4py()
+        process_tree = pm4py.discover_process_tree_inductive(pm4py_log)
+        process_tree = ProcessTree.from_pm4py(process_tree)
+
+        trees = [process_tree]
+        if len(trees) < n:
+            generator = BottomUpBinaryTreeGenerator()
+            unique_activities = eventlog.unique_activities()
+
+        while(len(trees) < n):
+            tree = generator._generate_naive_binary_tree(unique_activities)
+            trees.append(tree)
+
+        population = Population(trees)
+        return population
+
+
+ 
 if __name__ == "__main__":
     unique_activities = ["A", "B", "C"]
-    generator = BottomUpBinaryTreeGenerator()
-    tree = generator.generate_population(unique_activities, 100)[0]
-    print(tree)
