@@ -37,7 +37,7 @@ if __name__ == "__main__":
             discovered_net = Discovery.genetic_algorithm(
                 eventlog,
                 time_limit=60*5,
-                stagnation_limit=15,
+                stagnation_limit=50,
                 **hyper_parameters
             )
             
