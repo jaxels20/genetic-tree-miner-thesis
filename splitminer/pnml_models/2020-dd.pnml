@@ -1,0 +1,223 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<pnml>
+  <net id="" type="http://www.pnml.org/version-2009/grammar/pnmlcoremodel">
+    <name>
+      <text></text>
+    </name>
+    <page id="n0">
+      <place id="ent_node22">
+        <name>
+          <text>ent_node22</text>
+        </name>
+      </place>
+      <place id="ent_node12">
+        <name>
+          <text>ent_node12</text>
+        </name>
+      </place>
+      <place id="sink">
+        <name>
+          <text>sink</text>
+        </name>
+      </place>
+      <place id="source">
+        <name>
+          <text>source</text>
+        </name>
+        <initialMarking>
+          <text>1</text>
+        </initialMarking>
+      </place>
+      <place id="ent_node25">
+        <name>
+          <text>ent_node25</text>
+        </name>
+      </place>
+      <place id="exi_node28">
+        <name>
+          <text>exi_node28</text>
+        </name>
+      </place>
+      <place id="ent_node9">
+        <name>
+          <text>ent_node9</text>
+        </name>
+      </place>
+      <place id="ent_node23">
+        <name>
+          <text>ent_node23</text>
+        </name>
+      </place>
+      <place id="ent_node10">
+        <name>
+          <text>ent_node10</text>
+        </name>
+      </place>
+      <place id="ent_node16">
+        <name>
+          <text>ent_node16</text>
+        </name>
+      </place>
+      <place id="exi_node3">
+        <name>
+          <text>exi_node3</text>
+        </name>
+      </place>
+      <place id="exi_node7">
+        <name>
+          <text>exi_node7</text>
+        </name>
+      </place>
+      <transition id="node11">
+        <name>
+          <text>Declaration SUBMITTED by EMPLOYEE</text>
+        </name>
+      </transition>
+      <transition id="node26">
+        <name>
+          <text>Declaration FINAL_APPROVED by SUPERVISOR</text>
+        </name>
+      </transition>
+      <transition id="node12">
+        <name>
+          <text>node12</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="8066a4b3-2301-47bf-8cde-184c70c0582b"/>
+      </transition>
+      <transition id="node17">
+        <name>
+          <text>Declaration REJECTED by EMPLOYEE</text>
+        </name>
+      </transition>
+      <transition id="node22">
+        <name>
+          <text>Payment Handled</text>
+        </name>
+      </transition>
+      <transition id="node0">
+        <name>
+          <text>Declaration APPROVED by BUDGET OWNER</text>
+        </name>
+      </transition>
+      <transition id="node15">
+        <name>
+          <text>Declaration FOR_APPROVAL by ADMINISTRATION</text>
+        </name>
+      </transition>
+      <transition id="node6">
+        <name>
+          <text>Declaration SAVED by EMPLOYEE</text>
+        </name>
+      </transition>
+      <transition id="sfl_edge23">
+        <name>
+          <text>sfl_edge23</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="3a014e61-6aba-4a36-80fb-be3422515d09"/>
+      </transition>
+      <transition id="5485a17f-33d8-4bc0-aebc-868c7814427c">
+        <name>
+          <text>5485a17f-33d8-4bc0-aebc-868c7814427c</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="52a3a437-6f30-4db5-b2ff-2d4314463247"/>
+      </transition>
+      <transition id="node5">
+        <name>
+          <text>Declaration REJECTED by BUDGET OWNER</text>
+        </name>
+      </transition>
+      <transition id="node18">
+        <name>
+          <text>Declaration REJECTED by ADMINISTRATION</text>
+        </name>
+      </transition>
+      <transition id="node20">
+        <name>
+          <text>Declaration APPROVED by PRE_APPROVER</text>
+        </name>
+      </transition>
+      <transition id="node13">
+        <name>
+          <text>Declaration FOR_APPROVAL by SUPERVISOR</text>
+        </name>
+      </transition>
+      <transition id="node27">
+        <name>
+          <text>Declaration FOR_APPROVAL by PRE_APPROVER</text>
+        </name>
+      </transition>
+      <transition id="node21">
+        <name>
+          <text>Declaration REJECTED by SUPERVISOR</text>
+        </name>
+      </transition>
+      <transition id="node2">
+        <name>
+          <text>Declaration REJECTED by MISSING</text>
+        </name>
+      </transition>
+      <transition id="node24">
+        <name>
+          <text>Declaration REJECTED by PRE_APPROVER</text>
+        </name>
+      </transition>
+      <transition id="node4">
+        <name>
+          <text>Declaration APPROVED by ADMINISTRATION</text>
+        </name>
+      </transition>
+      <transition id="node23">
+        <name>
+          <text>Request Payment</text>
+        </name>
+      </transition>
+      <arc id="127940460805152" source="ent_node23" target="node23"/>
+      <arc id="127940460727328" source="exi_node28" target="node15"/>
+      <arc id="127940460726320" source="exi_node28" target="node4"/>
+      <arc id="127940460734000" source="node22" target="ent_node12"/>
+      <arc id="127940460729440" source="node13" target="ent_node16"/>
+      <arc id="127940460727904" source="5485a17f-33d8-4bc0-aebc-868c7814427c" target="exi_node3"/>
+      <arc id="127940460733040" source="exi_node3" target="node6"/>
+      <arc id="127940460728432" source="node18" target="ent_node10"/>
+      <arc id="127940460728960" source="node5" target="ent_node10"/>
+      <arc id="127940460709504" source="sfl_edge23" target="ent_node9"/>
+      <arc id="127940460729488" source="exi_node28" target="node18"/>
+      <arc id="127940460502176" source="ent_node12" target="node12"/>
+      <arc id="127940460733616" source="exi_node28" target="node27"/>
+      <arc id="127940460734144" source="exi_node7" target="node21"/>
+      <arc id="127940460732608" source="exi_node28" target="node24"/>
+      <arc id="127940460506832" source="ent_node22" target="node22"/>
+      <arc id="127940460725456" source="ent_node10" target="node17"/>
+      <arc id="127940460731600" source="node0" target="ent_node25"/>
+      <arc id="127940460730880" source="node12" target="sink"/>
+      <arc id="127940460732128" source="node11" target="exi_node28"/>
+      <arc id="127940460503280" source="source" target="5485a17f-33d8-4bc0-aebc-868c7814427c"/>
+      <arc id="127940460724976" source="exi_node7" target="node0"/>
+      <arc id="127940460708592" source="node24" target="ent_node10"/>
+      <arc id="127940460716032" source="exi_node3" target="sfl_edge23"/>
+      <arc id="127940460708112" source="node21" target="ent_node10"/>
+      <arc id="127940460727568" source="ent_node9" target="node11"/>
+      <arc id="127940460731168" source="node26" target="ent_node23"/>
+      <arc id="127940460733232" source="ent_node25" target="node26"/>
+      <arc id="127940460709168" source="node20" target="ent_node25"/>
+      <arc id="127940460724544" source="node23" target="ent_node22"/>
+      <arc id="127940460725600" source="node17" target="ent_node9"/>
+      <arc id="127940460728672" source="node2" target="ent_node9"/>
+      <arc id="127940460726656" source="node6" target="ent_node12"/>
+      <arc id="127940460731792" source="exi_node28" target="node20"/>
+      <arc id="127940460727712" source="node4" target="exi_node7"/>
+      <arc id="127940460708784" source="node27" target="ent_node16"/>
+      <arc id="127940460725168" source="exi_node7" target="node5"/>
+      <arc id="127940460730304" source="node15" target="ent_node9"/>
+      <arc id="127940460731360" source="ent_node16" target="node2"/>
+      <arc id="127940460725744" source="exi_node28" target="node13"/>
+    </page>
+    <finalmarkings>
+      <marking>
+        <place idref="sink">
+          <text>1</text>
+        </place>
+      </marking>
+    </finalmarkings>
+  </net>
+</pnml>

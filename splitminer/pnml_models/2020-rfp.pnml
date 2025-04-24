@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<pnml>
+  <net id="" type="http://www.pnml.org/version-2009/grammar/pnmlcoremodel">
+    <name>
+      <text></text>
+    </name>
+    <page id="n0">
+      <place id="sink">
+        <name>
+          <text>sink</text>
+        </name>
+      </place>
+      <place id="source">
+        <name>
+          <text>source</text>
+        </name>
+        <initialMarking>
+          <text>1</text>
+        </initialMarking>
+      </place>
+      <place id="ent_node8">
+        <name>
+          <text>ent_node8</text>
+        </name>
+      </place>
+      <place id="exi_node6">
+        <name>
+          <text>exi_node6</text>
+        </name>
+      </place>
+      <transition id="node8">
+        <name>
+          <text>node8</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="1120d8ea-6031-473b-92e4-79fc79d48516"/>
+      </transition>
+      <transition id="node1">
+        <name>
+          <text>activity 13776</text>
+        </name>
+      </transition>
+      <transition id="node7">
+        <name>
+          <text>activity 505</text>
+        </name>
+      </transition>
+      <transition id="node2">
+        <name>
+          <text>UNKNOWN</text>
+        </name>
+      </transition>
+      <transition id="node9">
+        <name>
+          <text>activity 181118</text>
+        </name>
+      </transition>
+      <transition id="43f4a096-d867-450a-a859-1680c0970256">
+        <name>
+          <text>43f4a096-d867-450a-a859-1680c0970256</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="ffac4662-6264-4485-b0f2-ce7090d6a6bb"/>
+      </transition>
+      <transition id="node0">
+        <name>
+          <text>activity 21016</text>
+        </name>
+      </transition>
+      <transition id="node5">
+        <name>
+          <text>activity 167406</text>
+        </name>
+      </transition>
+      <arc id="127940461395456" source="node8" target="sink"/>
+      <arc id="127940461394976" source="exi_node6" target="node7"/>
+      <arc id="127940461395504" source="43f4a096-d867-450a-a859-1680c0970256" target="exi_node6"/>
+      <arc id="127940461395024" source="node2" target="ent_node8"/>
+      <arc id="127940461984848" source="node1" target="ent_node8"/>
+      <arc id="127940461511264" source="node7" target="ent_node8"/>
+      <arc id="127940461394544" source="exi_node6" target="node2"/>
+      <arc id="127940461395120" source="node9" target="ent_node8"/>
+      <arc id="127940461522112" source="source" target="43f4a096-d867-450a-a859-1680c0970256"/>
+      <arc id="127940461511360" source="node0" target="ent_node8"/>
+      <arc id="127940461394640" source="exi_node6" target="node0"/>
+      <arc id="127940461523216" source="ent_node8" target="node8"/>
+      <arc id="127940461394736" source="exi_node6" target="node9"/>
+      <arc id="127940461393824" source="exi_node6" target="node1"/>
+      <arc id="127940461511072" source="node5" target="ent_node8"/>
+      <arc id="127940461394352" source="exi_node6" target="node5"/>
+    </page>
+    <finalmarkings>
+      <marking>
+        <place idref="sink">
+          <text>1</text>
+        </place>
+      </marking>
+    </finalmarkings>
+  </net>
+</pnml>
