@@ -15,12 +15,12 @@ from pprint import pprint
 import pandas as pd
 
 INPUT_DIR = "./real_life_datasets/"
-OUTPUT_DIR = "./experiment_5" 
-NUM_RUNS = 1
+OUTPUT_DIR = "./experiment_5"
+NUM_RUNS = 4
 BEST_PARAMS = "./best_parameters.csv"
 TIME_LIMIT = None
 STAGNATION_LIMIT = None
-MAX_GENERATIONS = 200
+MAX_GENERATIONS = 100
 colors = cycle(px.colors.qualitative.Pastel2)
 color_map = {
     "FootprintGuidedSequentialGenerator": next(colors),
@@ -50,7 +50,7 @@ def generate_monitors():
 
     for dataset_dir in dataset_dirs:
         # Assume only one file per directory
-        if dataset_dir not in ["2013-cp"]:
+        if dataset_dir not in ["2013-cp", "2013-op", "Sepsis"]:
             continue
           
         xes_file = [f for f in os.listdir(f"{INPUT_DIR}{dataset_dir}") if f.endswith(".xes")]
@@ -67,9 +67,7 @@ def generate_monitors():
     # # Change the mutator to TournamentMutator if you want to use tournament selection
     curr_hyperparams = deepcopy(hyperparams)
     curr_hyperparams["mutator"] = TournamentMutator(
-        random_creation_rate=curr_hyperparams['random_creation_rate'], 
-        crossover_rate=curr_hyperparams['crossover_rate'], 
-        mutation_rate=curr_hyperparams['mutation_rate'], 
+        random_creation_rate=curr_hyperparams['random_creation_rate'],
         elite_rate=curr_hyperparams['elite_rate'], 
         tournament_size=curr_hyperparams['tournament_size'])
     
@@ -118,7 +116,7 @@ def generate_monitors():
     curr_hyperparams3 = deepcopy(hyperparams)
     curr_hyperparams3["generator"] = BottomUpRandomBinaryGenerator()
     curr_hyperparams3["method_name"] = "BottomUpRandomBinaryGenerator"
-    methods_dict["BottoBottomUpRandomBinaryGeneratormUp"] = lambda log: Discovery.genetic_algorithm(
+    methods_dict["BottomUpRandomBinaryGeneratorUp"] = lambda log: Discovery.genetic_algorithm(
         log,
         export_monitor_path=f"{OUTPUT_DIR}",
         time_limit=TIME_LIMIT,
@@ -140,10 +138,11 @@ def generate_monitors():
     )
     
     # Injection
+    method_name = "InductiveMinerGenerator"
     curr_hyperparams5 = deepcopy(hyperparams)
     curr_hyperparams5["generator"] = InductiveMinerGenerator()
-    curr_hyperparams5["method_name"] = "InductiveMinerGenerator"
-    methods_dict["InductiveMinerGenerator"] = lambda log: Discovery.genetic_algorithm(
+    curr_hyperparams5["method_name"] = method_name
+    methods_dict[method_name] = lambda log: Discovery.genetic_algorithm(
         log,
         export_monitor_path=f"{OUTPUT_DIR}",
         time_limit=TIME_LIMIT,

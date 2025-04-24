@@ -75,17 +75,17 @@ class GeneticAlgorithm:
         self.start_time = time.time()
         
         # Filter the log
-        eventlog = Filtering.filter_eventlog_by_top_percentage_unique(eventlog, percentage_of_log, True)
+        filtered_eventlog = Filtering.filter_eventlog_by_top_percentage_unique(eventlog, percentage_of_log, True)
         objective.set_event_log(eventlog)
         mutator.set_event_log(eventlog)
         
         # Generate initial population
         if isinstance(generator, BottomUpRandomBinaryGenerator):
-            population = generator.generate_population(eventlog.unique_activities(), n=population_size)
+            population = generator.generate_population(filtered_eventlog.unique_activities(), n=population_size)
         elif isinstance(generator, FootprintGuidedSequentialGenerator):
-            population = generator.generate_population(eventlog, n=population_size)
+            population = generator.generate_population(filtered_eventlog, n=population_size)
         elif isinstance(generator, InductiveNoiseInjectionGenerator):
-            population = generator.generate_population(eventlog, n=population_size)
+            population = generator.generate_population(filtered_eventlog, n=population_size)
         elif isinstance(generator, InductiveMinerGenerator):
             population = generator.generate_population(eventlog, n=population_size)
         else:
@@ -106,9 +106,11 @@ class GeneticAlgorithm:
                
             # Generate a new population
             population = mutator.generate_new_population(population)
+            print(f"Succesful mutations: {mutator.successful_mutations}")
+            print(f"Unsuccesful mutations: {mutator.unsuccessful_mutations}")
         
         if export_monitor_path is not None:
-            self.monitor.save_objective_results(export_monitor_path, eventlog.name, self.method_name)
+            self.monitor.save_objective_results(export_monitor_path, filtered_eventlog.name, self.method_name)
         
         return self.best_tree
     

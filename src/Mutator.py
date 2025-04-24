@@ -21,6 +21,8 @@ class Mutator(MutatorBase):
         self.mutation_rate = mutation_rate
         self.elite_rate = elite_rate
         self.mutation_types_weights = None
+        self.successful_mutations = 0
+        self.unsuccessful_mutations = 0
         
     def set_event_log(self, event_log: EventLog):
         self.event_log = event_log
@@ -66,9 +68,11 @@ class Mutator(MutatorBase):
                 continue   # remove_duplicate_activities raise an error, i.e. not possible to remove duplicate activities without breaking the tree
             
             if candidate.is_valid():
+                self.successful_mutations += 1
                 return candidate
         
         # If no valid crossover point was found, return a random parent
+        self.unsuccessful_mutations += 1
         return deep_copy_tree(random.choice([parent1, parent2]))
 
     def mutation(self, process_tree: ProcessTree) -> ProcessTree:
@@ -235,7 +239,9 @@ class Mutator(MutatorBase):
 class TournamentMutator(Mutator):
     def __init__(self, random_creation_rate: float, elite_rate: float, tournament_size: float):
         super().__init__(
-            random_creation_rate = random_creation_rate, 
+            random_creation_rate = random_creation_rate,
+            crossover_rate = 0.0, # FIX lAter
+            mutation_rate = 0.0, # FIx later
             elite_rate = elite_rate
         )
         self.tournament_size = tournament_size
@@ -254,12 +260,11 @@ class TournamentMutator(Mutator):
         random_population = self.random_creation(random_count)
         new_population.add_trees(random_population)
         
-        # Tournament selection 
+        # Tournament selection
         for _ in range(population_size - elite_count - random_count):
-            random_sample = random.sample(old_population.get_population(), k=self.tournament_size)
+            random_sample = random.sample(old_population.get_population(), k=int(self.tournament_size*population_size))
             tree1, tree2 = sorted(random_sample, key=lambda tree: tree.get_fitness(), reverse=True)[:2]
             new_tree = self.crossover(tree1, tree2)
-            new_population.add_tree(new_tree)
             new_population.add_tree(self.mutation(new_tree))
             
         # Ensure the new population size is the same as the old one
