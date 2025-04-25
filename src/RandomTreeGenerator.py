@@ -5,6 +5,7 @@ from src.ProcessTree import ProcessTree, Operator
 from src.Population import Population
 from src.Filtering import Filtering
 import pm4py
+from copy import deepcopy
 
 
 class RandomTreeGeneratorBase:
@@ -174,19 +175,18 @@ class InductiveMinerGenerator:
         process_tree = pm4py.discover_process_tree_inductive(pm4py_log)
         process_tree = ProcessTree.from_pm4py(process_tree)
 
-        trees = [process_tree]
-        if len(trees) < n:
-            generator = BottomUpRandomBinaryGenerator()
-            unique_activities = eventlog.unique_activities()
-
-        while(len(trees) < n):
-            tree = generator._generate_naive_binary_tree(unique_activities)
-            trees.append(tree)
-
+        trees = [deepcopy(process_tree) for _ in range(n)]
+        
         population = Population(trees)
         return population
 
 
  
 if __name__ == "__main__":
-    unique_activities = ["A", "B", "C"]
+    eventlog = EventLog.from_trace_list('ABC', 'ABD')
+
+    generator = InductiveMinerGenerator()
+    population = generator.generate_population(eventlog, 10)
+
+    print(population)
+    
