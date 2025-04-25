@@ -153,7 +153,7 @@ class InductiveNoiseInjectionGenerator:
                 trees.append(tree)
         
         if len(trees) < n:
-            generator = BottomUpBinaryTreeGenerator()
+            generator = BottomUpRandomBinaryGenerator()
             unique_activities = event_log.unique_activities()
 
         while(len(trees) < n):

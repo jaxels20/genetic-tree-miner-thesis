@@ -1,0 +1,297 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<pnml>
+  <net id="" type="http://www.pnml.org/version-2009/grammar/pnmlcoremodel">
+    <name>
+      <text></text>
+    </name>
+    <page id="n0">
+      <place id="ent_node12">
+        <name>
+          <text>ent_node12</text>
+        </name>
+      </place>
+      <place id="ent_node11">
+        <name>
+          <text>ent_node11</text>
+        </name>
+      </place>
+      <place id="exi_node27">
+        <name>
+          <text>exi_node27</text>
+        </name>
+      </place>
+      <place id="exi_node7">
+        <name>
+          <text>exi_node7</text>
+        </name>
+      </place>
+      <place id="ent_node35">
+        <name>
+          <text>ent_node35</text>
+        </name>
+      </place>
+      <place id="ent_node28">
+        <name>
+          <text>ent_node28</text>
+        </name>
+      </place>
+      <place id="ent_node33">
+        <name>
+          <text>ent_node33</text>
+        </name>
+      </place>
+      <place id="ent_node30">
+        <name>
+          <text>ent_node30</text>
+        </name>
+      </place>
+      <place id="sink">
+        <name>
+          <text>sink</text>
+        </name>
+      </place>
+      <place id="exi_node0">
+        <name>
+          <text>exi_node0</text>
+        </name>
+      </place>
+      <place id="source">
+        <name>
+          <text>source</text>
+        </name>
+        <initialMarking>
+          <text>1</text>
+        </initialMarking>
+      </place>
+      <place id="ent_node1">
+        <name>
+          <text>ent_node1</text>
+        </name>
+      </place>
+      <place id="ent_node15">
+        <name>
+          <text>ent_node15</text>
+        </name>
+      </place>
+      <place id="ent_node17">
+        <name>
+          <text>ent_node17</text>
+        </name>
+      </place>
+      <place id="exi_node19">
+        <name>
+          <text>exi_node19</text>
+        </name>
+      </place>
+      <place id="ent_node16">
+        <name>
+          <text>ent_node16</text>
+        </name>
+      </place>
+      <place id="ent_node24">
+        <name>
+          <text>ent_node24</text>
+        </name>
+      </place>
+      <place id="ent_node14">
+        <name>
+          <text>ent_node14</text>
+        </name>
+      </place>
+      <place id="exi_node8">
+        <name>
+          <text>exi_node8</text>
+        </name>
+      </place>
+      <place id="exi_node22">
+        <name>
+          <text>exi_node22</text>
+        </name>
+      </place>
+      <transition id="node26">
+        <name>
+          <text>W_Nabellen incomplete dossiers</text>
+        </name>
+      </transition>
+      <transition id="sfl_edge40">
+        <name>
+          <text>sfl_edge40</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="8e133fb6-c3c1-479e-9425-b2570ccf4225"/>
+      </transition>
+      <transition id="node30">
+        <name>
+          <text>A_PARTLYSUBMITTED</text>
+        </name>
+      </transition>
+      <transition id="node1">
+        <name>
+          <text>A_PREACCEPTED</text>
+        </name>
+      </transition>
+      <transition id="node9">
+        <name>
+          <text>A_CANCELLED</text>
+        </name>
+      </transition>
+      <transition id="node14">
+        <name>
+          <text>node14</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="13451da1-825d-4b66-b21c-1bc9aeeb47c6"/>
+      </transition>
+      <transition id="node36">
+        <name>
+          <text>A_REGISTERED</text>
+        </name>
+      </transition>
+      <transition id="node24">
+        <name>
+          <text>O_SENT</text>
+        </name>
+      </transition>
+      <transition id="node33">
+        <name>
+          <text>W_Completeren aanvraag</text>
+        </name>
+      </transition>
+      <transition id="node10">
+        <name>
+          <text>W_Beoordelen fraude</text>
+        </name>
+      </transition>
+      <transition id="node21">
+        <name>
+          <text>O_DECLINED</text>
+        </name>
+      </transition>
+      <transition id="node11">
+        <name>
+          <text>W_Nabellen offertes</text>
+        </name>
+      </transition>
+      <transition id="node12">
+        <name>
+          <text>O_CREATED</text>
+        </name>
+      </transition>
+      <transition id="node34">
+        <name>
+          <text>A_ACCEPTED</text>
+        </name>
+      </transition>
+      <transition id="node17">
+        <name>
+          <text>A_FINALIZED</text>
+        </name>
+      </transition>
+      <transition id="node3">
+        <name>
+          <text>O_SENT_BACK</text>
+        </name>
+      </transition>
+      <transition id="node6">
+        <name>
+          <text>O_CANCELLED</text>
+        </name>
+      </transition>
+      <transition id="node20">
+        <name>
+          <text>W_Valideren aanvraag</text>
+        </name>
+      </transition>
+      <transition id="node31">
+        <name>
+          <text>O_SELECTED</text>
+        </name>
+      </transition>
+      <transition id="node25">
+        <name>
+          <text>A_APPROVED</text>
+        </name>
+      </transition>
+      <transition id="node2">
+        <name>
+          <text>W_Afhandelen leads</text>
+        </name>
+      </transition>
+      <transition id="node29">
+        <name>
+          <text>A_ACTIVATED</text>
+        </name>
+      </transition>
+      <transition id="node4">
+        <name>
+          <text>A_DECLINED</text>
+        </name>
+      </transition>
+      <transition id="node5">
+        <name>
+          <text>O_ACCEPTED</text>
+        </name>
+      </transition>
+      <transition id="node23">
+        <name>
+          <text>A_SUBMITTED</text>
+        </name>
+      </transition>
+      <arc id="130751676576784" source="node25" target="ent_node16"/>
+      <arc id="130751676570160" source="node33" target="exi_node8"/>
+      <arc id="130751676569152" source="node9" target="ent_node14"/>
+      <arc id="130751674335312" source="ent_node14" target="node14"/>
+      <arc id="130751676569680" source="sfl_edge40" target="ent_node14"/>
+      <arc id="130751676578416" source="node29" target="ent_node14"/>
+      <arc id="130751674343040" source="ent_node17" target="node17"/>
+      <arc id="130751676569728" source="ent_node35" target="node4"/>
+      <arc id="130751676571216" source="exi_node19" target="node36"/>
+      <arc id="130751676569776" source="node30" target="exi_node27"/>
+      <arc id="130751676579520" source="node10" target="ent_node35"/>
+      <arc id="130751676576448" source="exi_node8" target="node34"/>
+      <arc id="130751676570304" source="exi_node22" target="node21"/>
+      <arc id="130751676568768" source="exi_node7" target="node26"/>
+      <arc id="130751676576928" source="node20" target="exi_node7"/>
+      <arc id="130751676570832" source="exi_node27" target="node2"/>
+      <arc id="130751676567760" source="node17" target="ent_node12"/>
+      <arc id="130751676577504" source="node4" target="exi_node22"/>
+      <arc id="130751676566752" source="ent_node15" target="node31"/>
+      <arc id="130751674130672" source="ent_node24" target="node24"/>
+      <arc id="130751674129136" source="ent_node33" target="node33"/>
+      <arc id="130751674337520" source="exi_node22" target="sfl_edge40"/>
+      <arc id="130751674419968" source="ent_node11" target="node11"/>
+      <arc id="130751676570880" source="node31" target="ent_node17"/>
+      <arc id="130751676577552" source="node36" target="ent_node16"/>
+      <arc id="130751676570400" source="exi_node0" target="node6"/>
+      <arc id="130751674341168" source="ent_node30" target="node30"/>
+      <arc id="130751676563776" source="exi_node0" target="node3"/>
+      <arc id="130751676568384" source="ent_node28" target="node20"/>
+      <arc id="130751676568912" source="node21" target="ent_node35"/>
+      <arc id="130751674127696" source="ent_node1" target="node1"/>
+      <arc id="130751676567376" source="node26" target="ent_node28"/>
+      <arc id="130751676576592" source="node34" target="ent_node15"/>
+      <arc id="130751676570976" source="exi_node27" target="node10"/>
+      <arc id="130751674131824" source="ent_node12" target="node12"/>
+      <arc id="130751676563824" source="node1" target="ent_node33"/>
+      <arc id="130751676579184" source="node24" target="ent_node11"/>
+      <arc id="130751676567424" source="source" target="node23"/>
+      <arc id="130751676565888" source="exi_node8" target="node9"/>
+      <arc id="130751676578704" source="node5" target="exi_node19"/>
+      <arc id="130751676571024" source="node6" target="ent_node15"/>
+      <arc id="130751676569008" source="node23" target="ent_node30"/>
+      <arc id="130751676570544" source="node11" target="exi_node0"/>
+      <arc id="130751676566464" source="exi_node7" target="node5"/>
+      <arc id="130751676571600" source="exi_node19" target="node25"/>
+      <arc id="130751676579808" source="node12" target="ent_node24"/>
+      <arc id="130751676565984" source="ent_node16" target="node29"/>
+      <arc id="130751676566608" source="node3" target="ent_node28"/>
+      <arc id="130751676577264" source="node2" target="ent_node1"/>
+      <arc id="130751676568048" source="node14" target="sink"/>
+    </page>
+    <finalmarkings>
+      <marking>
+        <place idref="sink">
+          <text>1</text>
+        </place>
+      </marking>
+    </finalmarkings>
+  </net>
+</pnml>

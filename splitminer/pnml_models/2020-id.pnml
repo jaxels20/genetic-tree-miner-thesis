@@ -1,0 +1,379 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<pnml>
+  <net id="" type="http://www.pnml.org/version-2009/grammar/pnmlcoremodel">
+    <name>
+      <text></text>
+    </name>
+    <page id="n0">
+      <place id="exi_node35">
+        <name>
+          <text>exi_node35</text>
+        </name>
+      </place>
+      <place id="ent_node22">
+        <name>
+          <text>ent_node22</text>
+        </name>
+      </place>
+      <place id="ent_node47">
+        <name>
+          <text>ent_node47</text>
+        </name>
+      </place>
+      <place id="exi_node28">
+        <name>
+          <text>exi_node28</text>
+        </name>
+      </place>
+      <place id="exi_node13">
+        <name>
+          <text>exi_node13</text>
+        </name>
+      </place>
+      <place id="ent_node33">
+        <name>
+          <text>ent_node33</text>
+        </name>
+      </place>
+      <place id="source">
+        <name>
+          <text>source</text>
+        </name>
+        <initialMarking>
+          <text>1</text>
+        </initialMarking>
+      </place>
+      <place id="exi_node7">
+        <name>
+          <text>exi_node7</text>
+        </name>
+      </place>
+      <place id="ent_node11">
+        <name>
+          <text>ent_node11</text>
+        </name>
+      </place>
+      <place id="ent_node3">
+        <name>
+          <text>ent_node3</text>
+        </name>
+      </place>
+      <place id="exi_node10">
+        <name>
+          <text>exi_node10</text>
+        </name>
+      </place>
+      <place id="ent_node45">
+        <name>
+          <text>ent_node45</text>
+        </name>
+      </place>
+      <place id="ent_node32">
+        <name>
+          <text>ent_node32</text>
+        </name>
+      </place>
+      <place id="ent_node17">
+        <name>
+          <text>ent_node17</text>
+        </name>
+      </place>
+      <place id="exi_node5">
+        <name>
+          <text>exi_node5</text>
+        </name>
+      </place>
+      <place id="exi_node55">
+        <name>
+          <text>exi_node55</text>
+        </name>
+      </place>
+      <place id="ent_node24">
+        <name>
+          <text>ent_node24</text>
+        </name>
+      </place>
+      <place id="ent_node41">
+        <name>
+          <text>ent_node41</text>
+        </name>
+      </place>
+      <place id="ent_node12">
+        <name>
+          <text>ent_node12</text>
+        </name>
+      </place>
+      <place id="exi_node6">
+        <name>
+          <text>exi_node6</text>
+        </name>
+      </place>
+      <place id="sink">
+        <name>
+          <text>sink</text>
+        </name>
+      </place>
+      <transition id="deeef1a1-3316-484b-8ce8-2ef57c161261">
+        <name>
+          <text>deeef1a1-3316-484b-8ce8-2ef57c161261</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="7c7b8798-0db1-43e7-96a2-820a2aa005ed"/>
+      </transition>
+      <transition id="node9">
+        <name>
+          <text>Declaration APPROVED by ADMINISTRATION</text>
+        </name>
+      </transition>
+      <transition id="node25">
+        <name>
+          <text>Permit REJECTED by SUPERVISOR</text>
+        </name>
+      </transition>
+      <transition id="node39">
+        <name>
+          <text>Declaration REJECTED by EMPLOYEE</text>
+        </name>
+      </transition>
+      <transition id="node51">
+        <name>
+          <text>Payment Handled</text>
+        </name>
+      </transition>
+      <transition id="node8">
+        <name>
+          <text>Declaration REJECTED by PRE_APPROVER</text>
+        </name>
+      </transition>
+      <transition id="node20">
+        <name>
+          <text>Permit REJECTED by DIRECTOR</text>
+        </name>
+      </transition>
+      <transition id="node11">
+        <name>
+          <text>Request Payment</text>
+        </name>
+      </transition>
+      <transition id="node26">
+        <name>
+          <text>Permit FINAL_APPROVED by SUPERVISOR</text>
+        </name>
+      </transition>
+      <transition id="node29">
+        <name>
+          <text>Declaration REJECTED by SUPERVISOR</text>
+        </name>
+      </transition>
+      <transition id="node41">
+        <name>
+          <text>node41</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="cc2d1ebc-054e-4bf6-8127-8eac98fdd9f1"/>
+      </transition>
+      <transition id="node38">
+        <name>
+          <text>Declaration REJECTED by DIRECTOR</text>
+        </name>
+      </transition>
+      <transition id="node36">
+        <name>
+          <text>Declaration SAVED by EMPLOYEE</text>
+        </name>
+      </transition>
+      <transition id="node16">
+        <name>
+          <text>Declaration FINAL_APPROVED by DIRECTOR</text>
+        </name>
+      </transition>
+      <transition id="node19">
+        <name>
+          <text>Permit REJECTED by BUDGET OWNER</text>
+        </name>
+      </transition>
+      <transition id="node17">
+        <name>
+          <text>End trip</text>
+        </name>
+      </transition>
+      <transition id="node1">
+        <name>
+          <text>Declaration FINAL_APPROVED by SUPERVISOR</text>
+        </name>
+      </transition>
+      <transition id="node14">
+        <name>
+          <text>Permit REJECTED by ADMINISTRATION</text>
+        </name>
+      </transition>
+      <transition id="node23">
+        <name>
+          <text>Declaration SUBMITTED by EMPLOYEE</text>
+        </name>
+      </transition>
+      <transition id="node37">
+        <name>
+          <text>Permit REJECTED by EMPLOYEE</text>
+        </name>
+      </transition>
+      <transition id="node15">
+        <name>
+          <text>Declaration APPROVED by SUPERVISOR</text>
+        </name>
+      </transition>
+      <transition id="node52">
+        <name>
+          <text>Permit REJECTED by MISSING</text>
+        </name>
+      </transition>
+      <transition id="node4">
+        <name>
+          <text>Permit FINAL_APPROVED by DIRECTOR</text>
+        </name>
+      </transition>
+      <transition id="node2">
+        <name>
+          <text>Declaration REJECTED by ADMINISTRATION</text>
+        </name>
+      </transition>
+      <transition id="node48">
+        <name>
+          <text>Declaration APPROVED by BUDGET OWNER</text>
+        </name>
+      </transition>
+      <transition id="node53">
+        <name>
+          <text>Permit APPROVED by ADMINISTRATION</text>
+        </name>
+      </transition>
+      <transition id="node27">
+        <name>
+          <text>Start trip</text>
+        </name>
+      </transition>
+      <transition id="node21">
+        <name>
+          <text>Permit SUBMITTED by EMPLOYEE</text>
+        </name>
+      </transition>
+      <transition id="node40">
+        <name>
+          <text>Permit REJECTED by PRE_APPROVER</text>
+        </name>
+      </transition>
+      <transition id="node49">
+        <name>
+          <text>Permit APPROVED by BUDGET OWNER</text>
+        </name>
+      </transition>
+      <transition id="node44">
+        <name>
+          <text>Declaration APPROVED by PRE_APPROVER</text>
+        </name>
+      </transition>
+      <transition id="node54">
+        <name>
+          <text>Send Reminder</text>
+        </name>
+      </transition>
+      <transition id="node18">
+        <name>
+          <text>Permit APPROVED by SUPERVISOR</text>
+        </name>
+      </transition>
+      <transition id="node46">
+        <name>
+          <text>Permit APPROVED by PRE_APPROVER</text>
+        </name>
+      </transition>
+      <transition id="node34">
+        <name>
+          <text>Declaration REJECTED by BUDGET OWNER</text>
+        </name>
+      </transition>
+      <transition id="node33">
+        <name>
+          <text>Declaration REJECTED by MISSING</text>
+        </name>
+      </transition>
+      <arc id="130751674998784" source="ent_node3" target="node23"/>
+      <arc id="130751674996768" source="node20" target="ent_node32"/>
+      <arc id="130751674998880" source="exi_node10" target="node4"/>
+      <arc id="130751674996864" source="node11" target="exi_node35"/>
+      <arc id="130751674994848" source="node26" target="ent_node24"/>
+      <arc id="130751674998976" source="exi_node13" target="node18"/>
+      <arc id="130751674994944" source="deeef1a1-3316-484b-8ce8-2ef57c161261" target="ent_node22"/>
+      <arc id="130751674999072" source="exi_node5" target="node9"/>
+      <arc id="130751674992928" source="node4" target="ent_node24"/>
+      <arc id="130751674997056" source="node2" target="ent_node47"/>
+      <arc id="130751674995040" source="node9" target="exi_node6"/>
+      <arc id="130751674993024" source="node54" target="ent_node3"/>
+      <arc id="130751674999168" source="exi_node5" target="node44"/>
+      <arc id="130751674997152" source="node1" target="ent_node33"/>
+      <arc id="130751674995136" source="node18" target="exi_node10"/>
+      <arc id="130751674999264" source="exi_node13" target="node19"/>
+      <arc id="130751674993120" source="node29" target="ent_node47"/>
+      <arc id="130751674997248" source="node37" target="ent_node22"/>
+      <arc id="130751674999360" source="exi_node55" target="node16"/>
+      <arc id="130751674995328" source="node53" target="exi_node13"/>
+      <arc id="130751674999456" source="exi_node6" target="node34"/>
+      <arc id="130751674997440" source="node52" target="ent_node22"/>
+      <arc id="130751674999552" source="exi_node35" target="node52"/>
+      <arc id="130751674991392" source="node27" target="ent_node17"/>
+      <arc id="130751674995520" source="node23" target="exi_node5"/>
+      <arc id="130751674999648" source="exi_node7" target="node36"/>
+      <arc id="130751674997632" source="node44" target="ent_node45"/>
+      <arc id="130751674995616" source="node41" target="sink"/>
+      <arc id="130751674999744" source="exi_node5" target="node8"/>
+      <arc id="130751680125920" source="source" target="deeef1a1-3316-484b-8ce8-2ef57c161261"/>
+      <arc id="130751674995712" source="node48" target="ent_node45"/>
+      <arc id="130751674999840" source="exi_node7" target="node54"/>
+      <arc id="130751674993696" source="node21" target="exi_node28"/>
+      <arc id="130751674997824" source="exi_node5" target="node2"/>
+      <arc id="130751674995808" source="node8" target="ent_node47"/>
+      <arc id="130751674999936" source="exi_node13" target="node25"/>
+      <arc id="130751674993792" source="node16" target="ent_node11"/>
+      <arc id="130751674991776" source="node40" target="ent_node32"/>
+      <arc id="130751674997920" source="exi_node28" target="node46"/>
+      <arc id="130751674995904" source="node49" target="ent_node12"/>
+      <arc id="130751674993888" source="node39" target="ent_node3"/>
+      <arc id="130751675000032" source="exi_node10" target="node20"/>
+      <arc id="130751680244976" source="ent_node17" target="node17"/>
+      <arc id="130751674998016" source="ent_node32" target="node37"/>
+      <arc id="130751674996000" source="node46" target="ent_node12"/>
+      <arc id="130751680249152" source="ent_node11" target="node11"/>
+      <arc id="130751675000128" source="ent_node22" target="node21"/>
+      <arc id="130751674998112" source="ent_node12" target="node26"/>
+      <arc id="130751675000224" source="exi_node6" target="node48"/>
+      <arc id="130751674998208" source="ent_node45" target="node1"/>
+      <arc id="130751674996192" source="node19" target="ent_node32"/>
+      <arc id="130751675000320" source="exi_node28" target="node40"/>
+      <arc id="130751674992160" source="node36" target="ent_node41"/>
+      <arc id="130751674998304" source="exi_node55" target="node38"/>
+      <arc id="130751674994272" source="node51" target="ent_node41"/>
+      <arc id="130751675000416" source="ent_node24" target="node27"/>
+      <arc id="130751680132736" source="ent_node33" target="node33"/>
+      <arc id="130751674998400" source="exi_node6" target="node15"/>
+      <arc id="130751675000512" source="exi_node13" target="node49"/>
+      <arc id="130751674994368" source="node33" target="ent_node3"/>
+      <arc id="130751674998496" source="ent_node47" target="node39"/>
+      <arc id="130751674996480" source="node38" target="ent_node47"/>
+      <arc id="130751675000608" source="exi_node35" target="node51"/>
+      <arc id="130751674994464" source="node15" target="exi_node55"/>
+      <arc id="130751674998592" source="exi_node28" target="node53"/>
+      <arc id="130751675000704" source="exi_node6" target="node29"/>
+      <arc id="130751674994560" source="node17" target="exi_node7"/>
+      <arc id="130751680124816" source="ent_node41" target="node41"/>
+      <arc id="130751674992544" source="node25" target="ent_node32"/>
+      <arc id="130751674998688" source="exi_node28" target="node14"/>
+      <arc id="130751674996672" source="node14" target="ent_node32"/>
+      <arc id="130751674994656" source="node34" target="ent_node47"/>
+    </page>
+    <finalmarkings>
+      <marking>
+        <place idref="sink">
+          <text>1</text>
+        </place>
+      </marking>
+    </finalmarkings>
+  </net>
+</pnml>

@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<pnml>
+  <net id="" type="http://www.pnml.org/version-2009/grammar/pnmlcoremodel">
+    <name>
+      <text></text>
+    </name>
+    <page id="n0">
+      <place id="source">
+        <name>
+          <text>source</text>
+        </name>
+        <initialMarking>
+          <text>1</text>
+        </initialMarking>
+      </place>
+      <place id="sink">
+        <name>
+          <text>sink</text>
+        </name>
+      </place>
+      <place id="exi_node3">
+        <name>
+          <text>exi_node3</text>
+        </name>
+      </place>
+      <place id="ent_node7">
+        <name>
+          <text>ent_node7</text>
+        </name>
+      </place>
+      <transition id="node2">
+        <name>
+          <text>activity 22452</text>
+        </name>
+      </transition>
+      <transition id="node1">
+        <name>
+          <text>activity 21016</text>
+        </name>
+      </transition>
+      <transition id="node4">
+        <name>
+          <text>activity 13776</text>
+        </name>
+      </transition>
+      <transition id="e024cd9e-9139-46de-a37e-514bf407b99f">
+        <name>
+          <text>e024cd9e-9139-46de-a37e-514bf407b99f</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="c63af6bb-20e4-400d-bc6e-cfd37fb54bc5"/>
+      </transition>
+      <transition id="node7">
+        <name>
+          <text>node7</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="e2ea6af6-40f9-4954-9c79-4cc269ff124d"/>
+      </transition>
+      <transition id="node0">
+        <name>
+          <text>UNKNOWN</text>
+        </name>
+      </transition>
+      <transition id="node8">
+        <name>
+          <text>activity 505</text>
+        </name>
+      </transition>
+      <arc id="130751678632720" source="exi_node3" target="node0"/>
+      <arc id="130751678633008" source="exi_node3" target="node2"/>
+      <arc id="130751678632528" source="node8" target="ent_node7"/>
+      <arc id="130751678632624" source="node4" target="ent_node7"/>
+      <arc id="130751678632240" source="e024cd9e-9139-46de-a37e-514bf407b99f" target="exi_node3"/>
+      <arc id="130751678631856" source="node2" target="ent_node7"/>
+      <arc id="130751678632432" source="node7" target="sink"/>
+      <arc id="130751678630896" source="node0" target="ent_node7"/>
+      <arc id="130751678631760" source="node1" target="ent_node7"/>
+      <arc id="130751678632912" source="exi_node3" target="node1"/>
+      <arc id="130751675868384" source="ent_node7" target="node7"/>
+      <arc id="130751675871456" source="source" target="e024cd9e-9139-46de-a37e-514bf407b99f"/>
+      <arc id="130751678632816" source="exi_node3" target="node4"/>
+      <arc id="130751678633104" source="exi_node3" target="node8"/>
+    </page>
+    <finalmarkings>
+      <marking>
+        <place idref="sink">
+          <text>1</text>
+        </place>
+      </marking>
+    </finalmarkings>
+  </net>
+</pnml>
