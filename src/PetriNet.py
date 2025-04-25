@@ -483,8 +483,8 @@ class PetriNet:
     @staticmethod
     def from_pnml(ptml_file: str):
         """Create a Petri net from a PTML file."""
-        pn, init_marking, end_marking = import_pnml_net(ptml_file)
-        return deepcopy(PetriNet.from_pm4py(pn))
+        pn, init_marking, final_marking = import_pnml_net(ptml_file)
+        return deepcopy(PetriNet.from_pm4py(pn, init_marking, final_marking))
 
     def soundness_check(self) -> bool:
         """Check if the Petri net is sound, i.e. safeness, proper completion, option to complete and absence of dead parts"""
