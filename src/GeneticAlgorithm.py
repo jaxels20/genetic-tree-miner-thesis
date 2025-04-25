@@ -106,8 +106,6 @@ class GeneticAlgorithm:
                
             # Generate a new population
             population = mutator.generate_new_population(population)
-            print(f"Succesful mutations: {mutator.successful_mutations}")
-            print(f"Unsuccesful mutations: {mutator.unsuccessful_mutations}")
         
         if export_monitor_path is not None:
             self.monitor.save_objective_results(export_monitor_path, filtered_eventlog.name, self.method_name)
