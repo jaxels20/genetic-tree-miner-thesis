@@ -235,7 +235,9 @@ class Mutator(MutatorBase):
 class TournamentMutator(Mutator):
     def __init__(self, random_creation_rate: float, elite_rate: float, tournament_size: float):
         super().__init__(
-            random_creation_rate = random_creation_rate, 
+            random_creation_rate = random_creation_rate,
+            crossover_rate = 0.0, # FIX lAter
+            mutation_rate = 0.0, # FIx later
             elite_rate = elite_rate
         )
         self.tournament_size = tournament_size
@@ -254,12 +256,11 @@ class TournamentMutator(Mutator):
         random_population = self.random_creation(random_count)
         new_population.add_trees(random_population)
         
-        # Tournament selection 
+        # Tournament selection
         for _ in range(population_size - elite_count - random_count):
-            random_sample = random.sample(old_population.get_population(), k=self.tournament_size)
+            random_sample = random.sample(old_population.get_population(), k=int(self.tournament_size*population_size))
             tree1, tree2 = sorted(random_sample, key=lambda tree: tree.get_fitness(), reverse=True)[:2]
             new_tree = self.crossover(tree1, tree2)
-            new_population.add_tree(new_tree)
             new_population.add_tree(self.mutation(new_tree))
             
         # Ensure the new population size is the same as the old one

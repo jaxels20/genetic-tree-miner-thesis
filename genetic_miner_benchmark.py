@@ -2,7 +2,7 @@ from src.FileLoader import FileLoader
 from src.Evaluator import MultiEvaluator
 from src.Mutator import Mutator, TournamentMutator
 from src.Objective import Objective
-from src.RandomTreeGenerator import BottomUpBinaryTreeGenerator, SequentialTreeGenerator, InjectionTreeGenerator
+from src.RandomTreeGenerator import BottomUpRandomBinaryGenerator, FootprintGuidedSequentialGenerator, InductiveNoiseInjectionGenerator, InductiveMinerGenerator
 from src.Discovery import Discovery
 import os
 
@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
     for dataset_dir in dataset_dirs:
         # Assume only one file per directory
-        if dataset_dir != "BPI_Challenge_2013_open_problems":
+        if dataset_dir != "2013-op":
             continue
           
         xes_file = [f for f in os.listdir(f"{INPUT_DIR}{dataset_dir}") if f.endswith(".xes")]
@@ -33,8 +33,8 @@ if __name__ == "__main__":
         "Genetic Miner (Random Initial - NonTournament)": lambda log: Discovery.genetic_algorithm(
             log,
             method_name="Genetic Miner (Random Initial - NonTournament)",
-            mutator=Mutator(random_creation_rate=0.2, crossover_rate=0.3, mutation_rate=0.3, elite_rate=0.2),
-            generator=BottomUpBinaryTreeGenerator(),
+            mutator=TournamentMutator(random_creation_rate=0.2, elite_rate=0.2, tournament_size=0.4),
+            generator=BottomUpRandomBinaryGenerator(),
             objective=Objective(metric_weights={"simplicity": 20, "refined_simplicity": 20, "ftr_fitness": 100, "ftr_precision": 50}),
             percentage_of_log=0.1,
             population_size=5,
