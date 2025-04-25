@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<pnml>
+  <net id="" type="http://www.pnml.org/version-2009/grammar/pnmlcoremodel">
+    <name>
+      <text></text>
+    </name>
+    <page id="n0">
+      <place id="exi_node4">
+        <name>
+          <text>exi_node4</text>
+        </name>
+      </place>
+      <place id="source">
+        <name>
+          <text>source</text>
+        </name>
+        <initialMarking>
+          <text>1</text>
+        </initialMarking>
+      </place>
+      <place id="sink">
+        <name>
+          <text>sink</text>
+        </name>
+      </place>
+      <place id="ent_node0">
+        <name>
+          <text>ent_node0</text>
+        </name>
+      </place>
+      <place id="ent_node6">
+        <name>
+          <text>ent_node6</text>
+        </name>
+      </place>
+      <transition id="node7">
+        <name>
+          <text>Unmatched</text>
+        </name>
+      </transition>
+      <transition id="node0">
+        <name>
+          <text>Completed</text>
+        </name>
+      </transition>
+      <transition id="node5">
+        <name>
+          <text>Accepted</text>
+        </name>
+      </transition>
+      <transition id="node2">
+        <name>
+          <text>Queued</text>
+        </name>
+      </transition>
+      <transition id="159da279-fee6-48df-aa85-77736fb800d8">
+        <name>
+          <text>159da279-fee6-48df-aa85-77736fb800d8</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="f776c9e2-9903-4c4f-a496-e45a772ced03"/>
+      </transition>
+      <arc id="130751674128128" source="ent_node6" target="node5"/>
+      <arc id="130751674345776" source="ent_node0" target="node0"/>
+      <arc id="130751674347312" source="source" target="159da279-fee6-48df-aa85-77736fb800d8"/>
+      <arc id="130751674122416" source="159da279-fee6-48df-aa85-77736fb800d8" target="ent_node6"/>
+      <arc id="130751674123328" source="node0" target="sink"/>
+      <arc id="130751674122320" source="node5" target="exi_node4"/>
+      <arc id="130751674126688" source="exi_node4" target="node2"/>
+      <arc id="130751674135664" source="exi_node4" target="node7"/>
+      <arc id="130751674137584" source="node7" target="ent_node0"/>
+      <arc id="130751674127600" source="node2" target="ent_node6"/>
+    </page>
+    <finalmarkings>
+      <marking>
+        <place idref="sink">
+          <text>1</text>
+        </place>
+      </marking>
+    </finalmarkings>
+  </net>
+</pnml>
