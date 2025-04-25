@@ -10,14 +10,19 @@
           <text>ent_node5</text>
         </name>
       </place>
-      <place id="ent_node13">
+      <place id="ent_node6">
         <name>
-          <text>ent_node13</text>
+          <text>ent_node6</text>
         </name>
       </place>
-      <place id="ent_node0">
+      <place id="ent_node1">
         <name>
-          <text>ent_node0</text>
+          <text>ent_node1</text>
+        </name>
+      </place>
+      <place id="exi_node11">
+        <name>
+          <text>exi_node11</text>
         </name>
       </place>
       <place id="ent_node8">
@@ -33,21 +38,6 @@
           <text>1</text>
         </initialMarking>
       </place>
-      <place id="exi_node11">
-        <name>
-          <text>exi_node11</text>
-        </name>
-      </place>
-      <place id="sink">
-        <name>
-          <text>sink</text>
-        </name>
-      </place>
-      <place id="ent_node1">
-        <name>
-          <text>ent_node1</text>
-        </name>
-      </place>
       <place id="ent_node10">
         <name>
           <text>ent_node10</text>
@@ -58,29 +48,29 @@
           <text>exi_node15</text>
         </name>
       </place>
-      <place id="ent_node6">
+      <place id="ent_node0">
         <name>
-          <text>ent_node6</text>
+          <text>ent_node0</text>
         </name>
       </place>
-      <transition id="node1">
+      <place id="ent_node13">
         <name>
-          <text>Send Fine</text>
+          <text>ent_node13</text>
+        </name>
+      </place>
+      <place id="sink">
+        <name>
+          <text>sink</text>
+        </name>
+      </place>
+      <transition id="node9">
+        <name>
+          <text>Create Fine</text>
         </name>
       </transition>
-      <transition id="node12">
+      <transition id="node0">
         <name>
-          <text>Add penalty</text>
-        </name>
-      </transition>
-      <transition id="node4">
-        <name>
-          <text>Appeal to Judge</text>
-        </name>
-      </transition>
-      <transition id="node6">
-        <name>
-          <text>Insert Fine Notification</text>
+          <text>Notify Result Appeal to Offender</text>
         </name>
       </transition>
       <transition id="node13">
@@ -88,15 +78,14 @@
           <text>Payment</text>
         </name>
       </transition>
-      <transition id="node5">
+      <transition id="node2">
         <name>
-          <text>node5</text>
+          <text>Send Appeal to Prefecture</text>
         </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="0efb6dac-4eb4-41dd-8cdb-1ed3ffe03d98"/>
       </transition>
-      <transition id="node0">
+      <transition id="node12">
         <name>
-          <text>Notify Result Appeal to Offender</text>
+          <text>Add penalty</text>
         </name>
       </transition>
       <transition id="node16">
@@ -104,14 +93,15 @@
           <text>Insert Date Appeal to Prefecture</text>
         </name>
       </transition>
-      <transition id="node9">
+      <transition id="node5">
         <name>
-          <text>Create Fine</text>
+          <text>node5</text>
         </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="5c999c03-34bc-43c1-a8e6-1af672ba9c54"/>
       </transition>
-      <transition id="node8">
+      <transition id="node6">
         <name>
-          <text>Receive Result Appeal from Prefecture</text>
+          <text>Insert Fine Notification</text>
         </name>
       </transition>
       <transition id="node3">
@@ -119,35 +109,45 @@
           <text>Send for Credit Collection</text>
         </name>
       </transition>
-      <transition id="node2">
+      <transition id="node1">
         <name>
-          <text>Send Appeal to Prefecture</text>
+          <text>Send Fine</text>
         </name>
       </transition>
-      <arc id="127940459320320" source="ent_node0" target="node0"/>
-      <arc id="127940459594240" source="node0" target="ent_node13"/>
-      <arc id="127940459595296" source="exi_node11" target="node2"/>
-      <arc id="127940457282112" source="ent_node1" target="node1"/>
-      <arc id="127940459594816" source="node13" target="ent_node5"/>
-      <arc id="127940459318352" source="ent_node6" target="node6"/>
-      <arc id="127940459329632" source="node8" target="ent_node0"/>
-      <arc id="127940459595392" source="exi_node15" target="node16"/>
-      <arc id="127940459316384" source="ent_node8" target="node8"/>
-      <arc id="127940459594912" source="node6" target="exi_node15"/>
-      <arc id="127940459329728" source="node4" target="ent_node10"/>
-      <arc id="127940457281248" source="ent_node13" target="node13"/>
-      <arc id="127940459595488" source="exi_node11" target="node3"/>
-      <arc id="127940459593952" source="node9" target="ent_node1"/>
-      <arc id="127940459595008" source="exi_node15" target="node4"/>
-      <arc id="127940459331360" source="node12" target="exi_node11"/>
-      <arc id="127940459594048" source="node16" target="ent_node10"/>
-      <arc id="127940459595104" source="ent_node10" target="node12"/>
-      <arc id="127940459594144" source="node1" target="ent_node6"/>
-      <arc id="127940459330496" source="node2" target="ent_node8"/>
-      <arc id="127940459595200" source="source" target="node9"/>
-      <arc id="127940459594720" source="node3" target="ent_node5"/>
-      <arc id="127940459331552" source="node5" target="sink"/>
-      <arc id="127940457282544" source="ent_node5" target="node5"/>
+      <transition id="node4">
+        <name>
+          <text>Appeal to Judge</text>
+        </name>
+      </transition>
+      <transition id="node8">
+        <name>
+          <text>Receive Result Appeal from Prefecture</text>
+        </name>
+      </transition>
+      <arc id="130751676468736" source="exi_node15" target="node4"/>
+      <arc id="130751676467200" source="node3" target="ent_node5"/>
+      <arc id="130751676468256" source="exi_node15" target="node16"/>
+      <arc id="130751676466720" source="node5" target="sink"/>
+      <arc id="130751676467776" source="node8" target="ent_node0"/>
+      <arc id="130751676466816" source="node2" target="ent_node8"/>
+      <arc id="130751676468352" source="exi_node11" target="node3"/>
+      <arc id="130751676842640" source="ent_node6" target="node6"/>
+      <arc id="130751676467872" source="node4" target="ent_node10"/>
+      <arc id="130751676468448" source="exi_node11" target="node2"/>
+      <arc id="130751676466912" source="node6" target="exi_node15"/>
+      <arc id="130751676846336" source="ent_node5" target="node5"/>
+      <arc id="130751676467968" source="node1" target="ent_node6"/>
+      <arc id="130751676848928" source="ent_node8" target="node8"/>
+      <arc id="130751676467008" source="node16" target="ent_node10"/>
+      <arc id="130751676468544" source="ent_node10" target="node12"/>
+      <arc id="130751676844368" source="ent_node0" target="node0"/>
+      <arc id="130751676845904" source="ent_node13" target="node13"/>
+      <arc id="130751676468064" source="node9" target="ent_node1"/>
+      <arc id="130751676466048" source="node12" target="exi_node11"/>
+      <arc id="130751676843936" source="ent_node1" target="node1"/>
+      <arc id="130751676468640" source="source" target="node9"/>
+      <arc id="130751676467104" source="node13" target="ent_node5"/>
+      <arc id="130751676468160" source="node0" target="ent_node13"/>
     </page>
     <finalmarkings>
       <marking>

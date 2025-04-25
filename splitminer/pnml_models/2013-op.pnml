@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<pnml>
+  <net id="" type="http://www.pnml.org/version-2009/grammar/pnmlcoremodel">
+    <name>
+      <text></text>
+    </name>
+    <page id="n0">
+      <place id="exi_node5">
+        <name>
+          <text>exi_node5</text>
+        </name>
+      </place>
+      <place id="source">
+        <name>
+          <text>source</text>
+        </name>
+        <initialMarking>
+          <text>1</text>
+        </initialMarking>
+      </place>
+      <place id="sink">
+        <name>
+          <text>sink</text>
+        </name>
+      </place>
+      <place id="ent_node0">
+        <name>
+          <text>ent_node0</text>
+        </name>
+      </place>
+      <transition id="node1">
+        <name>
+          <text>Completed</text>
+        </name>
+      </transition>
+      <transition id="5bd2aa05-6bf0-47f1-afd6-0c956c333dda">
+        <name>
+          <text>5bd2aa05-6bf0-47f1-afd6-0c956c333dda</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="22209d26-1197-4009-8dc8-462bb014dc2c"/>
+      </transition>
+      <transition id="node6">
+        <name>
+          <text>Queued</text>
+        </name>
+      </transition>
+      <transition id="node3">
+        <name>
+          <text>Accepted</text>
+        </name>
+      </transition>
+      <arc id="130751676565120" source="node1" target="sink"/>
+      <arc id="130751676565504" source="ent_node0" target="node3"/>
+      <arc id="130751676565600" source="exi_node5" target="node6"/>
+      <arc id="130751676565408" source="exi_node5" target="node1"/>
+      <arc id="130751676564928" source="node3" target="exi_node5"/>
+      <arc id="130751674271312" source="source" target="5bd2aa05-6bf0-47f1-afd6-0c956c333dda"/>
+      <arc id="130751676565024" source="5bd2aa05-6bf0-47f1-afd6-0c956c333dda" target="ent_node0"/>
+      <arc id="130751676564448" source="node6" target="ent_node0"/>
+    </page>
+    <finalmarkings>
+      <marking>
+        <place idref="sink">
+          <text>1</text>
+        </place>
+      </marking>
+    </finalmarkings>
+  </net>
+</pnml>
