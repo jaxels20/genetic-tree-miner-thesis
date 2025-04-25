@@ -22,8 +22,8 @@ for filename in os.listdir(bpmn_dir):
             bpmn_model = pm4py.read_bpmn(bpmn_path)
 
             # Convert to Petri net
-            net, im, fm = pm4py.convert_to_petri_net(bpmn_model)
-
+            net, im, fm = pm4py.convert_to_petri_net(bpmn_model)       
+                 
             # Write to PNML file
             pm4py.write_pnml(net, im, fm, pnml_path)
             print(f"Saved: {pnml_path}")
