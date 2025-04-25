@@ -44,9 +44,7 @@ def objective(trial, event_log, fitness_weights=dict[str, float]):
     if mutator == "Tournament":
         tournament_size = trial.suggest_float("tournament_size", 0.3, 0.5)
         mutator = TournamentMutator(
-                    random_creation_rate=random_creation_rate, 
-                    crossover_rate=crossover_rate, 
-                    mutation_rate=mutation_rate, 
+                    random_creation_rate=random_creation_rate,  
                     elite_rate=elite_rate,
                     tournament_size=tournament_size)
     elif mutator == "NonTournament":
@@ -63,7 +61,7 @@ def objective(trial, event_log, fitness_weights=dict[str, float]):
         generator = FootprintGuidedSequentialGenerator()
     elif generator == "InductiveNoiseInjectionGenerator":
         log_filtering = trial.suggest_float("log_filtering", 0.0, 1.0)
-        generator = InjectionTreeGenerator(log_filtering=log_filtering)
+        generator = InductiveNoiseInjectionGenerator(log_filtering=log_filtering)
     elif generator == "InductiveMinerGenerator":
         generator = InductiveMinerGenerator()
 
@@ -136,7 +134,7 @@ if __name__ == "__main__":
 
     dataset_dirs = [x for x in dataset_dirs if not os.path.isfile(f"{INPUT_DIR}{x}")]
 
-    optimize_dataset(dataset_dirs[0])
+    optimize_dataset(dataset_dirs[-1])
     # with multiprocessing.Pool(processes=min(len(dataset_dirs), multiprocessing.cpu_count())) as pool:
     #     pool.map(optimize_dataset, dataset_dirs)
         
