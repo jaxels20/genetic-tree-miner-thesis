@@ -1,5 +1,4 @@
 import os
-import time
 import csv
 from src.FileLoader import FileLoader
 from src.Objective import Objective
@@ -19,7 +18,8 @@ if __name__ == "__main__":
 
     rows = []
     for dataset_dir in dataset_dirs:
-        if dataset_dir not in ["2013-op"]:  # delete later
+        #print(f"Processing dataset: {dataset_dir}")
+        if dataset_dir not in ["2020-ptc"]:  # delete later
             continue
         xes_file = [f for f in os.listdir(f"{INPUT_DIR}{dataset_dir}") if f.endswith(".xes")]
         if len(xes_file) == 0:
@@ -28,13 +28,13 @@ if __name__ == "__main__":
             our_log = loader.load_eventlog(f"{INPUT_DIR}{dataset_dir}/{xes_file[0]}")
             our_pn = PetriNet.from_pnml(f"{INPUT_PN_DIR}{dataset_dir}.pnml")
             pm4py_pn, im, fm = our_pn.to_pm4py()
+
+            our_pn.visualize(f"{OUTPUT_DIR}{dataset_dir}.png")
             pm4py_pt = convert_to_pt(pm4py_pn, im, fm)
             our_pt = ProcessTree.from_pm4py(pm4py_pt)
 
             objective = Objective({"simplicity": 10, "refined_simplicity": 10, "ftr_fitness": 50, "ftr_precision": 30})
             objective.set_event_log(our_log)
-            
-            start_time = time.time()
 
             simplicity = objective.simplicity(pm4py_pn)
             generalization = objective.generalization(pm4py_pn, im, fm)
@@ -43,10 +43,8 @@ if __name__ == "__main__":
             log_fitness = objective.log_fitness(pm4py_pn, im, fm)
             percentage_of_fitting_traces = objective.percentage_of_fitting(pm4py_pn, im, fm)
             precision = objective.precision(pm4py_pn, im, fm)
-            f1_score = 2 * (precision * log_fitness) / (precision + log_fitness)
+            f1_score = 2 * (precision * log_fitness) / (precision + log_fitness + 1e-09)
             objective_fitness = objective.fitness(our_pt)
-
-            elapsed_time = time.time() - start_time
             
             row = [
                 round(simplicity, 3),
@@ -60,9 +58,10 @@ if __name__ == "__main__":
                 round(f1_score, 3),
                 dataset_dir,
                 "Split Miner",  # or any miner name you used
-                elapsed_time
+                "0"
             ]
             rows.append(row)
+            #print(f"Processed {dataset_dir} with {xes_file[0]}")
         else:
             raise ValueError("More than one xes file in the directory")
     

@@ -13,7 +13,7 @@
 #include <sstream>
 #include <chrono>
 #include <thread>
-
+#include <optional>
 
 
 bool stop_condition_final_marking(Marking& current_marking, Marking& final_marking) {
