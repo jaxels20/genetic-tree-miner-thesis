@@ -21,8 +21,6 @@ class Mutator(MutatorBase):
         self.mutation_rate = mutation_rate
         self.elite_rate = elite_rate
         self.mutation_types_weights = None
-        self.successful_mutations = 0
-        self.unsuccessful_mutations = 0
         
     def set_event_log(self, event_log: EventLog):
         self.event_log = event_log
@@ -68,11 +66,9 @@ class Mutator(MutatorBase):
                 continue   # remove_duplicate_activities raise an error, i.e. not possible to remove duplicate activities without breaking the tree
             
             if candidate.is_valid():
-                self.successful_mutations += 1
                 return candidate
         
         # If no valid crossover point was found, return a random parent
-        self.unsuccessful_mutations += 1
         return deep_copy_tree(random.choice([parent1, parent2]))
 
     def mutation(self, process_tree: ProcessTree) -> ProcessTree:
