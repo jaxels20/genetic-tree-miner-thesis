@@ -76,23 +76,27 @@ def objective(trial, event_log, fitness_weights=dict[str, float]):
         generator = InductiveMinerGenerator()
 
     # Run the genetic miner
-    petri_net = Discovery.genetic_algorithm(
-        event_log,
-        method_name="Genetic Miner",
-        objective=Objective(metric_weights=FITNESS_WEIGHTS),
-        mutator=mutator,
-        generator=generator,
-        percentage_of_log=percentage_of_log,
-        population_size=population_size,
-        stagnation_limit=50,
-        time_limit=5 * 60,
-    )
+    try:
+        petri_net = Discovery.genetic_algorithm(
+            event_log,
+            method_name="Genetic Miner",
+            objective=Objective(metric_weights=FITNESS_WEIGHTS),
+            mutator=mutator,
+            generator=generator,
+            percentage_of_log=percentage_of_log,
+            population_size=population_size,
+            stagnation_limit=50,
+            time_limit=5 * 60,
+        )
 
-    # Evaluate fitness — should return a single value (higher is better)
-    evaluator = SingleEvaluator(petri_net, event_log)
-    fitness_score = evaluator.get_objective_fitness(fitness_weights)
+        # Evaluate fitness — should return a single value (higher is better)
+        evaluator = SingleEvaluator(petri_net, event_log)
+        fitness_score = evaluator.get_objective_fitness(fitness_weights)
 
-    return fitness_score
+        return fitness_score
+    except Exception as e:
+        print(f"Error during discovery: {e}")
+        return 0.0
 
 
 def optimize_dataset(dataset_dir):
