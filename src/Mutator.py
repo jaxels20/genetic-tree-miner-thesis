@@ -9,9 +9,8 @@ class MutatorBase:
     def __init__(self):
         pass
 
-    def generate_new_population(self, old_population: List[ProcessTree], new_population_size: int) -> List[ProcessTree]:
+    def generate_new_population(self, old_population: Population, new_population_size: int) -> Population:
         raise NotImplementedError
-
 
 class Mutator(MutatorBase):
     def __init__(self, random_creation_rate: float, crossover_rate: float, mutation_rate: float, elite_rate: float):
@@ -233,15 +232,20 @@ class Mutator(MutatorBase):
         return new_population
 
 class TournamentMutator(Mutator):
-    def __init__(self, random_creation_rate: float, elite_rate: float, tournament_size: float):
-        super().__init__(
-            random_creation_rate = random_creation_rate,
-            crossover_rate = 0.0, # FIX lAter
-            mutation_rate = 0.0, # FIx later
-            elite_rate = elite_rate
-        )
+    def __init__(self, random_creation_rate: float, elite_rate: float, tournament_rate: float, tournament_size: float, tournament_mutation_rate: float):
+        super().__init__(random_creation_rate=random_creation_rate, crossover_rate=0.0, mutation_rate=0.0, elite_rate=elite_rate)
+        self.tournament_rate = tournament_rate
         self.tournament_size = tournament_size
+        self.tournament_mutation_rate = tournament_mutation_rate
 
+    def random_creation(self, num_new_trees: int) -> List[ProcessTree]:
+        generator = BottomUpRandomBinaryGenerator()
+        new_trees = generator.generate_population(self.event_log.unique_activities(), num_new_trees)
+        return new_trees.get_population()
+
+    def set_event_log(self, event_log: EventLog):
+        self.event_log = event_log
+        
     def generate_new_population(self, old_population: Population) -> Population:
         new_population = Population([])
         population_size = len(old_population.get_population())
@@ -257,11 +261,16 @@ class TournamentMutator(Mutator):
         new_population.add_trees(random_population)
         
         # Tournament selection
-        for _ in range(population_size - elite_count - random_count):
+        tournament_count = int(self.tournament_rate * population_size)
+        for _ in range(tournament_count):
             random_sample = random.sample(old_population.get_population(), k=int(self.tournament_size*population_size))
             tree1, tree2 = sorted(random_sample, key=lambda tree: tree.get_fitness(), reverse=True)[:2]
             new_tree = self.crossover(tree1, tree2)
-            new_population.add_tree(self.mutation(new_tree))
+            if random.random() < self.tournament_mutation_rate:
+                new_tree = self.mutation(new_tree)
+                new_population.add_tree(new_tree)
+            else:
+                new_population.add_tree(new_tree)
             
         # Ensure the new population size is the same as the old one
         if len(new_population) < population_size:
