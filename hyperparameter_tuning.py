@@ -70,7 +70,7 @@ def objective(trial, event_log, fitness_weights=dict[str, float]):
     elif generator == "FootprintGuidedSequentialGenerator":
         generator = FootprintGuidedSequentialGenerator()
     elif generator == "InductiveNoiseInjectionGenerator":
-        log_filtering = trial.suggest_float("log_filtering", 0.0, 1.0)
+        log_filtering = trial.suggest_float("log_filtering", 0.0, 0.1)
         generator = InductiveNoiseInjectionGenerator(log_filtering=log_filtering)
     elif generator == "InductiveMinerGenerator":
         generator = InductiveMinerGenerator()
