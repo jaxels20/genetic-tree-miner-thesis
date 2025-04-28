@@ -34,7 +34,9 @@ def convert_json_to_hyperparamters(hyper_parameters: dict):
         hyper_parameters['mutator'] = TournamentMutator(
             hyper_parameters['random_creation_rate'],
             hyper_parameters['elite_rate'],
-            hyper_parameters['tournament_size']
+            hyper_parameters['tournament_size'],
+            hyper_parameters['tournament_rate'],
+            hyper_parameters['tournament_mutation_rate']
         )
     elif hyper_parameters['mutator'] == 'NonTournament':
         hyper_parameters['mutator'] = Mutator(
