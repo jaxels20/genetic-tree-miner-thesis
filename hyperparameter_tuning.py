@@ -28,7 +28,10 @@ def objective(trial, event_log, fitness_weights=dict[str, float]):
     elite_rate = trial.suggest_float("elite_rate", 0.0, 1.0)
     population_size = trial.suggest_int("population_size", 20, 60)
     percentage_of_log = trial.suggest_float("percentage_of_log", 0.001, 0.3)
-    generator = trial.suggest_categorical("generator", ["BottomUpRandomBinaryGenerator", "FootprintGuidedSequentialGenerator", "InductiveNoiseInjectionGenerator", "InductiveMinerGenerator"])
+    if event_log.name not in ["2015-1", "2015-2", "2015-3", "2015-4", "2015-5"]:
+        generator = trial.suggest_categorical("generator", ["BottomUpRandomBinaryGenerator", "FootprintGuidedSequentialGenerator", "InductiveNoiseInjectionGenerator"])
+    else:
+        generator = trial.suggest_categorical("generator", ["BottomUpRandomBinaryGenerator", "FootprintGuidedSequentialGenerator", "InductiveNoiseInjectionGenerator", "InductiveMinerGenerator"])
     mutator = trial.suggest_categorical("mutator", ["Tournament", "NonTournament"])
     
     # Create the mutator
