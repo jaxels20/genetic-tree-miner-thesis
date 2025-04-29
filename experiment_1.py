@@ -56,8 +56,6 @@ def load_hyperparameters_from_csv(path: str):
         reader = csv.DictReader(file)
         for row in reader:
             hyper_parameters['random_creation_rate'] = float(row['random_creation_rate'])
-            hyper_parameters['mutation_rate'] = float(row['mutation_rate'])
-            hyper_parameters['crossover_rate'] = float(row['crossover_rate'])
             hyper_parameters['elite_rate'] = float(row['elite_rate'])
             hyper_parameters['population_size'] = int(row['population_size'])
             hyper_parameters['percentage_of_log'] = float(row['percentage_of_log'])
@@ -66,8 +64,13 @@ def load_hyperparameters_from_csv(path: str):
             
             if hyper_parameters['mutator'] == 'Tournament':
                 hyper_parameters['tournament_size'] = float(row['tournament_size'])
+                hyper_parameters['tournament_rate'] = float(row['tournament_rate'])
+                hyper_parameters['tournament_mutation_rate'] = float(row['tournament_mutation_rate'])
+            elif hyper_parameters['mutator'] == 'NonTournament':
+                hyper_parameters['crossover_rate'] = float(row['crossover_rate'])
+                hyper_parameters['mutation_rate'] = float(row['mutation_rate'])
             
-            if hyper_parameters['generator'] == 'Injection':
+            if hyper_parameters['generator'] == 'InductiveNoiseInjectionGenerator':
                 hyper_parameters['log_filtering'] = float(row['log_filtering'])
             
             hyper_parameters['method_name'] = "Genetic Miner"
@@ -91,8 +94,6 @@ if __name__ == "__main__":
     eventlogs = []
 
     for dataset_dir in dataset_dirs:
-        if dataset_dir not in ["2013-op", "2013-cp"]:  # delete later
-            continue
         xes_file = [f for f in os.listdir(f"{INPUT_DIR}{dataset_dir}") if f.endswith(".xes")]
         if len(xes_file) == 0:
             continue
