@@ -709,11 +709,6 @@ double calculate_fitness(const EventLog& log, const PetriNet& net, bool prefix_c
         total_consumed += consumed;
     }
 
-    std::cout << "Produced: " << total_produced << std::endl;
-    std::cout << "Consumed: " << total_consumed << std::endl;
-    std::cout << "Missing: " << total_missing << std::endl;
-    std::cout << "Remaining: " << total_remaining << std::endl;
-
     double fitness = 0.5 * (1 - (static_cast<double>(total_missing) / total_consumed)) + 0.5 * (1 - (static_cast<double>(total_remaining) / total_produced));
 
     return fitness;

@@ -10,7 +10,7 @@ from experiment_1 import load_hyperparameters_from_csv
 
 BEST_PARAMS = "./best_parameters.csv"
 DATASET_DIR = "./real_life_datasets/"
-NUM_DATA_POINTS = 10
+NUM_DATA_POINTS = 5
 OBJECTIVE = {
     "simplicity": 10,
     "refined_simplicity": 10,
@@ -26,7 +26,7 @@ if __name__ == "__main__":
     dataset_dirs = [x for x in dataset_dirs if not os.path.isfile(f"{DATASET_DIR}{x}")]
     overall_df = pandas.DataFrame()
     for dataset_dir in dataset_dirs:
-        if dataset_dir != "2013-op" and dataset_dir != "2013-cp": # 
+        if dataset_dir not in ["2013-cp", "2013-i", "2013-op"]:
             continue
         
         # Load the event log
