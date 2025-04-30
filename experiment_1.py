@@ -7,17 +7,22 @@ from src.Evaluator import MultiEvaluator, SingleEvaluator
 from src.FileLoader import FileLoader
 from src.Objective import Objective
 
-INPUT_DIR = "./real_life_datasets/"
+INPUT_DIR = "./real_life_datasets_test/"
 OUTPUT_DIR = "./experiment_1/"
 SPLIT_MINER_DIR = "./experiment_1/split_miner/"
 BEST_PARAMS = "./best_parameters.csv"
 
 def convert_json_to_hyperparamters(hyper_parameters: dict):
-    total = hyper_parameters['random_creation_rate'] + hyper_parameters['mutation_rate'] + hyper_parameters['crossover_rate'] + hyper_parameters['elite_rate']
+    # total = hyper_parameters['random_creation_rate'] + hyper_parameters['mutation_rate'] + hyper_parameters['crossover_rate'] + hyper_parameters['elite_rate']
+    # hyper_parameters['random_creation_rate'] = hyper_parameters['random_creation_rate'] / total
+    # hyper_parameters['mutation_rate'] = hyper_parameters['mutation_rate'] / total
+    # hyper_parameters['crossover_rate'] = hyper_parameters['crossover_rate'] / total
+    # hyper_parameters['elite_rate'] = hyper_parameters['elite_rate'] / total
+    
+    total = hyper_parameters['random_creation_rate'] + hyper_parameters['elite_rate'] + hyper_parameters["tournament_rate"]
     hyper_parameters['random_creation_rate'] = hyper_parameters['random_creation_rate'] / total
-    hyper_parameters['mutation_rate'] = hyper_parameters['mutation_rate'] / total
-    hyper_parameters['crossover_rate'] = hyper_parameters['crossover_rate'] / total
     hyper_parameters['elite_rate'] = hyper_parameters['elite_rate'] / total
+    hyper_parameters['tournament_rate'] = hyper_parameters['tournament_rate'] / total
     
     # Convert the generator and mutator to objects
     if hyper_parameters['generator'] == 'BottomUpRandomBinaryGenerator':
@@ -30,11 +35,14 @@ def convert_json_to_hyperparamters(hyper_parameters: dict):
         hyper_parameters['generator'] = InductiveMinerGenerator()
     else:
         raise ValueError("Invalid generator type")
+    
     if hyper_parameters['mutator'] == 'Tournament':
         hyper_parameters['mutator'] = TournamentMutator(
             hyper_parameters['random_creation_rate'],
             hyper_parameters['elite_rate'],
-            hyper_parameters['tournament_size']
+            hyper_parameters['tournament_size'],
+            hyper_parameters['tournament_rate'],
+            hyper_parameters['tournament_mutation_rate']
         )
     elif hyper_parameters['mutator'] == 'NonTournament':
         hyper_parameters['mutator'] = Mutator(
@@ -54,8 +62,6 @@ def load_hyperparameters_from_csv(path: str):
         reader = csv.DictReader(file)
         for row in reader:
             hyper_parameters['random_creation_rate'] = float(row['random_creation_rate'])
-            hyper_parameters['mutation_rate'] = float(row['mutation_rate'])
-            hyper_parameters['crossover_rate'] = float(row['crossover_rate'])
             hyper_parameters['elite_rate'] = float(row['elite_rate'])
             hyper_parameters['population_size'] = int(row['population_size'])
             hyper_parameters['percentage_of_log'] = float(row['percentage_of_log'])
@@ -64,8 +70,13 @@ def load_hyperparameters_from_csv(path: str):
             
             if hyper_parameters['mutator'] == 'Tournament':
                 hyper_parameters['tournament_size'] = float(row['tournament_size'])
+                hyper_parameters['tournament_rate'] = float(row['tournament_rate'])
+                hyper_parameters['tournament_mutation_rate'] = float(row['tournament_mutation_rate'])
+            else:
+                hyper_parameters['crossover_rate'] = float(row['crossover_rate'])
+                hyper_parameters['mutation_rate'] = float(row['mutation_rate'])
             
-            if hyper_parameters['generator'] == 'Injection':
+            if hyper_parameters['generator'] == 'InductiveNoiseInjectionGenerator':
                 hyper_parameters['log_filtering'] = float(row['log_filtering'])
             
             hyper_parameters['method_name'] = "Genetic Miner"
@@ -76,10 +87,6 @@ def load_hyperparameters_from_csv(path: str):
                 "ftr_precision": 30
             })
 
-    # THIS IS WRONG BUT FOR NOW !!!!!
-    hyper_parameters['log_filtering'] = 0.1
-
-
     return convert_json_to_hyperparamters(hyper_parameters)
 
 if __name__ == "__main__":
@@ -89,9 +96,11 @@ if __name__ == "__main__":
     eventlogs = []
 
     for dataset_dir in dataset_dirs:
-        if dataset_dir not in ["2013-op", "2013-cp"]:  # delete later
-            continue
         xes_file = [f for f in os.listdir(f"{INPUT_DIR}{dataset_dir}") if f.endswith(".xes")]
+        
+        if "2015" in dataset_dir or dataset_dir != "2017":
+            continue
+        
         if len(xes_file) == 0:
             continue
         elif len(xes_file) == 1:

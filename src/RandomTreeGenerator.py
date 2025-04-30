@@ -148,9 +148,7 @@ class InductiveNoiseInjectionGenerator:
         trees = []
         for _ in range(n):
             tree = self.generate_injection_model(event_log)
-            if not any (trees[i].is_equal(tree) for i in range(len(trees))):
-                # Ensure uniqueness of trees
-                trees.append(tree)
+            trees.append(tree)
         
         if len(trees) < n:
             generator = BottomUpRandomBinaryGenerator()
