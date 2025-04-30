@@ -56,12 +56,13 @@ class Marking:
         """
         marking = cls({place.name: tokens for place, tokens in pm4py_marking.items()})
         return marking
-    
-    def to_pm4py(self):
+      
+
+    def to_pm4py(self, pm4py_dict: dict):
         """
         Converts the Python Marking object to a pm4py Marking object.
         """
-        pm4py_marking = PM4PyMarking({place: tokens for place, tokens in self.places.items()})
+        pm4py_marking = PM4PyMarking({pm4py_dict[place_name]: tokens for place_name, tokens in self.places.items()})
         return pm4py_marking
     
 class Place:
@@ -380,7 +381,7 @@ class PetriNet:
             if len(outgoing_arcs) == 0:
                 self.arcs.append(Arc(transition.name, end_place.name))
 
-    def to_pm4py(self, initial_marking=None, final_marking=None):
+    def to_pm4py(self):
         """Convert our Petri net class to a pm4py Petri net and return it"""
         pm4py_pn = PM4PyPetriNet()
         pm4py_dict = {}
@@ -418,20 +419,9 @@ class PetriNet:
             else:
                 transition = pm4py_dict[arc.target]
                 transition.in_arcs.add(pm4py_arc)
-
-        source = pm4py_dict[self.get_start_place().name]
-        target = pm4py_dict[self.get_end_place().name]
         
-        # Set initial and final marking
-        if initial_marking is not None:
-            initial_marking = Marking.to_pm4py(initial_marking)
-        else:
-            initial_marking = PM4PyMarking({source: 1})
-        
-        if final_marking is not None:
-            final_marking = Marking.to_pm4py(final_marking)
-        else:
-            final_marking = PM4PyMarking({target: 1})
+        initial_marking = Marking.to_pm4py(self.initial_marking, pm4py_dict)
+        final_marking = Marking.to_pm4py(self.final_marking, pm4py_dict)
         
         return pm4py_pn, initial_marking, final_marking
 

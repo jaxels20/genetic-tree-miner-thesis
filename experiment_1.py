@@ -7,7 +7,7 @@ from src.Evaluator import MultiEvaluator, SingleEvaluator
 from src.FileLoader import FileLoader
 from src.Objective import Objective
 
-INPUT_DIR = "./real_life_datasets_test/"
+INPUT_DIR = "./real_life_datasets/"
 OUTPUT_DIR = "./experiment_1/"
 SPLIT_MINER_DIR = "./experiment_1/split_miner/"
 BEST_PARAMS = "./best_parameters.csv"
@@ -98,7 +98,7 @@ if __name__ == "__main__":
     for dataset_dir in dataset_dirs:
         xes_file = [f for f in os.listdir(f"{INPUT_DIR}{dataset_dir}") if f.endswith(".xes")]
         
-        if "2015" in dataset_dir or dataset_dir != "2017":
+        if dataset_dir not in ["2013-cp", "2013-i", "2013-op"]:
             continue
         
         if len(xes_file) == 0:
