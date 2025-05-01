@@ -62,7 +62,15 @@
         "algorithm": "cpp",
         "memory": "cpp",
         "print": "cpp",
-        "stack": "cpp"
+        "stack": "cpp",
+        "atomic": "cpp",
+        "bit": "cpp",
+        "compare": "cpp",
+        "exception": "cpp",
+        "type_traits": "cpp",
+        "utility": "cpp",
+        "*.tcc": "cpp",
+        "cinttypes": "cpp"
     },
     "cmake.sourceDirectory": "/Users/jeppeaxelsen/Desktop/github-folder/temp-name/src/FastTokenBasedReplay",
     "cmake.ignoreCMakeListsMissing": true

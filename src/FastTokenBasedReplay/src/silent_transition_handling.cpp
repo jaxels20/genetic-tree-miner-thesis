@@ -99,10 +99,6 @@ attempt_to_make_transition_enabled_by_firing_silent_transitions(PetriNet& net, T
     size_t iterations = 0;
 
     while (!delta_set.empty()){
-        iterations++;
-        if (iterations >= max_iterations) {
-            break;
-        }
         for (const auto& sequence : possible_firing_sequences) {
             // Partially fire the sequence 
             std::vector<std::string> fired_transitions = net_copy.partially_fire_transition_sequence(sequence, nullptr, nullptr);
@@ -126,6 +122,10 @@ attempt_to_make_transition_enabled_by_firing_silent_transitions(PetriNet& net, T
             lambda_set = compute_lambda_set(current_marking, target_marking);
             possible_firing_sequences = get_possible_firing_sequences(firing_sequences, delta_set, lambda_set);
             break; // break the for loop to start the while loop again
+        }
+        iterations++;
+        if (iterations >= max_iterations) {
+            break;
         }
     }
     // No sequence found to enable the transition
