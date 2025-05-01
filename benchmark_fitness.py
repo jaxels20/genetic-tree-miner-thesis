@@ -233,6 +233,10 @@ def real_life_evaluation():
         for filename in os.listdir(eventlog_dir + folder):
             if filename.endswith(".xes"):
                 print(f"Processing {filename}")
+                
+                if "2015" in filename:
+                    continue
+                
                 our_event_log = EventLog.load_xes(os.path.join(eventlog_dir, folder, filename))
                 
                 # filter the traces
@@ -243,14 +247,15 @@ def real_life_evaluation():
                 pm4py_net, init, end = pt_converter.apply(pm4py_pt, variant=pt_converter.Variants.TO_PETRI_NET)
                 
                 our_net = PetriNet.from_pm4py(pm4py_net, init, end)
-                # sort the our_event_log traces by length longest to shortest
-                our_event_log.traces.sort(key=lambda x: len(x.events), reverse=True)
+
+                
+                
                 
                 data[filename] = {"FastTokenBasedReplay (without caching)": time_fast_token_based_replay_without_caching(our_event_log, our_net),
-                                #"pm4py": time_pm4py_token_based_replay(our_event_log, our_net),
+                                "pm4py": time_pm4py_token_based_replay(our_event_log, our_net),
                                 "FastTokenBasedReplay (with prefix caching)": time_fast_token_based_replay_with_prefix_caching(our_event_log, our_net),
                                 "FastTokenBasedReplay (with suffix caching)": time_fast_token_based_replay_with_suffix_caching(our_event_log, our_net),
-                                "FastTokenBasedReplay (with prefix and suffix caching)" : time_fast_token_based_replay_with_prefix_and_suffix_caching(our_event_log, our_net),
+                                #"FastTokenBasedReplay (with prefix and suffix caching)" : time_fast_token_based_replay_with_prefix_and_suffix_caching(our_event_log, our_net),
                                 }
         
     # Plot configuration
