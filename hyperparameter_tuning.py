@@ -11,6 +11,12 @@ from src.Objective import Objective
 import pandas as pd
 import multiprocessing
 
+TIME_LIMIT = 5*60
+STAGNATION_LIMIT = 50
+PERCENTAGE_OF_LOG = 0.05
+OPTUNA_TIMEOUT_LIMIT = 60*60*18
+INPUT_DIR = "./real_life_datasets/"
+OUTPUT_DIR = "./real_life_datasets_results/" 
 
 FITNESS_WEIGHTS = {
     "simplicity": 10,
@@ -18,11 +24,6 @@ FITNESS_WEIGHTS = {
     "ftr_fitness": 50,
     "ftr_precision": 30
 }
-PERCENTAGE_OF_LOG = 0.05
-MUTATOR = "Tournament"
-INPUT_DIR = "./real_life_datasets/"
-OUTPUT_DIR = "./real_life_datasets_results/" 
-
 
 def objective(trial, event_log, fitness_weights=dict[str, float]):
     # Suggest hyperparameters
@@ -70,8 +71,8 @@ def objective(trial, event_log, fitness_weights=dict[str, float]):
             generator=generator,
             percentage_of_log=PERCENTAGE_OF_LOG,
             population_size=population_size,
-            stagnation_limit=50,
-            time_limit=5 * 60,
+            stagnation_limit=STAGNATION_LIMIT,
+            time_limit=TIME_LIMIT,
         )
 
         # Evaluate fitness — should return a single value (higher is better)
@@ -108,7 +109,7 @@ def optimize_dataset(dataset_dir):
             lambda trial: objective(trial, eventlog, FITNESS_WEIGHTS),
             show_progress_bar=False,
             n_trials=None,
-            timeout=60 * 60 * 18
+            timeout=OPTUNA_TIMEOUT_LIMIT
         )
 
         best_params = study.best_params

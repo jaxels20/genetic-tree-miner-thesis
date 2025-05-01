@@ -26,6 +26,7 @@ class GeneticAlgorithm:
         
     def _check_stopping_criteria(self, generation: int, population: Population, stagnation_limit: int, time_limit: int, min_fitness: float) -> bool:
         # Update the best tree
+        epsilon = 0.05
         best_tree_b_update = self.best_tree.get_fitness() if self.best_tree is not None else None
         self._update_best_tree(population)
         
@@ -37,7 +38,7 @@ class GeneticAlgorithm:
         
         # Criterion 2: No improvement for `stagnation_limit` generations
         if stagnation_limit is not None and best_tree_b_update is not None:
-            if self.best_tree.get_fitness() > best_tree_b_update:
+            if self.best_tree.get_fitness() > best_tree_b_update + epsilon:
                 self.stagnation_counter = 0  # Reset stagnation counter
             else:
                 self.stagnation_counter += 1
