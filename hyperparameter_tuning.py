@@ -18,6 +18,8 @@ FITNESS_WEIGHTS = {
     "ftr_fitness": 50,
     "ftr_precision": 30
 }
+PERCENTAGE_OF_LOG = 0.05
+MUTATOR = "Tournament"
 INPUT_DIR = "./real_life_datasets/"
 OUTPUT_DIR = "./real_life_datasets_results/" 
 
@@ -27,42 +29,25 @@ def objective(trial, event_log, fitness_weights=dict[str, float]):
     random_creation_rate = trial.suggest_float("random_creation_rate", 0.0, 1.0)
     elite_rate = trial.suggest_float("elite_rate", 0.0, 1.0)
     population_size = trial.suggest_int("population_size", 20, 60)
-    percentage_of_log = trial.suggest_float("percentage_of_log", 0.001, 0.3)
-    if event_log.name not in ["2015-1", "2015-2", "2015-3", "2015-4", "2015-5"]:
-        generator = trial.suggest_categorical("generator", ["BottomUpRandomBinaryGenerator", "FootprintGuidedSequentialGenerator", "InductiveNoiseInjectionGenerator"])
-    else:
-        generator = trial.suggest_categorical("generator", ["BottomUpRandomBinaryGenerator", "FootprintGuidedSequentialGenerator", "InductiveNoiseInjectionGenerator", "InductiveMinerGenerator"])
-    mutator = trial.suggest_categorical("mutator", ["Tournament", "NonTournament"])
+    generator = trial.suggest_categorical("generator", ["BottomUpRandomBinaryGenerator", "FootprintGuidedSequentialGenerator", "InductiveNoiseInjectionGenerator", "InductiveMinerGenerator"])
     
     # Create the mutator
-    if mutator == "Tournament":
-        tournament_size = trial.suggest_float("tournament_size", 0.1, 0.3)
-        tournament_rate = trial.suggest_float("tournament_rate", 0.0, 1.0)
-        tournament_mutation_rate = trial.suggest_float("tournament_mutation_rate", 0.0, 1.0)
-        
-        total = random_creation_rate + elite_rate + tournament_rate
-        random_creation_rate = random_creation_rate / total
-        elite_rate = elite_rate / total
-        tournament_rate = tournament_rate / total
-        mutator = TournamentMutator(
-                    random_creation_rate=random_creation_rate,  
-                    elite_rate=elite_rate,
-                    tournament_rate=tournament_rate,
-                    tournament_size=tournament_size,
-                    tournament_mutation_rate=tournament_mutation_rate)
-    elif mutator == "NonTournament":
-        mutation_rate = trial.suggest_float("mutation_rate", 0.0, 1.0)
-        crossover_rate = trial.suggest_float("crossover_rate", 0.0, 1.0)
-        total = mutation_rate + crossover_rate + random_creation_rate + elite_rate
-        mutation_rate = mutation_rate / total
-        crossover_rate = crossover_rate / total
-        random_creation_rate = random_creation_rate / total
-        elite_rate = elite_rate / total
-        mutator = Mutator(
-                    random_creation_rate=random_creation_rate, 
-                    crossover_rate=crossover_rate, 
-                    mutation_rate=mutation_rate, 
-                    elite_rate=elite_rate)
+    tournament_size = trial.suggest_float("tournament_size", 0.1, 0.3)
+    tournament_rate = trial.suggest_float("tournament_rate", 0.0, 1.0)
+    tournament_mutation_rate = trial.suggest_float("tournament_mutation_rate", 0.0, 1.0)
+    
+    total = random_creation_rate + elite_rate + tournament_rate
+    random_creation_rate = random_creation_rate / total
+    elite_rate = elite_rate / total
+    tournament_rate = tournament_rate / total
+    
+    mutator = TournamentMutator(
+                random_creation_rate=random_creation_rate,  
+                elite_rate=elite_rate,
+                tournament_rate=tournament_rate,
+                tournament_size=tournament_size,
+                tournament_mutation_rate=tournament_mutation_rate
+    )
         
     # Create the generator
     if generator == "BottomUpRandomBinaryGenerator":
@@ -83,7 +68,7 @@ def objective(trial, event_log, fitness_weights=dict[str, float]):
             objective=Objective(metric_weights=FITNESS_WEIGHTS),
             mutator=mutator,
             generator=generator,
-            percentage_of_log=percentage_of_log,
+            percentage_of_log=PERCENTAGE_OF_LOG,
             population_size=population_size,
             stagnation_limit=50,
             time_limit=5 * 60,
@@ -125,7 +110,6 @@ def optimize_dataset(dataset_dir):
             n_trials=None,
             timeout=60 * 60 * 18
         )
-
 
         best_params = study.best_params
         best_value = study.best_value
