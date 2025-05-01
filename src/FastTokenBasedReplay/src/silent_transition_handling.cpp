@@ -85,16 +85,17 @@ get_possible_firing_sequences(
 }
 
 std::tuple<bool, std::vector<std::string>> 
-attempt_to_make_transition_enabled_by_firing_silent_transitions(PetriNet& net, Transition* transition, std::unordered_map<std::string, std::unordered_map<std::string, std::vector<std::string>>> firing_sequences) {
-    PetriNet net_copy = net;
+attempt_to_make_transition_enabled_by_firing_silent_transitions(PetriNet& net, Transition* transition, std::unordered_map<std::string, std::unordered_map<std::string, std::vector<std::string>>>& firing_sequences) {    
+    PetriNet net_copy = net;    
     std::vector<std::string> final_firing_sequence;
     Marking current_marking = net.get_current_marking();
     Marking target_marking = net.get_marking_enabling_transition(*transition);
     std::set<std::string> delta_set = compute_delta_set(current_marking, target_marking);
     std::set<std::string> lambda_set = compute_lambda_set(current_marking, target_marking);
     std::set<std::vector<std::string>, CompareVectorLength> possible_firing_sequences = get_possible_firing_sequences(firing_sequences, delta_set, lambda_set);
-    
-    size_t max_iterations = 10;
+
+
+    size_t max_iterations = 2;
     size_t iterations = 0;
 
     while (!delta_set.empty()){
@@ -133,7 +134,7 @@ attempt_to_make_transition_enabled_by_firing_silent_transitions(PetriNet& net, T
 };
 
 std::tuple<bool, std::vector<std::string>>
-attempt_to_reach_final_marking_by_firing_silent_transitions(PetriNet& net, std::unordered_map<std::string, std::unordered_map<std::string, std::vector<std::string>>> firing_sequences, Marking final_marking) {
+attempt_to_reach_final_marking_by_firing_silent_transitions(PetriNet& net, std::unordered_map<std::string, std::unordered_map<std::string, std::vector<std::string>>>& firing_sequences, Marking final_marking) {
     PetriNet net_copy = net;
     bool reachable_by_silent_transitions = false;
     std::vector<std::string> final_firing_sequence;
@@ -145,7 +146,7 @@ attempt_to_reach_final_marking_by_firing_silent_transitions(PetriNet& net, std::
     std::set<std::string> lambda_set = compute_lambda_set(current_marking, final_marking);
     std::set<std::vector<std::string>, CompareVectorLength> possible_firing_sequences = get_possible_firing_sequences(firing_sequences, delta_set, lambda_set);
 
-    size_t max_iterations = 5;
+    size_t max_iterations = 2;
     size_t iterations = 0;
 
      while (!delta_set.empty()){
@@ -227,6 +228,6 @@ std::unordered_map<std::string, std::unordered_map<std::string, std::vector<std:
     for (const auto& place : net.places) {
         get_places_shortest_path(net, place.name, place.name, places_shortest_path, {}, 0, max_rec_depth);
     }
-    return places_shortest_path;
+    return std::move(places_shortest_path);
 }
 

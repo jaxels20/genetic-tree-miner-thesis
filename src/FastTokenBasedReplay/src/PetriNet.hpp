@@ -160,7 +160,7 @@ class PetriNet {
                     }
                 }
             }
-            return preset;
+            return std::move(preset);
         }
         
         uint32_t number_of_tokens() const {
@@ -193,7 +193,7 @@ class PetriNet {
                     marking.add_place(place.name, place.tokens);
                 }
             }
-            return marking;
+            return std::move(marking);
         }
 
         std::vector<std::string> fire_transition_sequence(const std::vector<std::string>& transition_names, int* consumed, int* produced) {
@@ -382,7 +382,7 @@ class PetriNet {
                 }
                 ++i;
             }
-            return visible_transitions;
+            return std::move(visible_transitions);
         }
         
     };

@@ -29,15 +29,15 @@ std::unordered_map<std::string, std::set<std::string>> compute_prefixes(const Ev
             
         }
     }
-    
-    return prefixes;
+
+    return std::move(prefixes);
 }
 
 
 std::tuple<int32_t, int32_t> replay_trace_precision(
     const Trace& trace, 
     PetriNet& net, 
-    std::unordered_map<std::string, std::unordered_map<std::string,std::vector<std::string>>> silent_firing_sequences,
+    std::unordered_map<std::string, std::unordered_map<std::string,std::vector<std::string>>>& silent_firing_sequences,
     ActivityCache& activity_cache,
     std::unordered_map<std::string, std::set<std::string>>& prefixes,
     std::unordered_map<Marking, std::set<std::string>, MarkingHasher>& visible_transitions_eventually_enabled_cache
@@ -60,9 +60,9 @@ std::tuple<int32_t, int32_t> replay_trace_precision(
 
         // DO THE BOOKKEEPING
         // Count the number of allowed tasks, which is the number of enabled transitions
-        PetriNet net_copy = net;
+        //PetriNet net_copy = net;
         // Get the current marking
-        Marking current_marking = net_copy.get_current_marking();
+        Marking current_marking = net.get_current_marking();
         
         std::set<std::string> allowed_tasks_set;
 
@@ -73,7 +73,7 @@ std::tuple<int32_t, int32_t> replay_trace_precision(
             allowed_tasks_set = it->second;
         } else {
             // If not found, compute the allowed tasks and store in the cache
-            allowed_tasks_set = net_copy.get_visible_transitions_eventually_enabled();
+            allowed_tasks_set = net.get_visible_transitions_eventually_enabled();
             visible_transitions_eventually_enabled_cache[current_marking] = allowed_tasks_set;
         }
 
@@ -95,10 +95,10 @@ std::tuple<int32_t, int32_t> replay_trace_precision(
         // if the transition is not enabled, we need to fire silent transitions to make it enabled
         if (!net.can_fire(*transition)) {
             Marking current_marking = net.get_current_marking();
-            std::vector<std::string> cached_sequence = activity_cache.retrieve(current_marking, transition->name);
+            std::vector<std::string>* cached_sequence = activity_cache.retrieve(current_marking, transition->name);
             
-            if (!cached_sequence.empty()) {
-                net.fire_transition_sequence(cached_sequence, nullptr, nullptr);
+            if (cached_sequence) {
+                net.fire_transition_sequence(*cached_sequence, nullptr, nullptr);
             } else {
                 auto [reachable, sequence] = attempt_to_make_transition_enabled_by_firing_silent_transitions(net, transition, silent_firing_sequences);     
                 if (reachable) {
@@ -144,7 +144,7 @@ double calculate_precision(const EventLog& log, const PetriNet& net){
     PetriNet net_copy = net;
     // A map to store the firing sequences for every place to every other place using silent transitions
     std::unordered_map<std::string, std::unordered_map<std::string, std::vector<std::string>>> silent_firing_sequences;
-    silent_firing_sequences = get_places_shortest_path_by_hidden(net_copy, 5);
+    silent_firing_sequences = get_places_shortest_path_by_hidden(net_copy, 50);
 
     // Activity cache to store the precomputed values
     ActivityCache activity_cache;
@@ -153,7 +153,7 @@ double calculate_precision(const EventLog& log, const PetriNet& net){
     for (const auto& trace : log.traces) {
         if (trace_cache.find(trace) == trace_cache.end()) {
             // If this trace has not been processed, do token replay
-            PetriNet net_copy = net;
+            // PetriNet net_copy = net;
             trace_cache[trace] = replay_trace_precision(trace, net_copy, silent_firing_sequences, activity_cache, prefixes, visible_transitions_eventually_enabled_cache);
         }
 
