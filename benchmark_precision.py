@@ -43,6 +43,8 @@ def real_life_evaluation():
         for filename in os.listdir(eventlog_dir + folder):
             if filename.endswith(".xes"): #and filename == "BPI_Challenge_2017.xes":
                 print(f"Processing {filename}")
+                if "2015" in filename:
+                    continue
                 our_event_log = EventLog.load_xes(os.path.join(eventlog_dir, folder, filename))
                 
                 # filter the traces
