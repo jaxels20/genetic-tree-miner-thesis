@@ -14,9 +14,9 @@ class ActivityCache {
             cache[marking][transition] = silent_sequence;
         }
     
-        std::vector<std::string> retrieve(const Marking& marking, const std::string& transition) {
+        std::vector<std::string>* retrieve(const Marking& marking, const std::string& transition) {
             if (cache.find(marking) != cache.end() && cache[marking].find(transition) != cache[marking].end()) {
-                return cache[marking][transition];
+                return &cache[marking][transition];
             }
             return {}; // Return empty vector if no cache entry exists
         }
