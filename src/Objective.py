@@ -92,12 +92,10 @@ class Objective:
             precision_value = precision(self.event_log_pm4py, pm4py_pn, inital_marking, final_marking)
         return precision_value
     
-    def ftr_fitness(self, ftr_petri_net, our_petri_net=None):
+    def ftr_fitness(self, ftr_petri_net):
         try:
             fitness = FastTokenBasedReplay.calculate_fitness(self.ftr_eventlog, ftr_petri_net, False, False)
         except Exception as e:
-            print(f"Unique activities: {self.eventlog.unique_activities()}")
-            our_petri_net.visualize()
             raise e
         return fitness
     
