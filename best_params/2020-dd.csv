@@ -1,2 +1,2 @@
-random_creation_rate,elite_rate,population_size,percentage_of_log,generator,mutator,tournament_size,tournament_rate,tournament_mutation_rate,objective,dataset
-0.20729486113602702,0.953968848790735,35,0.14911393919938906,FootprintGuidedSequentialGenerator,Tournament,0.11752342228274892,0.9053910930101594,0.9685459802412898,93.18151644015202,2020-dd_0
+random_creation_rate,elite_rate,population_size,generator,tournament_size,tournament_rate,tournament_mutation_rate,log_filtering,objective,dataset
+0.21194233964441456,0.2897428660091965,47,InductiveNoiseInjectionGenerator,0.1788307285096315,0.928801399484426,0.8312827817713918,0.07622666548557244,94.69266470281623,2020-dd_0

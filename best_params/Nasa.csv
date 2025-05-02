@@ -1,2 +1,2 @@
-random_creation_rate,elite_rate,population_size,percentage_of_log,generator,mutator,mutation_rate,crossover_rate,log_filtering,objective,dataset
-0.4934416998917195,0.9837794813599743,40,0.20426089123884303,InductiveNoiseInjectionGenerator,NonTournament,0.6301763170231438,0.7061767509399695,0.05921967889443555,70.84106708109366,Nasa_0
+random_creation_rate,elite_rate,population_size,generator,tournament_size,tournament_rate,tournament_mutation_rate,log_filtering,objective,dataset
+0.41783324714287134,0.8187493555656555,40,InductiveNoiseInjectionGenerator,0.2852989098110776,0.1175117323080816,0.04758476871858855,0.07757761355006144,70.27301008719502,Nasa_0
