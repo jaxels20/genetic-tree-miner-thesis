@@ -6,6 +6,7 @@ import tempfile
 from time import time
 import pickle
 from collections import defaultdict
+from multiprocessing import Pool, cpu_count
 
 from src.EventLog import EventLog
 from src.Discovery import Discovery
@@ -136,46 +137,71 @@ class SingleEvaluator:
 # This function discovers a process model from an event log 
 # and evaluates it against the event log (calculates the metrics)
 class MultiEvaluator:
-    def __init__(self, event_logs: list[EventLog], methods_dict: dict):
+    def __init__(self, event_logs: list, methods_dict: dict, cpu_count: int = 1):
         """
-        Initialize with dictionaries of Petri nets and event logs.
+        Initialize with a list of EventLog objects and a dictionary of discovery methods.
         Args:
-        - event_logs (dict): A dictionary where keys are event log names and values are EventLog objects.
-        - methods (list): A list of strings representing the discovery methods to use.
+        - event_logs (list): A list of EventLog objects.
+        - methods_dict (dict): A dictionary where keys are method names and values are discovery functions.
         """
-        self.event_logs = event_logs # list of EventLog objects
-        self.petri_nets = {method: {} for method in methods_dict.keys()} # dictionary of Petri nets with keys as discovery methods 
-        self.times = {method: {} for method in methods_dict.keys()} # dictionary of times with keys as discovery methods
-        # and values a dict of event log names and PetriNet objects
+        self.event_logs = event_logs
+        self.petri_nets = {method: {} for method in methods_dict}
+        self.times = {method: {} for method in methods_dict}
+        self.cpu_count = cpu_count
+
+        tasks = []
         for method, miner in methods_dict.items():
             for event_log in self.event_logs:
-                print("Running discovery for", method, "on", event_log.name)
-                start = time()
-                pn_result = miner(event_log)
-                discovery_time = time() - start
-                self.petri_nets[method][event_log.name] = pn_result
-                self.times[method][event_log.name] = discovery_time
+                tasks.append((method, miner, event_log))
+
+        # Use multiprocessing to run the discovery in parallel
         
-    def evaluate_all(self, objective_metric_weights: dict[str, float]=None):
+        with Pool(processes=self.cpu_count) as pool:
+            results = pool.map(MultiEvaluator._run_discovery, tasks)
+
+        # Collect results
+        for method, log_name, pn_result, discovery_time in results:
+            self.petri_nets[method][log_name] = pn_result
+            self.times[method][log_name] = discovery_time
+
+    @staticmethod
+    def _run_discovery(args):
+        method, miner, event_log = args
+        print(f"Running discovery for {method} on {event_log.name}")
+        start = time()
+        pn_result = miner(event_log)
+        discovery_time = time() - start
+        return method, event_log.name, pn_result, discovery_time
+        
+    def evaluate_all(self, objective_metric_weights: dict[str, float] = None, cpu_count: int = None):
         """
         Evaluate all Petri nets against their corresponding event logs and return a DataFrame with metrics.
         """
-        results = []
-        
-        # Iterate through each miner type and dataset in petri_nets
+        tasks = []
+
         for miner, dataset_pn_pairs in self.petri_nets.items():
             for dataset, pn in dataset_pn_pairs.items():
-                i = next((i for i, el in enumerate(self.event_logs) if el.name == dataset))
-                event_log = self.event_logs[i]
-                evaluator = SingleEvaluator(pn, event_log)
-                res = {k: round(v, 3) for k, v in evaluator.get_evaluation_metrics(objective_metric_weights).items()}
-                res["dataset"] = dataset
-                res["miner"] = miner
-                res["time"] = self.times[miner][dataset]   # add timing results
-                res["ftr_fitness"] = evaluator.get_ftr_fitness(objective_metric_weights)
-                results.append(res)
-        
+                # Find corresponding event log
+                event_log = next(el for el in self.event_logs if el.name == dataset)
+                discovery_time = self.times[miner][dataset]
+                tasks.append((miner, dataset, pn, event_log, discovery_time, objective_metric_weights))
+
+        # Use multiprocessing to evaluate in parallel
+        with Pool(processes=self.cpu_count) as pool:
+            results = pool.map(MultiEvaluator._evaluate_single, tasks)
+
         return pd.DataFrame(results)
+
+    @staticmethod
+    def _evaluate_single(args):
+        miner, dataset, pn, event_log, discovery_time, objective_metric_weights = args
+        evaluator = SingleEvaluator(pn, event_log)
+        res = {k: round(v, 3) for k, v in evaluator.get_evaluation_metrics(objective_metric_weights).items()}
+        res["dataset"] = dataset
+        res["miner"] = miner
+        res["time"] = discovery_time
+        res["ftr_fitness"] = evaluator.get_ftr_fitness(objective_metric_weights)
+        return res
 
     def export_petri_nets(self, output_dir, format="png"):
         """

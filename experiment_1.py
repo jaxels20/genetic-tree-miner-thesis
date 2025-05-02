@@ -1,5 +1,6 @@
 import csv
 import os
+from multiprocessing import cpu_count
 from src.Discovery import Discovery
 from src.Mutator import Mutator, TournamentMutator
 from src.RandomTreeGenerator import BottomUpRandomBinaryGenerator, FootprintGuidedSequentialGenerator, InductiveNoiseInjectionGenerator, InductiveMinerGenerator
@@ -110,7 +111,7 @@ if __name__ == "__main__":
     }
     
     # Run the methods on each event log
-    multi_evaluator = MultiEvaluator(eventlogs, methods_dict)
+    multi_evaluator = MultiEvaluator(eventlogs, methods_dict, min(len(eventlogs), cpu_count()))
     results_df = multi_evaluator.evaluate_all({"simplicity": 10, "refined_simplicity": 10, "ftr_fitness": 50, "ftr_precision": 30})
     results_df.to_csv(OUTPUT_DIR + "results.csv", index=False)
     results_df[["miner","dataset", "simplicity","generalization","ftr_fitness","log_fitness","precision","objective_fitness","time", "f1_score"]].to_latex(OUTPUT_DIR + "results.tex", index=False, float_format="%.2f")
