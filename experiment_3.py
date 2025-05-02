@@ -22,19 +22,22 @@ def consolidate_csv_files(input_dir):
     consolidated_df.to_csv('best_parameters_all_datasets.csv', index=False)
 
 def plot_data(df):
-    df.loc[df['mutator'] == 'NonTournament', 'tournament_size'] = -1_000_000_000
-    df.loc[df['mutator'] == 'NonTournament', 'tournament_rate'] = 1_000_000_000
-    df.loc[df['mutator'] == 'NonTournament', 'tournament_mutation_rate'] = 1_000_000_000
+    # df.loc[df['mutator'] == 'NonTournament', 'tournament_size'] = -1_000_000_000
+    # df.loc[df['mutator'] == 'NonTournament', 'tournament_rate'] = 1_000_000_000
+    # df.loc[df['mutator'] == 'NonTournament', 'tournament_mutation_rate'] = 1_000_000_000
     df.loc[df['generator'] == 'FootprintGuidedSequentialGenerator', 'log_filtering'] = 1_000_000_000
     df.loc[df['generator'] == 'BottomUpRandomBinaryGenerator', 'log_filtering'] = -1_000_000_000
 
     # Remove rows where 'objective' is NaN, since that's used for coloring
     df = df[df['objective'].notna()]
 
+    df_size = pd.read_csv("./real_life_datasets_analysis.csv")
+    df = pd.merge(df, df_size, on='dataset', how='left')
+
     df.rename(columns={
         'random_creation_rate': 'Random Creation Rate',
-        'mutation_rate': 'Mutation Rate',
-        'crossover_rate': 'Crossover Rate',
+        # 'mutation_rate': 'Mutation Rate',
+        # 'crossover_rate': 'Crossover Rate',
         'elite_rate': 'Elite Rate',
         'population_size': 'Population Size',
         'percentage_of_log': 'Percentage of Log',
@@ -42,16 +45,16 @@ def plot_data(df):
         'tournament_size': 'Tournament Size',
         'tournament_rate': 'Tournament Rate',
         'tournament_mutation_rate': 'Tournament Mut. Rate',
-        'mutator': 'Mutator',
+        # 'mutator': 'Mutator',
         'generator': 'Generator',
         'objective': 'Objective',
         'dataset': 'Dataset',
     }, inplace=True)
     
-    df['Mutator'].replace({
-        'Tournament': 'Tourn.',
-        'NonTournament': 'NonTourn.',
-    }, inplace=True)
+    # df['Mutator'].replace({
+    #     'Tournament': 'Tourn.',
+    #     'NonTournament': 'NonTourn.',
+    # }, inplace=True)
 
 
     skip_cols = ['Dataset', 'Objective']
@@ -94,7 +97,7 @@ def plot_data(df):
 
     desired_col_order = ['Tournament Size', 'Tournament Mut. Rate', 'Tournament Rate', 'Random Creation Rate', 
                         'Elite Rate',
-                        'Population Size', 'Percentage of Log', 'Generator',
+                        'Population Size', 'Generator',
                         'Log Filtering']
 
     # Reorder dimensions
@@ -110,7 +113,7 @@ def plot_data(df):
         # 'Crossover Rate' : [0,1], 
         'Elite Rate' : [0,1],
         'Population Size' : [20,60], 
-        'Percentage of Log' : [0.01, 0.3], 
+        # 'Percentage of Log' : [0.01, 0.3], 
         'Log Filtering' : [0.001, 0.1]
     }
 
@@ -123,7 +126,7 @@ def plot_data(df):
         # 'Crossover Rate' : [x / 100 for x in range(0, 102, 10)], 
         'Elite Rate' : [x / 100 for x in range(0, 102, 10)],
         'Population Size' : [x  for x in range(20, 65, 5)],
-        'Percentage of Log' : [x / 100 for x in range(1, 30, 3)] + [0.3], 
+        # 'Percentage of Log' : [x / 100 for x in range(1, 30, 3)] + [0.3], 
         'Log Filtering' : [x / 1000 for x in range(1, 102, 20)]
     }
 
@@ -139,8 +142,9 @@ def plot_data(df):
     fig = go.Figure(
         data=go.Parcoords(
             line=dict(
-                color='black',
-                showscale=False
+                color=df["Number of Unique Traces"],
+                colorscale='Viridis',
+                colorbar=dict(title='Num Unique Traces')
             ),
             dimensions=dimensions,
             labelside='bottom',
@@ -170,8 +174,8 @@ def plot_data(df):
 if __name__ == "__main__":
     # consolidate_csv_files(BEST_PARAMS)
     df = pd.read_csv(INPUT_DIR)
-    df = df[df['mutator'] == 'Tournament']
-    df = df[df['dataset'] != '2013-op_0']
+    # df = df[df['mutator'] == 'Tournament']
+    # df = df[df['dataset'] != '2013-op_0']
     
     # normalize elite rate, random creation rate and tournament rate by making it sum up to 1 for each row
     total = df['elite_rate'] + df['random_creation_rate'] + df['tournament_rate']

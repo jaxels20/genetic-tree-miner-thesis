@@ -11,6 +11,8 @@ INPUT_DIR = "./real_life_datasets/"
 OUTPUT_DIR = "./experiment_1/"
 SPLIT_MINER_DIR = "./experiment_1/split_miner/"
 BEST_PARAMS = "./best_parameters.csv"
+STAGNATION_LIMIT = 50
+TIME_LIMIT = 60*5
 
 def convert_json_to_hyperparamters(hyper_parameters: dict):
     # total = hyper_parameters['random_creation_rate'] + hyper_parameters['mutation_rate'] + hyper_parameters['crossover_rate'] + hyper_parameters['elite_rate']
@@ -36,23 +38,13 @@ def convert_json_to_hyperparamters(hyper_parameters: dict):
     else:
         raise ValueError("Invalid generator type")
     
-    if hyper_parameters['mutator'] == 'Tournament':
-        hyper_parameters['mutator'] = TournamentMutator(
-            hyper_parameters['random_creation_rate'],
-            hyper_parameters['elite_rate'],
-            hyper_parameters['tournament_size'],
-            hyper_parameters['tournament_rate'],
-            hyper_parameters['tournament_mutation_rate']
-        )
-    elif hyper_parameters['mutator'] == 'NonTournament':
-        hyper_parameters['mutator'] = Mutator(
-            hyper_parameters['random_creation_rate'],
-            hyper_parameters['crossover_rate'],
-            hyper_parameters['mutation_rate'],
-            hyper_parameters['elite_rate']
-        )
-    else:
-        raise ValueError("Invalid mutator type")
+    hyper_parameters['mutator'] = TournamentMutator(
+        hyper_parameters['random_creation_rate'],
+        hyper_parameters['elite_rate'],
+        hyper_parameters['tournament_size'],
+        hyper_parameters['tournament_rate'],
+        hyper_parameters['tournament_mutation_rate']
+    )
     
     return hyper_parameters
 
@@ -64,17 +56,13 @@ def load_hyperparameters_from_csv(path: str):
             hyper_parameters['random_creation_rate'] = float(row['random_creation_rate'])
             hyper_parameters['elite_rate'] = float(row['elite_rate'])
             hyper_parameters['population_size'] = int(row['population_size'])
-            hyper_parameters['percentage_of_log'] = float(row['percentage_of_log'])
+            # hyper_parameters['percentage_of_log'] = float(row['percentage_of_log'])
             hyper_parameters['generator'] = row['generator']
-            hyper_parameters['mutator'] = row['mutator']
+            # hyper_parameters['mutator'] = row['mutator']
             
-            if hyper_parameters['mutator'] == 'Tournament':
-                hyper_parameters['tournament_size'] = float(row['tournament_size'])
-                hyper_parameters['tournament_rate'] = float(row['tournament_rate'])
-                hyper_parameters['tournament_mutation_rate'] = float(row['tournament_mutation_rate'])
-            else:
-                hyper_parameters['crossover_rate'] = float(row['crossover_rate'])
-                hyper_parameters['mutation_rate'] = float(row['mutation_rate'])
+            hyper_parameters['tournament_size'] = float(row['tournament_size'])
+            hyper_parameters['tournament_rate'] = float(row['tournament_rate'])
+            hyper_parameters['tournament_mutation_rate'] = float(row['tournament_mutation_rate'])
             
             if hyper_parameters['generator'] == 'InductiveNoiseInjectionGenerator':
                 hyper_parameters['log_filtering'] = float(row['log_filtering'])
@@ -98,9 +86,6 @@ if __name__ == "__main__":
     for dataset_dir in dataset_dirs:
         xes_file = [f for f in os.listdir(f"{INPUT_DIR}{dataset_dir}") if f.endswith(".xes")]
         
-        if dataset_dir not in ["2013-cp", "2013-i", "2013-op"]:
-            continue
-        
         if len(xes_file) == 0:
             continue
         elif len(xes_file) == 1:
@@ -116,8 +101,9 @@ if __name__ == "__main__":
     methods_dict = {
         "Genetic Miner": lambda log: Discovery.genetic_algorithm(
             log,
-            stagnation_limit=50,
-            time_limit=60*5,
+            stagnation_limit=STAGNATION_LIMIT,
+            time_limit=TIME_LIMIT,
+            percentage_of_log=0.05,
             **hyperparams,
         ),
         "Inductive Miner": lambda log: Discovery.inductive_miner(log)
