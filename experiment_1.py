@@ -127,4 +127,4 @@ if __name__ == "__main__":
     multi_evaluator = MultiEvaluator(eventlogs, methods_dict)
     results_df = multi_evaluator.evaluate_all({"simplicity": 10, "refined_simplicity": 10, "ftr_fitness": 50, "ftr_precision": 30})
     results_df.to_csv(OUTPUT_DIR + "results.csv", index=False)
-    results_df[["miner","dataset", "simplicity","generalization","log_fitness","precision","objective_fitness","time"]].to_latex(OUTPUT_DIR + "results.tex", index=False, float_format="%.2f")
+    results_df[["miner","dataset", "simplicity","generalization","ftr_fitness","log_fitness","precision","objective_fitness","time", "f1_score"]].to_latex(OUTPUT_DIR + "results.tex", index=False, float_format="%.2f")

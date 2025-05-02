@@ -128,6 +128,11 @@ class SingleEvaluator:
             f1_score = 0.0
         return f1_score
 
+    def get_ftr_fitness(self, objective_metric_weights: dict[str, float]={"simplicity": 10, "refined_simplicity": 10, "ftr_fitness": 50, "ftr_precision": 30}):
+        objective = Objective(objective_metric_weights)
+        objective.set_event_log(self.eventlog)
+        return objective.ftr_fitness(self.pn.to_fast_token_based_replay())
+
 # This function discovers a process model from an event log 
 # and evaluates it against the event log (calculates the metrics)
 class MultiEvaluator:
@@ -167,6 +172,7 @@ class MultiEvaluator:
                 res["dataset"] = dataset
                 res["miner"] = miner
                 res["time"] = self.times[miner][dataset]   # add timing results
+                res["ftr_fitness"] = evaluator.get_ftr_fitness(objective_metric_weights)
                 results.append(res)
         
         return pd.DataFrame(results)
