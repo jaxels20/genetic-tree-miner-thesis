@@ -14,6 +14,7 @@ SPLIT_MINER_DIR = "./experiment_1/split_miner/"
 BEST_PARAMS = "./best_parameters.csv"
 STAGNATION_LIMIT = 50
 TIME_LIMIT = 60*5
+CPU_COUNT = 1
 
 def convert_json_to_hyperparamters(hyper_parameters: dict):
     # total = hyper_parameters['random_creation_rate'] + hyper_parameters['mutation_rate'] + hyper_parameters['crossover_rate'] + hyper_parameters['elite_rate']
@@ -111,7 +112,7 @@ if __name__ == "__main__":
     }
     
     # Run the methods on each event log
-    multi_evaluator = MultiEvaluator(eventlogs, methods_dict, min(len(eventlogs), cpu_count()))
+    multi_evaluator = MultiEvaluator(eventlogs, methods_dict, CPU_COUNT)
     results_df = multi_evaluator.evaluate_all({"simplicity": 10, "refined_simplicity": 10, "ftr_fitness": 50, "ftr_precision": 30})
     results_df.to_csv(OUTPUT_DIR + "results.csv", index=False)
     results_df[["miner","dataset", "simplicity","generalization","ftr_fitness","log_fitness","precision","objective_fitness","time", "f1_score"]].to_latex(OUTPUT_DIR + "results.tex", index=False, float_format="%.2f")

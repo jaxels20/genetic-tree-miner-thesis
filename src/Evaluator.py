@@ -202,12 +202,13 @@ class MultiEvaluator:
                 else:
                     raise ValueError(f"Invalid format: {format}. Must be 'png' or 'pdf'.")
 
-    def save_df_to_pdf(self, df, pdf_path):
+    @staticmethod
+    def save_df_to_pdf(df, pdf_path):
         """
         Save the DataFrame to a single PDF figure with all datasets grouped.
         """
         table_data = []
-        column_headers = ["Dataset", "Method", "Replay Fitness", "Precision", "Generalization", "Simplicity", "Objective fitness", "Time"]
+        column_headers = ["Dataset", "Method", "F1-score", "Replay Fitness", "FTR Fitness", "Precision", "Generalization", "Simplicity", "Objective fitness", "Time"]
         grouped = df.groupby('dataset')
         
         # Assing colors per dataset
@@ -223,7 +224,9 @@ class MultiEvaluator:
                 table_data.append([
                     dataset if i == 0 else "",  # Show dataset name only in first row
                     row['miner'],
+                    f"{row['f1_score']:.3f}",
                     f"{row['log_fitness']:.3f}",
+                    f"{row['ftr_fitness']:.3f}",
                     f"{row['precision']:.3f}",
                     f"{row['generalization']:.3f}",
                     f"{row['simplicity']:.3f}",
@@ -233,7 +236,7 @@ class MultiEvaluator:
                 ])
 
         # Create the figure and add the table
-        fig, ax = plt.subplots(figsize=(12, 6))
+        fig, ax = plt.subplots(figsize=(20, len(table_data) * 0.4 + 1))  # dynamic height
         ax.axis('off')
 
         # Add the table to the figure
@@ -256,7 +259,7 @@ class MultiEvaluator:
             cell.set_text_props(weight='bold')
         
         # Adjust row heights
-        row_heights = 0.06  # Adjust this value to control row height
+        row_heights = 0.04  # Adjust this value to control row height
         for i in range(len(table_data) + 1):  # +1 for header row
             for j in range(len(column_headers)):
                 cell = table[i, j]
