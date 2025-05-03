@@ -137,43 +137,29 @@ class SingleEvaluator:
 # This function discovers a process model from an event log 
 # and evaluates it against the event log (calculates the metrics)
 class MultiEvaluator:
-    def __init__(self, event_logs: list, methods_dict: dict, cpu_count: int = 1):
+    def __init__(self, event_logs: list[EventLog], methods_dict: dict, cpu_count: int = 1):
         """
-        Initialize with a list of EventLog objects and a dictionary of discovery methods.
+        Initialize with dictionaries of Petri nets and event logs.
         Args:
-        - event_logs (list): A list of EventLog objects.
-        - methods_dict (dict): A dictionary where keys are method names and values are discovery functions.
+        - event_logs (dict): A dictionary where keys are event log names and values are EventLog objects.
+        - methods (list): A list of strings representing the discovery methods to use.
         """
-        self.event_logs = event_logs
-        self.petri_nets = {method: {} for method in methods_dict}
-        self.times = {method: {} for method in methods_dict}
+        self.event_logs = event_logs # list of EventLog objects
+        self.petri_nets = {method: {} for method in methods_dict.keys()} # dictionary of Petri nets with keys as discovery methods 
+        self.times = {method: {} for method in methods_dict.keys()} # dictionary of times with keys as discovery methods and values a dict of event log names and PetriNet objects
         self.cpu_count = cpu_count
-
-        tasks = []
+    
         for method, miner in methods_dict.items():
             for event_log in self.event_logs:
-                tasks.append((method, miner, event_log))
+                print("Running discovery for", method, "on", event_log.name)
+                start = time()
+                pn_result = miner(event_log)
+                discovery_time = time() - start
+                self.petri_nets[method][event_log.name] = pn_result
+                self.times[method][event_log.name] = discovery_time
 
-        # Use multiprocessing to run the discovery in parallel
         
-        with Pool(processes=self.cpu_count) as pool:
-            results = pool.map(MultiEvaluator._run_discovery, tasks)
-
-        # Collect results
-        for method, log_name, pn_result, discovery_time in results:
-            self.petri_nets[method][log_name] = pn_result
-            self.times[method][log_name] = discovery_time
-
-    @staticmethod
-    def _run_discovery(args):
-        method, miner, event_log = args
-        print(f"Running discovery for {method} on {event_log.name}")
-        start = time()
-        pn_result = miner(event_log)
-        discovery_time = time() - start
-        return method, event_log.name, pn_result, discovery_time
-        
-    def evaluate_all(self, objective_metric_weights: dict[str, float] = None, cpu_count: int = None):
+    def evaluate_all(self, objective_metric_weights: dict[str, float] = None):
         """
         Evaluate all Petri nets against their corresponding event logs and return a DataFrame with metrics.
         """
