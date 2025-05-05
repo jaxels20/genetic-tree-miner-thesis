@@ -16,6 +16,7 @@ import numpy as np
 from pm4py.sim import play_out, generate_process_tree
 from src.Filtering import Filtering
 import pandas as pd
+from pm4py.algo.discovery.alpha.algorithm import apply as alpha_miner
 
 def time_fast_token_based_replay_without_caching(eventlog, petri_net):
     c_petri_net = petri_net.to_fast_token_based_replay()
@@ -234,29 +235,31 @@ def real_life_evaluation():
             if filename.endswith(".xes"):
                 print(f"Processing {filename}")
                 
-                if "2015" in filename:
+                if "2015-1" not in filename:
                     continue
                 
                 our_event_log = EventLog.load_xes(os.path.join(eventlog_dir, folder, filename))
                 
                 # filter the traces
-                our_event_log = Filtering.filter_eventlog_by_top_percentage_unique(our_event_log, 0.1, include_all_activities=False)
+                our_event_log = Filtering.filter_eventlog_by_top_percentage_unique(our_event_log, 0.05, include_all_activities=False)
                 
                 pm4py_event_log = our_event_log.to_pm4py()
-                pm4py_pt = pm4py_inductive_miner(pm4py_event_log)
-                pm4py_net, init, end = pt_converter.apply(pm4py_pt, variant=pt_converter.Variants.TO_PETRI_NET)
-                
+                #pm4py_pt = pm4py_inductive_miner(pm4py_event_log)
+                #pm4py_net, init, end = pt_converter.apply(pm4py_pt, variant=pt_converter.Variants.TO_PETRI_NET)
+                pm4py_net, init, end = alpha_miner(pm4py_event_log)
                 our_net = PetriNet.from_pm4py(pm4py_net, init, end)
 
                 
                 
                 
                 data[filename] = {"FastTokenBasedReplay (without caching)": time_fast_token_based_replay_without_caching(our_event_log, our_net),
-                                "pm4py": time_pm4py_token_based_replay(our_event_log, our_net),
+                                #"pm4py": time_pm4py_token_based_replay(our_event_log, our_net),
                                 "FastTokenBasedReplay (with prefix caching)": time_fast_token_based_replay_with_prefix_caching(our_event_log, our_net),
                                 "FastTokenBasedReplay (with suffix caching)": time_fast_token_based_replay_with_suffix_caching(our_event_log, our_net),
                                 #"FastTokenBasedReplay (with prefix and suffix caching)" : time_fast_token_based_replay_with_prefix_and_suffix_caching(our_event_log, our_net),
                                 }
+
+
         
     # Plot configuration
     datasets = list(data.keys())

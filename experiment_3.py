@@ -142,9 +142,7 @@ def plot_data(df):
     fig = go.Figure(
         data=go.Parcoords(
             line=dict(
-                color=df["Number of Unique Traces"],
-                colorscale='Viridis',
-                colorbar=dict(title='Num Unique Traces')
+                color='black'
             ),
             dimensions=dimensions,
             labelside='bottom',
@@ -174,8 +172,10 @@ def plot_data(df):
 if __name__ == "__main__":
     # consolidate_csv_files(BEST_PARAMS)
     df = pd.read_csv(INPUT_DIR)
-    # df = df[df['mutator'] == 'Tournament']
-    # df = df[df['dataset'] != '2013-op_0']
+    datasets = df['dataset'].unique()
+    datasets_to_remove = ['Nasa', '2017', '2019', '2020-pl', '2013-i', '2013-op', '2020-ptc', '2020-id', '2020-rfp']
+    datasets_to_keep = [dataset for dataset in datasets if dataset not in datasets_to_remove]
+    df = df[df['dataset'].isin(datasets_to_keep)]
     
     # normalize elite rate, random creation rate and tournament rate by making it sum up to 1 for each row
     total = df['elite_rate'] + df['random_creation_rate'] + df['tournament_rate']
@@ -183,5 +183,4 @@ if __name__ == "__main__":
     df['random_creation_rate'] = df['random_creation_rate'] / total
     df['tournament_rate'] = df['tournament_rate'] / total
     
-    print(df.head(15))
     plot_data(df)

@@ -9,6 +9,7 @@ from pm4py.objects.process_tree.importer.variants import ptml as PM4PyImporter
 import pm4py.visualization.process_tree.visualizer as vis_process_tree
 import pm4py.objects.conversion.process_tree.converter as tree_converter
 import re
+import zss
 
 class Operator(Enum):
     SEQUENCE = 'SEQ'
@@ -99,6 +100,36 @@ class ProcessTree:
             return self.label if self.label else "tau"
         
         return f"{self.operator}({children_str})"
+    
+    def label_or_op(self) -> str:
+        return self.label if self.label is not None else str(self.operator)
+    
+    def to_zss(self) -> zss.Node:
+        """
+        Convert a ProcessTree into a zss.Node tree for Zhang-Shasha distance.
+
+        Each zss.Node stores the ProcessTree's label or operator string,
+        and children are recursively added.
+        """
+        # Use label_or_op() as the node label
+        zss_node = zss.Node(self.label_or_op())
+        for child in self.children:
+            zss_node.addkid(child.to_zss())
+        return zss_node
+    
+    def get_distance(self, other: 'ProcessTree') -> float:
+        """
+        Calculate the Zhang-Shasha distance between two ProcessTree instances.
+
+        Args:
+            other (ProcessTree): The other ProcessTree to compare against.
+
+        Returns:
+            float: The Zhang-Shasha distance.
+        """
+        self_zss = self.to_zss()
+        other_zss = other.to_zss()
+        return zss.simple_distance(self_zss, other_zss)
     
     @staticmethod
     def load(filename: str):

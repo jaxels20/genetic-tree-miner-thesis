@@ -43,6 +43,10 @@ class Discovery:
         )
         pm4py_net, init, end = our_pt.to_pm4py_pn()
         
+        if kwargs.get("return_monitor", False):
+            # Return the monitor as well
+            return PetriNet.from_pm4py(pm4py_net, init, end), ga.monitor
+        
         return PetriNet.from_pm4py(pm4py_net, init, end)
 
     @staticmethod

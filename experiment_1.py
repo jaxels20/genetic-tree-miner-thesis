@@ -1,5 +1,6 @@
 import csv
 import os
+import pandas as pd
 from multiprocessing import cpu_count
 from src.Discovery import Discovery
 from src.Mutator import Mutator, TournamentMutator
@@ -15,6 +16,8 @@ BEST_PARAMS = "./best_parameters.csv"
 STAGNATION_LIMIT = 50
 TIME_LIMIT = 60*5
 CPU_COUNT = 1
+TEST_DATASETS = ['Nasa', '2017', '2019', '2020-pl', '2013-i', '2013-op', '2020-ptc', '2020-id', '2020-rfp']
+OBJECTIVE_WEIGHTS = {"simplicity": 10, "refined_simplicity": 10, "ftr_fitness": 50, "ftr_precision": 30}
 
 def convert_json_to_hyperparamters(hyper_parameters: dict):
     # total = hyper_parameters['random_creation_rate'] + hyper_parameters['mutation_rate'] + hyper_parameters['crossover_rate'] + hyper_parameters['elite_rate']
@@ -79,13 +82,15 @@ def load_hyperparameters_from_csv(path: str):
 
     return convert_json_to_hyperparamters(hyper_parameters)
 
-if __name__ == "__main__":
+def run_experiment():
     dataset_dirs = os.listdir(INPUT_DIR)
     dataset_dirs = [x for x in dataset_dirs if not os.path.isfile(f"{INPUT_DIR}{x}")]
     loader = FileLoader()
     eventlogs = []
 
     for dataset_dir in dataset_dirs:
+        if dataset_dir not in TEST_DATASETS:
+            continue
         xes_file = [f for f in os.listdir(f"{INPUT_DIR}{dataset_dir}") if f.endswith(".xes")]
         
         if len(xes_file) == 0:
@@ -107,12 +112,26 @@ if __name__ == "__main__":
             time_limit=TIME_LIMIT,
             percentage_of_log=0.05,
             **hyperparams,
-        ),
-        "Inductive Miner": lambda log: Discovery.inductive_miner(log)
+        )
     }
     
     # Run the methods on each event log
     multi_evaluator = MultiEvaluator(eventlogs, methods_dict, CPU_COUNT)
-    results_df = multi_evaluator.evaluate_all({"simplicity": 10, "refined_simplicity": 10, "ftr_fitness": 50, "ftr_precision": 30})
-    results_df.to_csv(OUTPUT_DIR + "results.csv", index=False)
-    results_df[["miner","dataset", "simplicity","generalization","ftr_fitness","log_fitness","precision","objective_fitness","time", "f1_score"]].to_latex(OUTPUT_DIR + "results.tex", index=False, float_format="%.2f")
+    results_df = multi_evaluator.evaluate_all(OBJECTIVE_WEIGHTS)
+    results_df.to_csv(OUTPUT_DIR + "results_genetic.csv", index=False)
+    
+    
+def consolidate_results(genetic_csv, split_csv, inductive_csv):
+    split_results = pd.read_csv(split_csv)
+    inductive_results = pd.read_csv(inductive_csv)
+    genetic_results = pd.read_csv(genetic_csv)
+    
+    # Merge the results with results_df
+    results_df = pd.concat([genetic_results, inductive_results, split_results], ignore_index=True) 
+    
+    results_df.to_csv(OUTPUT_DIR + "results_all.csv", index=False)
+    MultiEvaluator.save_df_to_pdf(results_df, OUTPUT_DIR + "results_all.pdf")
+    
+if __name__ == "__main__":
+    run_experiment()
+    consolidate_results(genetic_csv=OUTPUT_DIR + "results_genetic.csv", split_csv=OUTPUT_DIR + "results_split.csv", inductive_csv=OUTPUT_DIR + "results_inductive.csv")
