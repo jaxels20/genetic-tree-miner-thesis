@@ -6,6 +6,7 @@ import tempfile
 from time import time
 import pickle
 from collections import defaultdict
+from multiprocessing import Pool, cpu_count
 
 from src.EventLog import EventLog
 from src.Discovery import Discovery
@@ -136,7 +137,7 @@ class SingleEvaluator:
 # This function discovers a process model from an event log 
 # and evaluates it against the event log (calculates the metrics)
 class MultiEvaluator:
-    def __init__(self, event_logs: list[EventLog], methods_dict: dict):
+    def __init__(self, event_logs: list[EventLog], methods_dict: dict, cpu_count: int = 1):
         """
         Initialize with dictionaries of Petri nets and event logs.
         Args:
@@ -145,8 +146,9 @@ class MultiEvaluator:
         """
         self.event_logs = event_logs # list of EventLog objects
         self.petri_nets = {method: {} for method in methods_dict.keys()} # dictionary of Petri nets with keys as discovery methods 
-        self.times = {method: {} for method in methods_dict.keys()} # dictionary of times with keys as discovery methods
-        # and values a dict of event log names and PetriNet objects
+        self.times = {method: {} for method in methods_dict.keys()} # dictionary of times with keys as discovery methods and values a dict of event log names and PetriNet objects
+        self.cpu_count = cpu_count
+    
         for method, miner in methods_dict.items():
             for event_log in self.event_logs:
                 print("Running discovery for", method, "on", event_log.name)
@@ -155,27 +157,37 @@ class MultiEvaluator:
                 discovery_time = time() - start
                 self.petri_nets[method][event_log.name] = pn_result
                 self.times[method][event_log.name] = discovery_time
+
         
-    def evaluate_all(self, objective_metric_weights: dict[str, float]=None):
+    def evaluate_all(self, objective_metric_weights: dict[str, float] = None):
         """
         Evaluate all Petri nets against their corresponding event logs and return a DataFrame with metrics.
         """
-        results = []
-        
-        # Iterate through each miner type and dataset in petri_nets
+        tasks = []
+
         for miner, dataset_pn_pairs in self.petri_nets.items():
             for dataset, pn in dataset_pn_pairs.items():
-                i = next((i for i, el in enumerate(self.event_logs) if el.name == dataset))
-                event_log = self.event_logs[i]
-                evaluator = SingleEvaluator(pn, event_log)
-                res = {k: round(v, 3) for k, v in evaluator.get_evaluation_metrics(objective_metric_weights).items()}
-                res["dataset"] = dataset
-                res["miner"] = miner
-                res["time"] = self.times[miner][dataset]   # add timing results
-                res["ftr_fitness"] = evaluator.get_ftr_fitness(objective_metric_weights)
-                results.append(res)
-        
+                # Find corresponding event log
+                event_log = next(el for el in self.event_logs if el.name == dataset)
+                discovery_time = self.times[miner][dataset]
+                tasks.append((miner, dataset, pn, event_log, discovery_time, objective_metric_weights))
+
+        # Use multiprocessing to evaluate in parallel
+        with Pool(processes=self.cpu_count) as pool:
+            results = pool.map(MultiEvaluator._evaluate_single, tasks)
+
         return pd.DataFrame(results)
+
+    @staticmethod
+    def _evaluate_single(args):
+        miner, dataset, pn, event_log, discovery_time, objective_metric_weights = args
+        evaluator = SingleEvaluator(pn, event_log)
+        res = {k: round(v, 3) for k, v in evaluator.get_evaluation_metrics(objective_metric_weights).items()}
+        res["dataset"] = dataset
+        res["miner"] = miner
+        res["time"] = discovery_time
+        res["ftr_fitness"] = evaluator.get_ftr_fitness(objective_metric_weights)
+        return res
 
     def export_petri_nets(self, output_dir, format="png"):
         """
@@ -190,12 +202,13 @@ class MultiEvaluator:
                 else:
                     raise ValueError(f"Invalid format: {format}. Must be 'png' or 'pdf'.")
 
-    def save_df_to_pdf(self, df, pdf_path):
+    @staticmethod
+    def save_df_to_pdf(df, pdf_path):
         """
         Save the DataFrame to a single PDF figure with all datasets grouped.
         """
         table_data = []
-        column_headers = ["Dataset", "Method", "Replay Fitness", "Precision", "Generalization", "Simplicity", "Objective fitness", "Time"]
+        column_headers = ["Dataset", "Method", "F1-score", "Replay Fitness", "FTR Fitness", "Precision", "Generalization", "Simplicity", "Objective fitness", "Time"]
         grouped = df.groupby('dataset')
         
         # Assing colors per dataset
@@ -211,7 +224,9 @@ class MultiEvaluator:
                 table_data.append([
                     dataset if i == 0 else "",  # Show dataset name only in first row
                     row['miner'],
+                    f"{row['f1_score']:.3f}",
                     f"{row['log_fitness']:.3f}",
+                    f"{row['ftr_fitness']:.3f}",
                     f"{row['precision']:.3f}",
                     f"{row['generalization']:.3f}",
                     f"{row['simplicity']:.3f}",
@@ -221,7 +236,7 @@ class MultiEvaluator:
                 ])
 
         # Create the figure and add the table
-        fig, ax = plt.subplots(figsize=(12, 6))
+        fig, ax = plt.subplots(figsize=(20, len(table_data) * 0.4 + 1))  # dynamic height
         ax.axis('off')
 
         # Add the table to the figure
@@ -244,7 +259,7 @@ class MultiEvaluator:
             cell.set_text_props(weight='bold')
         
         # Adjust row heights
-        row_heights = 0.06  # Adjust this value to control row height
+        row_heights = 0.04  # Adjust this value to control row height
         for i in range(len(table_data) + 1):  # +1 for header row
             for j in range(len(column_headers)):
                 cell = table[i, j]
