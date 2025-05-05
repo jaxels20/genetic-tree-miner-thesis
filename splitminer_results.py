@@ -18,8 +18,8 @@ if __name__ == "__main__":
 
     rows = []
     for dataset_dir in dataset_dirs:
-        #print(f"Processing dataset: {dataset_dir}")
-        if dataset_dir not in ["2020-ptc"]:  # delete later
+        print(f"Processing dataset: {dataset_dir}")
+        if dataset_dir in ["2019"]:  # delete later
             continue
         xes_file = [f for f in os.listdir(f"{INPUT_DIR}{dataset_dir}") if f.endswith(".xes")]
         if len(xes_file) == 0:
@@ -29,9 +29,9 @@ if __name__ == "__main__":
             our_pn = PetriNet.from_pnml(f"{INPUT_PN_DIR}{dataset_dir}.pnml")
             pm4py_pn, im, fm = our_pn.to_pm4py()
 
-            our_pn.visualize(f"{OUTPUT_DIR}{dataset_dir}.png")
-            pm4py_pt = convert_to_pt(pm4py_pn, im, fm)
-            our_pt = ProcessTree.from_pm4py(pm4py_pt)
+            #our_pn.visualize(f"{OUTPUT_DIR}{dataset_dir}.png")
+            #pm4py_pt = convert_to_pt(pm4py_pn, im, fm)
+            #our_pt = ProcessTree.from_pm4py(pm4py_pt)
 
             objective = Objective({"simplicity": 10, "refined_simplicity": 10, "ftr_fitness": 50, "ftr_precision": 30})
             objective.set_event_log(our_log)
@@ -44,7 +44,7 @@ if __name__ == "__main__":
             percentage_of_fitting_traces = objective.percentage_of_fitting(pm4py_pn, im, fm)
             precision = objective.precision(pm4py_pn, im, fm)
             f1_score = 2 * (precision * log_fitness) / (precision + log_fitness + 1e-09)
-            objective_fitness = objective.fitness(our_pt)
+            #objective_fitness = objective.fitness(our_pt)
             
             row = [
                 round(simplicity, 3),
@@ -54,11 +54,11 @@ if __name__ == "__main__":
                 round(log_fitness, 3),
                 round(percentage_of_fitting_traces, 3),
                 round(precision, 3),
-                round(objective_fitness, 3),
+                "-",
                 round(f1_score, 3),
                 dataset_dir,
                 "Split Miner",  # or any miner name you used
-                "0"
+                "-"
             ]
             rows.append(row)
             #print(f"Processed {dataset_dir} with {xes_file[0]}")

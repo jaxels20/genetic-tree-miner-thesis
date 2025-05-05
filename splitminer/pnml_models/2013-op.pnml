@@ -5,9 +5,9 @@
       <text></text>
     </name>
     <page id="n0">
-      <place id="exi_node5">
+      <place id="ent_node0">
         <name>
-          <text>exi_node5</text>
+          <text>ent_node0</text>
         </name>
       </place>
       <place id="source">
@@ -18,45 +18,45 @@
           <text>1</text>
         </initialMarking>
       </place>
+      <place id="exi_node5">
+        <name>
+          <text>exi_node5</text>
+        </name>
+      </place>
       <place id="sink">
         <name>
           <text>sink</text>
         </name>
       </place>
-      <place id="ent_node0">
+      <transition id="node6">
         <name>
-          <text>ent_node0</text>
+          <text>Queued</text>
         </name>
-      </place>
+      </transition>
       <transition id="node1">
         <name>
           <text>Completed</text>
         </name>
       </transition>
-      <transition id="5bd2aa05-6bf0-47f1-afd6-0c956c333dda">
+      <transition id="7ad4fffc-242c-4772-aecc-0e622fdbd99f">
         <name>
-          <text>5bd2aa05-6bf0-47f1-afd6-0c956c333dda</text>
+          <text>7ad4fffc-242c-4772-aecc-0e622fdbd99f</text>
         </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="22209d26-1197-4009-8dc8-462bb014dc2c"/>
-      </transition>
-      <transition id="node6">
-        <name>
-          <text>Queued</text>
-        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="545d6427-085e-4796-89c5-011d35e84aca"/>
       </transition>
       <transition id="node3">
         <name>
           <text>Accepted</text>
         </name>
       </transition>
-      <arc id="130751676565120" source="node1" target="sink"/>
-      <arc id="130751676565504" source="ent_node0" target="node3"/>
-      <arc id="130751676565600" source="exi_node5" target="node6"/>
-      <arc id="130751676565408" source="exi_node5" target="node1"/>
-      <arc id="130751676564928" source="node3" target="exi_node5"/>
-      <arc id="130751674271312" source="source" target="5bd2aa05-6bf0-47f1-afd6-0c956c333dda"/>
-      <arc id="130751676565024" source="5bd2aa05-6bf0-47f1-afd6-0c956c333dda" target="ent_node0"/>
-      <arc id="130751676564448" source="node6" target="ent_node0"/>
+      <arc id="132964386842256" source="ent_node0" target="node3"/>
+      <arc id="132964386834480" source="source" target="7ad4fffc-242c-4772-aecc-0e622fdbd99f"/>
+      <arc id="132964386841392" source="7ad4fffc-242c-4772-aecc-0e622fdbd99f" target="ent_node0"/>
+      <arc id="132964386842160" source="exi_node5" target="node6"/>
+      <arc id="132964386840912" source="node6" target="ent_node0"/>
+      <arc id="132964386842064" source="exi_node5" target="node1"/>
+      <arc id="132964386841680" source="node1" target="sink"/>
+      <arc id="132964386841968" source="node3" target="exi_node5"/>
     </page>
     <finalmarkings>
       <marking>

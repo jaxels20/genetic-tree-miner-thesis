@@ -5,6 +5,11 @@
       <text></text>
     </name>
     <page id="n0">
+      <place id="sink">
+        <name>
+          <text>sink</text>
+        </name>
+      </place>
       <place id="source">
         <name>
           <text>source</text>
@@ -13,30 +18,25 @@
           <text>1</text>
         </initialMarking>
       </place>
-      <place id="exi_node6">
-        <name>
-          <text>exi_node6</text>
-        </name>
-      </place>
       <place id="ent_node8">
         <name>
           <text>ent_node8</text>
         </name>
       </place>
-      <place id="sink">
+      <place id="exi_node6">
         <name>
-          <text>sink</text>
+          <text>exi_node6</text>
         </name>
       </place>
       <transition id="node8">
         <name>
           <text>node8</text>
         </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="1005c7e0-8f81-4b7b-ae56-0ea5eb087754"/>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="78d830da-43a2-4bad-886a-92fefd7abf10"/>
       </transition>
-      <transition id="node2">
+      <transition id="node7">
         <name>
-          <text>UNKNOWN</text>
+          <text>activity 505</text>
         </name>
       </transition>
       <transition id="node0">
@@ -44,19 +44,25 @@
           <text>activity 21016</text>
         </name>
       </transition>
-      <transition id="node9">
-        <name>
-          <text>activity 181118</text>
-        </name>
-      </transition>
       <transition id="node1">
         <name>
           <text>activity 13776</text>
         </name>
       </transition>
-      <transition id="node7">
+      <transition id="f4130896-206a-4691-b9c9-572828a842dd">
         <name>
-          <text>activity 505</text>
+          <text>f4130896-206a-4691-b9c9-572828a842dd</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="d5245f4e-c061-4020-9e50-e3d3bd4b6de2"/>
+      </transition>
+      <transition id="node9">
+        <name>
+          <text>activity 181118</text>
+        </name>
+      </transition>
+      <transition id="node2">
+        <name>
+          <text>UNKNOWN</text>
         </name>
       </transition>
       <transition id="node5">
@@ -64,28 +70,22 @@
           <text>activity 167406</text>
         </name>
       </transition>
-      <transition id="1dc36029-593f-4527-8bb1-5d6566afdad5">
-        <name>
-          <text>1dc36029-593f-4527-8bb1-5d6566afdad5</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="02d239be-0e18-4ed8-bae5-e04705f57680"/>
-      </transition>
-      <arc id="130751674883616" source="node1" target="ent_node8"/>
-      <arc id="130751675111984" source="node5" target="ent_node8"/>
-      <arc id="130751674884672" source="exi_node6" target="node0"/>
-      <arc id="130751674884192" source="1dc36029-593f-4527-8bb1-5d6566afdad5" target="exi_node6"/>
-      <arc id="130751675112080" source="node2" target="ent_node8"/>
-      <arc id="130751674884768" source="exi_node6" target="node9"/>
-      <arc id="130751674884288" source="node8" target="sink"/>
-      <arc id="130751674883808" source="node9" target="ent_node8"/>
-      <arc id="130751674884864" source="exi_node6" target="node1"/>
-      <arc id="130751674884384" source="node7" target="ent_node8"/>
-      <arc id="130751674884960" source="exi_node6" target="node2"/>
-      <arc id="130751674882944" source="node0" target="ent_node8"/>
-      <arc id="130751674877376" source="source" target="1dc36029-593f-4527-8bb1-5d6566afdad5"/>
-      <arc id="130751674878912" source="ent_node8" target="node8"/>
-      <arc id="130751674885056" source="exi_node6" target="node5"/>
-      <arc id="130751674884576" source="exi_node6" target="node7"/>
+      <arc id="132964388000768" source="exi_node6" target="node0"/>
+      <arc id="132964392764480" source="ent_node8" target="node8"/>
+      <arc id="132964388147792" source="node9" target="ent_node8"/>
+      <arc id="132964387996784" source="exi_node6" target="node7"/>
+      <arc id="132964392765584" source="source" target="f4130896-206a-4691-b9c9-572828a842dd"/>
+      <arc id="132964388143760" source="node0" target="ent_node8"/>
+      <arc id="132964388146352" source="node7" target="ent_node8"/>
+      <arc id="132964388147888" source="node1" target="ent_node8"/>
+      <arc id="132964387996352" source="node8" target="sink"/>
+      <arc id="132964388002496" source="exi_node6" target="node9"/>
+      <arc id="132964388146928" source="node5" target="ent_node8"/>
+      <arc id="132964388009216" source="exi_node6" target="node2"/>
+      <arc id="132964388005664" source="exi_node6" target="node1"/>
+      <arc id="132964388001632" source="f4130896-206a-4691-b9c9-572828a842dd" target="exi_node6"/>
+      <arc id="132964388007824" source="exi_node6" target="node5"/>
+      <arc id="132964388000672" source="node2" target="ent_node8"/>
     </page>
     <finalmarkings>
       <marking>

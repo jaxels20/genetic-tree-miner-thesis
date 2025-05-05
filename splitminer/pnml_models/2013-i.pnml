@@ -5,11 +5,6 @@
       <text></text>
     </name>
     <page id="n0">
-      <place id="ent_node1">
-        <name>
-          <text>ent_node1</text>
-        </name>
-      </place>
       <place id="exi_node0">
         <name>
           <text>exi_node0</text>
@@ -20,9 +15,9 @@
           <text>sink</text>
         </name>
       </place>
-      <place id="exi_node8">
+      <place id="ent_node1">
         <name>
-          <text>exi_node8</text>
+          <text>ent_node1</text>
         </name>
       </place>
       <place id="source">
@@ -33,15 +28,14 @@
           <text>1</text>
         </initialMarking>
       </place>
-      <transition id="sfl_edge5">
+      <place id="exi_node8">
         <name>
-          <text>sfl_edge5</text>
+          <text>exi_node8</text>
         </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="ff72d648-c605-4537-adce-89acab8f3e53"/>
-      </transition>
-      <transition id="node6">
+      </place>
+      <transition id="node7">
         <name>
-          <text>Accepted</text>
+          <text>Queued</text>
         </name>
       </transition>
       <transition id="node2">
@@ -49,34 +43,40 @@
           <text>Unmatched</text>
         </name>
       </transition>
-      <transition id="7bc15cc4-4b77-4076-bc26-31e1a07a8305">
-        <name>
-          <text>7bc15cc4-4b77-4076-bc26-31e1a07a8305</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="31dfe698-2f6d-4b12-985c-23c9bc2a2cf0"/>
-      </transition>
       <transition id="node3">
         <name>
           <text>Completed</text>
         </name>
       </transition>
-      <transition id="node7">
+      <transition id="sfl_edge5">
         <name>
-          <text>Queued</text>
+          <text>sfl_edge5</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="f2780c14-c622-43f1-96c8-1fa6b7d10363"/>
+      </transition>
+      <transition id="fab4abdf-27e3-4258-a75f-14ea438cd347">
+        <name>
+          <text>fab4abdf-27e3-4258-a75f-14ea438cd347</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="89948242-18e7-4aa3-b629-d38b74472c4f"/>
+      </transition>
+      <transition id="node6">
+        <name>
+          <text>Accepted</text>
         </name>
       </transition>
-      <arc id="130751675865216" source="exi_node8" target="sfl_edge5"/>
-      <arc id="130751675865984" source="7bc15cc4-4b77-4076-bc26-31e1a07a8305" target="ent_node1"/>
-      <arc id="130751675873808" source="exi_node8" target="node2"/>
-      <arc id="130751675864592" source="sfl_edge5" target="sink"/>
-      <arc id="130751675867328" source="source" target="7bc15cc4-4b77-4076-bc26-31e1a07a8305"/>
-      <arc id="130751675872848" source="exi_node0" target="node3"/>
-      <arc id="130751675865792" source="ent_node1" target="node6"/>
-      <arc id="130751675874768" source="node6" target="exi_node0"/>
-      <arc id="130751675865936" source="node7" target="ent_node1"/>
-      <arc id="130751675864400" source="node3" target="exi_node8"/>
-      <arc id="130751675868528" source="node2" target="ent_node1"/>
-      <arc id="130751675865840" source="exi_node0" target="node7"/>
+      <arc id="132964392412384" source="ent_node1" target="node6"/>
+      <arc id="132964392403072" source="node2" target="ent_node1"/>
+      <arc id="132964391584016" source="source" target="fab4abdf-27e3-4258-a75f-14ea438cd347"/>
+      <arc id="132964392411808" source="sfl_edge5" target="sink"/>
+      <arc id="132964392403744" source="node7" target="ent_node1"/>
+      <arc id="132964392409504" source="exi_node0" target="node3"/>
+      <arc id="132964392403504" source="fab4abdf-27e3-4258-a75f-14ea438cd347" target="ent_node1"/>
+      <arc id="132964392409024" source="exi_node0" target="node7"/>
+      <arc id="132964392411712" source="node6" target="exi_node0"/>
+      <arc id="132964392411232" source="exi_node8" target="sfl_edge5"/>
+      <arc id="132964392403696" source="node3" target="exi_node8"/>
+      <arc id="132964392411616" source="exi_node8" target="node2"/>
     </page>
     <finalmarkings>
       <marking>

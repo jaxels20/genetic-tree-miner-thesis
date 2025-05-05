@@ -5,64 +5,6 @@
       <text></text>
     </name>
     <page id="n0">
-      <place id="ent_node20">
-        <name>
-          <text>ent_node20</text>
-        </name>
-      </place>
-      <place id="ent_node3">
-        <name>
-          <text>ent_node3</text>
-        </name>
-      </place>
-      <place id="ent_node10">
-        <name>
-          <text>ent_node10</text>
-        </name>
-      </place>
-      <place id="ent_node21">
-        <name>
-          <text>ent_node21</text>
-        </name>
-      </place>
-      <place id="ent_node9">
-        <name>
-          <text>ent_node9</text>
-        </name>
-      </place>
-      <place id="exi_node18">
-        <name>
-          <text>exi_node18</text>
-        </name>
-      </place>
-      <place id="ent_node14">
-        <name>
-          <text>ent_node14</text>
-        </name>
-      </place>
-      <place id="ent_node4">
-        <name>
-          <text>ent_node4</text>
-        </name>
-      </place>
-      <place id="exi_node15">
-        <name>
-          <text>exi_node15</text>
-        </name>
-      </place>
-      <place id="source">
-        <name>
-          <text>source</text>
-        </name>
-        <initialMarking>
-          <text>1</text>
-        </initialMarking>
-      </place>
-      <place id="ent_node2">
-        <name>
-          <text>ent_node2</text>
-        </name>
-      </place>
       <place id="sink">
         <name>
           <text>sink</text>
@@ -73,75 +15,67 @@
           <text>ent_node13</text>
         </name>
       </place>
-      <transition id="node4">
+      <place id="ent_node9">
         <name>
-          <text>LacticAcid</text>
+          <text>ent_node9</text>
         </name>
-      </transition>
+      </place>
+      <place id="ent_node3">
+        <name>
+          <text>ent_node3</text>
+        </name>
+      </place>
+      <place id="ent_node4">
+        <name>
+          <text>ent_node4</text>
+        </name>
+      </place>
+      <place id="ent_node2">
+        <name>
+          <text>ent_node2</text>
+        </name>
+      </place>
+      <place id="ent_node14">
+        <name>
+          <text>ent_node14</text>
+        </name>
+      </place>
+      <place id="source">
+        <name>
+          <text>source</text>
+        </name>
+        <initialMarking>
+          <text>1</text>
+        </initialMarking>
+      </place>
+      <place id="ent_node10">
+        <name>
+          <text>ent_node10</text>
+        </name>
+      </place>
+      <place id="exi_node18">
+        <name>
+          <text>exi_node18</text>
+        </name>
+      </place>
+      <place id="ent_node20">
+        <name>
+          <text>ent_node20</text>
+        </name>
+      </place>
+      <place id="ent_node21">
+        <name>
+          <text>ent_node21</text>
+        </name>
+      </place>
+      <place id="exi_node15">
+        <name>
+          <text>exi_node15</text>
+        </name>
+      </place>
       <transition id="node6">
         <name>
           <text>Release D</text>
-        </name>
-      </transition>
-      <transition id="node2">
-        <name>
-          <text>node2</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="50bab16b-715b-4c23-b388-f403c4422df3"/>
-      </transition>
-      <transition id="node12">
-        <name>
-          <text>Admission IC</text>
-        </name>
-      </transition>
-      <transition id="node14">
-        <name>
-          <text>Return ER</text>
-        </name>
-      </transition>
-      <transition id="node16">
-        <name>
-          <text>Release E</text>
-        </name>
-      </transition>
-      <transition id="node13">
-        <name>
-          <text>ER Triage</text>
-        </name>
-      </transition>
-      <transition id="node11">
-        <name>
-          <text>ER Registration</text>
-        </name>
-      </transition>
-      <transition id="node7">
-        <name>
-          <text>Leucocytes</text>
-        </name>
-      </transition>
-      <transition id="node20">
-        <name>
-          <text>CRP</text>
-        </name>
-      </transition>
-      <transition id="node5">
-        <name>
-          <text>Release C</text>
-        </name>
-      </transition>
-      <transition id="node0">
-        <name>
-          <text>Release B</text>
-        </name>
-      </transition>
-      <transition id="node3">
-        <name>
-          <text>ER Sepsis Triage</text>
-        </name>
-      </transition>
-      <transition id="node19">
-        <name>
-          <text>Admission NC</text>
         </name>
       </transition>
       <transition id="node8">
@@ -149,9 +83,24 @@
           <text>Release A</text>
         </name>
       </transition>
+      <transition id="node20">
+        <name>
+          <text>CRP</text>
+        </name>
+      </transition>
+      <transition id="node12">
+        <name>
+          <text>Admission IC</text>
+        </name>
+      </transition>
       <transition id="node21">
         <name>
           <text>IV Liquid</text>
+        </name>
+      </transition>
+      <transition id="node0">
+        <name>
+          <text>Release B</text>
         </name>
       </transition>
       <transition id="node9">
@@ -159,40 +108,91 @@
           <text>IV Antibiotics</text>
         </name>
       </transition>
-      <arc id="130751682355200" source="ent_node3" target="node3"/>
-      <arc id="130751680429088" source="exi_node15" target="node8"/>
-      <arc id="130751680426016" source="node0" target="ent_node2"/>
-      <arc id="130751682352704" source="ent_node2" target="node2"/>
-      <arc id="130751680427072" source="node4" target="ent_node10"/>
-      <arc id="130751680428128" source="node13" target="ent_node3"/>
-      <arc id="130751680425056" source="node20" target="exi_node15"/>
-      <arc id="130751680427648" source="node21" target="ent_node9"/>
-      <arc id="130751680429184" source="source" target="node11"/>
-      <arc id="130751682355872" source="ent_node21" target="node21"/>
-      <arc id="130751680425632" source="node16" target="ent_node2"/>
-      <arc id="130751680427168" source="node5" target="ent_node2"/>
-      <arc id="130751680428704" source="exi_node15" target="node16"/>
-      <arc id="130751682354864" source="ent_node4" target="node4"/>
-      <arc id="130751680428224" source="node2" target="sink"/>
-      <arc id="130751680429280" source="ent_node10" target="node7"/>
-      <arc id="130751680424672" source="node6" target="ent_node2"/>
-      <arc id="130751680428800" source="exi_node18" target="node19"/>
-      <arc id="130751680425728" source="node3" target="ent_node21"/>
-      <arc id="130751680428320" source="node9" target="exi_node18"/>
-      <arc id="130751680426784" source="node14" target="ent_node2"/>
-      <arc id="130751680429376" source="exi_node15" target="node5"/>
-      <arc id="130751682354528" source="ent_node13" target="node13"/>
-      <arc id="130751680428896" source="exi_node15" target="node0"/>
-      <arc id="130751680427360" source="node7" target="ent_node20"/>
-      <arc id="130751682353520" source="ent_node20" target="node20"/>
-      <arc id="130751680426880" source="node12" target="ent_node4"/>
-      <arc id="130751680428416" source="node11" target="ent_node13"/>
-      <arc id="130751682356640" source="ent_node9" target="node9"/>
-      <arc id="130751680424864" source="node8" target="ent_node14"/>
-      <arc id="130751680429472" source="exi_node15" target="node6"/>
-      <arc id="130751682360768" source="ent_node14" target="node14"/>
-      <arc id="130751680428992" source="exi_node18" target="node12"/>
-      <arc id="130751680426976" source="node19" target="ent_node10"/>
+      <transition id="node16">
+        <name>
+          <text>Release E</text>
+        </name>
+      </transition>
+      <transition id="node19">
+        <name>
+          <text>Admission NC</text>
+        </name>
+      </transition>
+      <transition id="node13">
+        <name>
+          <text>ER Triage</text>
+        </name>
+      </transition>
+      <transition id="node3">
+        <name>
+          <text>ER Sepsis Triage</text>
+        </name>
+      </transition>
+      <transition id="node4">
+        <name>
+          <text>LacticAcid</text>
+        </name>
+      </transition>
+      <transition id="node2">
+        <name>
+          <text>node2</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="1516f88e-6c37-4ae1-bfee-541dca491c10"/>
+      </transition>
+      <transition id="node7">
+        <name>
+          <text>Leucocytes</text>
+        </name>
+      </transition>
+      <transition id="node14">
+        <name>
+          <text>Return ER</text>
+        </name>
+      </transition>
+      <transition id="node11">
+        <name>
+          <text>ER Registration</text>
+        </name>
+      </transition>
+      <transition id="node5">
+        <name>
+          <text>Release C</text>
+        </name>
+      </transition>
+      <arc id="132964392647184" source="exi_node15" target="node16"/>
+      <arc id="132964392643632" source="node13" target="ent_node3"/>
+      <arc id="132964392509008" source="ent_node21" target="node21"/>
+      <arc id="132964392647760" source="exi_node15" target="node5"/>
+      <arc id="132964392647280" source="exi_node15" target="node0"/>
+      <arc id="132964392507520" source="ent_node3" target="node3"/>
+      <arc id="132964392646800" source="node2" target="sink"/>
+      <arc id="132964392645264" source="node9" target="exi_node18"/>
+      <arc id="132964392643728" source="node3" target="ent_node21"/>
+      <arc id="132964392647856" source="exi_node15" target="node8"/>
+      <arc id="132964392646320" source="node19" target="ent_node10"/>
+      <arc id="132964392514768" source="ent_node9" target="node9"/>
+      <arc id="132964392647376" source="exi_node18" target="node19"/>
+      <arc id="132964392645360" source="node7" target="ent_node20"/>
+      <arc id="132964392646896" source="node6" target="ent_node2"/>
+      <arc id="132964392508672" source="ent_node4" target="node4"/>
+      <arc id="132964392511744" source="ent_node2" target="node2"/>
+      <arc id="132964392646416" source="node5" target="ent_node2"/>
+      <arc id="132964392647472" source="exi_node18" target="node12"/>
+      <arc id="132964392643920" source="node4" target="ent_node10"/>
+      <arc id="132964392645456" source="node20" target="exi_node15"/>
+      <arc id="132964392646992" source="node12" target="ent_node4"/>
+      <arc id="132964392513904" source="ent_node13" target="node13"/>
+      <arc id="132964392646512" source="node16" target="ent_node2"/>
+      <arc id="132964392644976" source="node8" target="ent_node14"/>
+      <arc id="132964392647568" source="source" target="node11"/>
+      <arc id="132964392509344" source="ent_node14" target="node14"/>
+      <arc id="132964392647088" source="ent_node10" target="node7"/>
+      <arc id="132964392644016" source="node0" target="ent_node2"/>
+      <arc id="132964392513472" source="ent_node20" target="node20"/>
+      <arc id="132964392646608" source="node11" target="ent_node13"/>
+      <arc id="132964392643536" source="node21" target="ent_node9"/>
+      <arc id="132964392647664" source="exi_node15" target="node6"/>
+      <arc id="132964392646128" source="node14" target="ent_node2"/>
     </page>
     <finalmarkings>
       <marking>

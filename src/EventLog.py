@@ -49,6 +49,10 @@ class Trace:
     def __repr__(self):
         return f"Trace(trace_id={self.trace_id}, events={len(self.events)})"
 
+    def __len__(self):
+        """Return the number of events in the trace."""
+        return len(self.events)
+
 class EventLog:
     """
     Class representing an event log.

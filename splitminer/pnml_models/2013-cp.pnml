@@ -5,6 +5,21 @@
       <text></text>
     </name>
     <page id="n0">
+      <place id="ent_node0">
+        <name>
+          <text>ent_node0</text>
+        </name>
+      </place>
+      <place id="sink">
+        <name>
+          <text>sink</text>
+        </name>
+      </place>
+      <place id="ent_node6">
+        <name>
+          <text>ent_node6</text>
+        </name>
+      </place>
       <place id="exi_node4">
         <name>
           <text>exi_node4</text>
@@ -18,29 +33,9 @@
           <text>1</text>
         </initialMarking>
       </place>
-      <place id="sink">
+      <transition id="node2">
         <name>
-          <text>sink</text>
-        </name>
-      </place>
-      <place id="ent_node0">
-        <name>
-          <text>ent_node0</text>
-        </name>
-      </place>
-      <place id="ent_node6">
-        <name>
-          <text>ent_node6</text>
-        </name>
-      </place>
-      <transition id="node7">
-        <name>
-          <text>Unmatched</text>
-        </name>
-      </transition>
-      <transition id="node0">
-        <name>
-          <text>Completed</text>
+          <text>Queued</text>
         </name>
       </transition>
       <transition id="node5">
@@ -48,27 +43,32 @@
           <text>Accepted</text>
         </name>
       </transition>
-      <transition id="node2">
+      <transition id="0009c89a-c1e3-4ecc-b5c9-6e0de1fefb2a">
         <name>
-          <text>Queued</text>
+          <text>0009c89a-c1e3-4ecc-b5c9-6e0de1fefb2a</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="c30f5d8e-9a21-468f-b966-c2852dc7154d"/>
+      </transition>
+      <transition id="node0">
+        <name>
+          <text>Completed</text>
         </name>
       </transition>
-      <transition id="159da279-fee6-48df-aa85-77736fb800d8">
+      <transition id="node7">
         <name>
-          <text>159da279-fee6-48df-aa85-77736fb800d8</text>
+          <text>Unmatched</text>
         </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="f776c9e2-9903-4c4f-a496-e45a772ced03"/>
       </transition>
-      <arc id="130751674128128" source="ent_node6" target="node5"/>
-      <arc id="130751674345776" source="ent_node0" target="node0"/>
-      <arc id="130751674347312" source="source" target="159da279-fee6-48df-aa85-77736fb800d8"/>
-      <arc id="130751674122416" source="159da279-fee6-48df-aa85-77736fb800d8" target="ent_node6"/>
-      <arc id="130751674123328" source="node0" target="sink"/>
-      <arc id="130751674122320" source="node5" target="exi_node4"/>
-      <arc id="130751674126688" source="exi_node4" target="node2"/>
-      <arc id="130751674135664" source="exi_node4" target="node7"/>
-      <arc id="130751674137584" source="node7" target="ent_node0"/>
-      <arc id="130751674127600" source="node2" target="ent_node6"/>
+      <arc id="132964389383936" source="source" target="0009c89a-c1e3-4ecc-b5c9-6e0de1fefb2a"/>
+      <arc id="132964389376784" source="exi_node4" target="node7"/>
+      <arc id="132964389376640" source="0009c89a-c1e3-4ecc-b5c9-6e0de1fefb2a" target="ent_node6"/>
+      <arc id="132964389377024" source="node0" target="sink"/>
+      <arc id="132964389376928" source="exi_node4" target="node2"/>
+      <arc id="132964389376544" source="ent_node6" target="node5"/>
+      <arc id="132964389377840" source="node2" target="ent_node6"/>
+      <arc id="132964389289424" source="ent_node0" target="node0"/>
+      <arc id="132964389376736" source="node5" target="exi_node4"/>
+      <arc id="132964389377648" source="node7" target="ent_node0"/>
     </page>
     <finalmarkings>
       <marking>
