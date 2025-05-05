@@ -130,7 +130,19 @@ class Population:
                 self.remove_tree(tree)
                 removed += 1
         return removed
-                    
+    
+    def diversity(self) -> float:
+        """
+        Returns the diversity of the population
+        """
+        tree_pairs = [(self.trees[i], self.trees[j]) for i in range(len(self.trees)) for j in range(i + 1, len(self.trees))]
+        distances = [tree1.get_distance(tree2) for tree1, tree2 in tree_pairs]
+        
+        if not distances:
+            raise ValueError("Population must contain at least two trees to calculate diversity.")
+        
+        return sum(distances) / len(distances)
+        
 
 if __name__ == "__main__":
     pop = Population([ProcessTree.from_string("AND(SEQ(B,C),AND(B,C),A,D)"), ProcessTree.from_string("SEQ(SEQ(A,B),O(C,B),D)"),ProcessTree.from_string("SEQ(SEQ(A,B),O(C,B),D)")])

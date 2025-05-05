@@ -12,11 +12,10 @@ from experiment_1 import load_hyperparameters_from_csv
 
 INPUT_DIR = "./real_life_datasets/"
 DATASET = "./real_life_datasets/2013-cp/2013-cp.xes"
-TIME_LIMT = 3
+TIME_LIMT = 5 * 60
 STAGNATION_LIMIT = 50
-MAX_GENERATIONS = 3
 BEST_PARAMS = "./best_parameters.csv"
-NUM_SAMPLES = 2
+NUM_SAMPLES = 20
 OBJECTIVE_WEIGHTS = {
     "simplicity": 10,
     "refined_simplicity": 10,
@@ -26,15 +25,25 @@ OBJECTIVE_WEIGHTS = {
 
 
 def sample_hyperparameters(hyper_parameters, num_samples):
+    
+    limits = {
+        'random_creation_rate': 0.1,
+        'elite_rate': 0.1,
+        'population_size': 5,
+        'tournament_size': 0.05,
+        'log_filtering': 0.01,
+        'tournament_rate': 0.1,
+        'tournament_mutation_rate': 0.1,
+    }
     sampled_hyperparameters = {}
     for key, value in hyper_parameters.items():
         if isinstance(value, (int)):
             random = np.random.default_rng()
-            samples = random.normal(value, 0.5 * value, num_samples)
+            samples = random.uniform(value - limits[key], value + limits[key], num_samples)
             sampled_hyperparameters[key] = [int(sample) for sample in samples]
         elif isinstance(value, float):
             random = np.random.default_rng()
-            samples = random.normal(value, 0.5 * value, num_samples)
+            samples = random.uniform(value - limits[key], value + limits[key], num_samples)
             sampled_hyperparameters[key] = [round(sample, 2) for sample in samples]
     return sampled_hyperparameters
 
@@ -46,26 +55,24 @@ def create_plot(df):
     dimension_cols = [col for col in df.columns if col not in [color_col, 'dataset']]
 
     # Define custom axis limits and ticks
-    custom_ylim = {
+    custom_ylim =  {
         'random_creation_rate': [0, 1],
-        'mutation_rate': [0, 1],
-        'crossover_rate': [0, 1],
         'elite_rate': [0, 1],
         'population_size': [20, 70],
-        'percentage_of_log': [0.01, 0.31],
-        'tournament_size': [0.3, 0.5],
+        'tournament_size': [0.1, 0.3],
         'log_filtering': [0.001, 0.200],
+        'tournament_rate': [0, 1],
+        'tournament_mutation_rate': [0, 1],
     }
 
     y_tick_vals = {
         'random_creation_rate': [x / 100 for x in range(0, 102, 10)],
-        'mutation_rate': [x / 100 for x in range(0, 102, 10)],
-        'crossover_rate': [x / 100 for x in range(0, 102, 10)],
         'elite_rate': [x / 100 for x in range(0, 102, 10)],
         'population_size': list(range(20, 75, 5)),
-        'percentage_of_log': [x / 100 for x in range(1, 32, 3)],
-        'tournament_size': [x / 100 for x in range(30, 51, 2)],
+        'tournament_size': [x / 100 for x in range(10, 31, 2)],
         'log_filtering': [x / 1000 for x in range(1, 202, 20)],
+        'tournament_rate': [x / 100 for x in range(0, 102, 10)],
+        'tournament_mutation_rate': [x / 100 for x in range(0, 102, 10)],
     }
 
     # return unique values of specific column in df
@@ -132,7 +139,7 @@ def get_data():
 
     for dataset_dir in dataset_dirs:
         # Assume only one file per directory
-        if dataset_dir not in ["2013-cp", "2013-op", "Sepsis"]:
+        if dataset_dir not in ["2013-cp"]:
             continue
           
         xes_file = [f for f in os.listdir(f"{INPUT_DIR}{dataset_dir}") if f.endswith(".xes")]
@@ -154,6 +161,8 @@ def get_data():
                 objective=Objective(OBJECTIVE_WEIGHTS),
                 time_limit=TIME_LIMT,
                 **cur_hyper_parameters,
+                stagnation_limit=STAGNATION_LIMIT,
+                percentage_of_log=0.05,
             )
             
             evaluator = SingleEvaluator(
@@ -170,6 +179,6 @@ def get_data():
     df.to_csv("./experiment_4/experiment_4_results.csv", index=False)
     
 if __name__ == "__main__":
-    # get_data()
+    get_data()
     df = pd.read_csv("./experiment_4/experiment_4_results.csv")
     create_plot(df)

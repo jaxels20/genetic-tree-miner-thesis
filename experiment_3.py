@@ -142,9 +142,10 @@ def plot_data(df):
     fig = go.Figure(
         data=go.Parcoords(
             line=dict(
-                color=df["Number of Unique Traces"],
-                colorscale='Viridis',
-                colorbar=dict(title='Num Unique Traces')
+                #color=df["Number of Unique Traces"],
+                #colorscale='Viridis',
+                #colorbar=dict(title='Num Unique Traces')
+                color="black",
             ),
             dimensions=dimensions,
             labelside='bottom',
@@ -183,5 +184,4 @@ if __name__ == "__main__":
     df['random_creation_rate'] = df['random_creation_rate'] / total
     df['tournament_rate'] = df['tournament_rate'] / total
     
-    print(df.head(15))
     plot_data(df)
