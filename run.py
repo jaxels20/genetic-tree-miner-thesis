@@ -13,5 +13,4 @@ if __name__ == "__main__":
     df = pd.read_csv("./experiment_1/results.csv")
     MultiEvaluator.save_df_to_pdf(df, "./experiment_1/results.pdf")
     
-            
     

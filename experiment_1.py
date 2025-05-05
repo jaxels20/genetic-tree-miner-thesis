@@ -15,6 +15,7 @@ BEST_PARAMS = "./best_parameters.csv"
 STAGNATION_LIMIT = 50
 TIME_LIMIT = 60*5
 CPU_COUNT = 1
+TEST_DATASETS = ['Nasa', '2017', '2019', '2020-pl', '2013-i', '2013-op', '2020-ptc', '2020-id', '2020-rfp']
 
 def convert_json_to_hyperparamters(hyper_parameters: dict):
     # total = hyper_parameters['random_creation_rate'] + hyper_parameters['mutation_rate'] + hyper_parameters['crossover_rate'] + hyper_parameters['elite_rate']
@@ -86,6 +87,8 @@ if __name__ == "__main__":
     eventlogs = []
 
     for dataset_dir in dataset_dirs:
+        if dataset_dir not in TEST_DATASETS:
+            continue
         xes_file = [f for f in os.listdir(f"{INPUT_DIR}{dataset_dir}") if f.endswith(".xes")]
         
         if len(xes_file) == 0:
@@ -115,4 +118,4 @@ if __name__ == "__main__":
     multi_evaluator = MultiEvaluator(eventlogs, methods_dict, CPU_COUNT)
     results_df = multi_evaluator.evaluate_all({"simplicity": 10, "refined_simplicity": 10, "ftr_fitness": 50, "ftr_precision": 30})
     results_df.to_csv(OUTPUT_DIR + "results.csv", index=False)
-    results_df[["miner","dataset", "simplicity","generalization","ftr_fitness","log_fitness","precision","objective_fitness","time", "f1_score"]].to_latex(OUTPUT_DIR + "results.tex", index=False, float_format="%.2f")
+    
