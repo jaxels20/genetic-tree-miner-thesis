@@ -112,7 +112,7 @@ def run_experiment():
             time_limit=TIME_LIMIT,
             percentage_of_log=0.05,
             **hyperparams,
-        )
+        ),
     }
     
     # Run the methods on each event log
@@ -133,5 +133,5 @@ def consolidate_results(genetic_csv, split_csv, inductive_csv):
     MultiEvaluator.save_df_to_pdf(results_df, OUTPUT_DIR + "results_all.pdf")
     
 if __name__ == "__main__":
-    run_experiment()
+    # run_experiment()
     consolidate_results(genetic_csv=OUTPUT_DIR + "results_genetic.csv", split_csv=OUTPUT_DIR + "results_split.csv", inductive_csv=OUTPUT_DIR + "results_inductive.csv")
