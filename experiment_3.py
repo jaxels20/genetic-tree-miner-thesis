@@ -8,6 +8,7 @@ from experiment_1 import load_hyperparameters_from_csv
 
 BEST_PARAMS = "./best_params/"
 INPUT_DIR = "./best_parameters_all_datasets.csv"
+SELECTED_BEST_PARAMS = "./best_parameters.csv"
 
 
 def consolidate_csv_files(input_dir):
@@ -22,14 +23,6 @@ def consolidate_csv_files(input_dir):
     consolidated_df.to_csv('best_parameters_all_datasets.csv', index=False)
 
 def plot_data(df):
-    # df.loc[df['mutator'] == 'NonTournament', 'tournament_size'] = -1_000_000_000
-    # df.loc[df['mutator'] == 'NonTournament', 'tournament_rate'] = 1_000_000_000
-    # df.loc[df['mutator'] == 'NonTournament', 'tournament_mutation_rate'] = 1_000_000_000
-    df.loc[df['generator'] == 'FootprintGuidedSequentialGenerator', 'log_filtering'] = 1_000_000_000
-    df.loc[df['generator'] == 'BottomUpRandomBinaryGenerator', 'log_filtering'] = -1_000_000_000
-
-    # Remove rows where 'objective' is NaN, since that's used for coloring
-    df = df[df['objective'].notna()]
 
     df_size = pd.read_csv("./real_life_datasets_analysis.csv")
     df = pd.merge(df, df_size, on='dataset', how='left')
@@ -57,7 +50,7 @@ def plot_data(df):
     # }, inplace=True)
 
 
-    skip_cols = ['Dataset', 'Objective']
+    skip_cols = ['Dataset', 'Objective', "Generator"]
     dimension_cols = [col for col in df.columns if col not in skip_cols]
 
     dimensions = []
@@ -97,7 +90,7 @@ def plot_data(df):
 
     desired_col_order = ['Tournament Size', 'Tournament Mut. Rate', 'Tournament Rate', 'Random Creation Rate', 
                         'Elite Rate',
-                        'Population Size', 'Generator',
+                        'Population Size',
                         'Log Filtering']
 
     # Reorder dimensions
@@ -137,12 +130,20 @@ def plot_data(df):
         if col_label in custom_ylim:
             dim['range'] = custom_ylim[col_label]
             dim['tickvals'] = y_tick_vals[col_label]
+            
 
+    # Assign 1 to the first line, 0 to the rest
+    color_array = np.zeros(len(df))
+    color_array[0] = 1  # First line will be mapped to red
+    
+    
     # Create the parcoords plot
-    fig = go.Figure(
-        data=go.Parcoords(
+    fig = go.Figure()
+    fig = fig.add_trace(
+        go.Parcoords(
             line=dict(
-                color='black'
+                color=color_array,
+                colorscale=[[0, 'black'], [1, 'red']],
             ),
             dimensions=dimensions,
             labelside='bottom',
@@ -151,7 +152,8 @@ def plot_data(df):
     )
 
 
-        # Layout adjustments
+
+    # Layout adjustments
     fig.update_layout(
         font=dict(family='Arial', size=14),
         # legend=dict(
@@ -177,10 +179,20 @@ if __name__ == "__main__":
     datasets_to_keep = [dataset for dataset in datasets if dataset not in datasets_to_remove]
     df = df[df['dataset'].isin(datasets_to_keep)]
     
+    selected_params_df = pd.read_csv(SELECTED_BEST_PARAMS)
+    selected_params_df['dataset'] = "Selected Parameters"
+
+    # Combine the two dataframes
+    df = pd.concat([selected_params_df, df], ignore_index=True)
+    
+    
     # normalize elite rate, random creation rate and tournament rate by making it sum up to 1 for each row
     total = df['elite_rate'] + df['random_creation_rate'] + df['tournament_rate']
     df['elite_rate'] = df['elite_rate'] / total
     df['random_creation_rate'] = df['random_creation_rate'] / total
     df['tournament_rate'] = df['tournament_rate'] / total
+    
+    
+    
     
     plot_data(df)
