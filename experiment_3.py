@@ -37,7 +37,7 @@ def plot_data(df):
         'log_filtering': 'Log Filtering',
         'tournament_size': 'Tournament Size',
         'tournament_rate': 'Tournament Rate',
-        'tournament_mutation_rate': 'Tournament Mut. Rate',
+        'tournament_mutation_rate': 'Mutation Rate',
         # 'mutator': 'Mutator',
         'generator': 'Generator',
         'objective': 'Objective',
@@ -88,7 +88,7 @@ def plot_data(df):
                 values=values
             ))
 
-    desired_col_order = ['Tournament Size', 'Tournament Mut. Rate', 'Tournament Rate', 'Random Creation Rate', 
+    desired_col_order = ['Tournament Size', 'Mutation Rate', 'Tournament Rate', 'Random Creation Rate', 
                         'Elite Rate',
                         'Population Size',
                         'Log Filtering']
@@ -100,7 +100,7 @@ def plot_data(df):
     custom_ylim = {
         'Tournament Size' : [0.1, 0.3],
         'Tournament Rate' : [0,1],
-        'Tournament Mut. Rate' : [0,1], 
+        'Mutation Rate' : [0,1], 
         'Random Creation Rate' : [0,1],
         # 'Mutation Rate' : [0,1], 
         # 'Crossover Rate' : [0,1], 
@@ -111,16 +111,16 @@ def plot_data(df):
     }
 
     y_tick_vals = {
-        'Tournament Size' : [x / 100 for x in range(10, 32, 2)],
-        'Tournament Rate' : [x / 100 for x in range(0, 102, 10)],
-        'Tournament Mut. Rate' : [x / 100 for x in range(0, 102, 10)], 
-        'Random Creation Rate' : [x / 100 for x in range(0, 102, 10)],
+        'Tournament Size' : [x / 100 for x in range(10, 32, 4)],
+        'Tournament Rate' : [x / 100 for x in range(0, 102, 20)],
+        'Mutation Rate' : [x / 100 for x in range(0, 102, 20)], 
+        'Random Creation Rate' : [x / 100 for x in range(0, 102, 20)],
         # 'Mutation Rate' : [x / 100 for x in range(0, 102, 10)], 
         # 'Crossover Rate' : [x / 100 for x in range(0, 102, 10)], 
-        'Elite Rate' : [x / 100 for x in range(0, 102, 10)],
-        'Population Size' : [x  for x in range(20, 65, 5)],
+        'Elite Rate' : [x / 100 for x in range(0, 102, 20)],
+        'Population Size' : [x  for x in range(20, 65, 10)],
         # 'Percentage of Log' : [x / 100 for x in range(1, 30, 3)] + [0.3], 
-        'Log Filtering' : [x / 1000 for x in range(1, 102, 20)]
+        'Log Filtering' : [x / 1000 for x in range(0, 102, 20)]
     }
 
 
@@ -165,8 +165,8 @@ def plot_data(df):
         # ),
         margin=dict(l=60, r=80, t=50, b=90),
         template='simple_white',
-        height=500,
-        width=900
+        height=400,
+        width=850
     )
 
     fig.write_image("./experiment_3/plot.pdf")
