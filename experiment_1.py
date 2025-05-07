@@ -135,7 +135,7 @@ if __name__ == "__main__":
     df = consolidate_results("./experiment_1/csvs/")
     
     # change column order in dataframe
-    column_order = ['dataset', 'miner', 'f1_score', 'log_fitness', 'precision', 'objective_fitness', 'generalization', 'simplicity']
+    column_order = ['dataset', 'miner', 'f1_score', 'log_fitness', 'precision', 'objective_fitness', 'generalization', 'simplicity', 'time']
     df = df[column_order]
     df.rename(columns={
         'dataset': 'Dataset',
@@ -145,7 +145,8 @@ if __name__ == "__main__":
         'precision': 'Precision',
         'objective_fitness': 'Objective Fitness',
         'generalization': 'Generalization',
-        'simplicity': 'Simplicity'
+        'simplicity': 'Simplicity',
+        'time': 'Time (s)'
     }, inplace=True)
     df.sort_values(by=['Dataset', 'Discovery Method'], inplace=True)
     
