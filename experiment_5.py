@@ -21,7 +21,7 @@ BEST_PARAMS = "./best_parameters.csv"
 TIME_LIMIT = None
 STAGNATION_LIMIT = None
 MAX_GENERATIONS = 300
-#TEST_DATASETS = ['2019', '2013-op', '2020-dd', '2020-ptc']
+#TEST_DATASETS = ['2019', '2013-op', '2020-dd', '2020-ptc', "2020-rfp"]
 
 def generate_monitors(datasets):
     dataset_dirs = os.listdir(INPUT_DIR)
