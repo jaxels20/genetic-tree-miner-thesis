@@ -11,10 +11,9 @@ from src.Objective import Objective
 
 INPUT_DIR = "./real_life_datasets/"
 OUTPUT_DIR = "./experiment_1/"
-SPLIT_MINER_DIR = "./experiment_1/split_miner/"
 BEST_PARAMS = "./best_parameters.csv"
 STAGNATION_LIMIT = 50
-TIME_LIMIT = 60*5
+TIME_LIMIT = 60
 CPU_COUNT = 1
 TEST_DATASETS = ['Nasa', '2017', '2019', '2020-pl', '2013-i', '2013-op', '2020-ptc', '2020-id', '2020-rfp']
 OBJECTIVE_WEIGHTS = {"simplicity": 10, "refined_simplicity": 10, "ftr_fitness": 50, "ftr_precision": 30}
@@ -89,13 +88,8 @@ def run_experiment():
     eventlogs = []
 
     for dataset_dir in dataset_dirs:
-        if dataset_dir not in TEST_DATASETS:
-            continue
         xes_file = [f for f in os.listdir(f"{INPUT_DIR}{dataset_dir}") if f.endswith(".xes")]
-        
-        if len(xes_file) == 0:
-            continue
-        elif len(xes_file) == 1:
+        if len(xes_file) == 1:
             loaded_log = loader.load_eventlog(f"{INPUT_DIR}{dataset_dir}/{xes_file[0]}")
             eventlogs.append(loaded_log)
         else:
@@ -106,7 +100,7 @@ def run_experiment():
 
     # Define the methods to be used
     methods_dict = {
-        "Genetic Miner": lambda log: Discovery.genetic_algorithm(
+        "Genetic Miner (1 minute)": lambda log: Discovery.genetic_algorithm(
             log,
             stagnation_limit=STAGNATION_LIMIT,
             time_limit=TIME_LIMIT,
@@ -118,20 +112,44 @@ def run_experiment():
     # Run the methods on each event log
     multi_evaluator = MultiEvaluator(eventlogs, methods_dict, CPU_COUNT)
     results_df = multi_evaluator.evaluate_all(OBJECTIVE_WEIGHTS)
-    results_df.to_csv(OUTPUT_DIR + "results_genetic.csv", index=False)
     
+    return results_df
     
-def consolidate_results(genetic_csv, split_csv, inductive_csv):
-    split_results = pd.read_csv(split_csv)
-    inductive_results = pd.read_csv(inductive_csv)
-    genetic_results = pd.read_csv(genetic_csv)
+def consolidate_results(input_dir):
+    # list all csv files in a directory
+    csv_files = [f for f in os.listdir(input_dir) if f.endswith('.csv')]
+
+    df = pd.DataFrame()
+    for file in csv_files:
+        loaded_df = pd.read_csv(input_dir + file)
+        df = pd.concat([df, loaded_df], ignore_index=True)
     
-    # Merge the results with results_df
-    results_df = pd.concat([genetic_results, inductive_results, split_results], ignore_index=True) 
-    
-    results_df.to_csv(OUTPUT_DIR + "results_all.csv", index=False)
-    MultiEvaluator.save_df_to_pdf(results_df, OUTPUT_DIR + "results_all.pdf")
+    return df
     
 if __name__ == "__main__":
-    # run_experiment()
-    consolidate_results(genetic_csv=OUTPUT_DIR + "results_genetic.csv", split_csv=OUTPUT_DIR + "results_split.csv", inductive_csv=OUTPUT_DIR + "results_inductive.csv")
+    # Run some experiments producing csv files
+    # result_df = run_experiment()
+    # result_df.to_csv(OUTPUT_DIR + "/csvs/" + "results_genetic_1.csv", index=False)
+    
+    # Consolidate all results
+    df = consolidate_results("./experiment_1/csvs/")
+    
+    # change column order in dataframe
+    column_order = ['dataset', 'miner', 'f1_score', 'log_fitness', 'precision', 'objective_fitness', 'generalization', 'simplicity']
+    df = df[column_order]
+    df.rename(columns={
+        'dataset': 'Dataset',
+        'miner': 'Discovery Method',
+        'f1_score': 'F1 Score',
+        'log_fitness': 'Log Fitness',
+        'precision': 'Precision',
+        'objective_fitness': 'Objective Fitness',
+        'generalization': 'Generalization',
+        'simplicity': 'Simplicity'
+    }, inplace=True)
+    df.sort_values(by=['Dataset', 'Discovery Method'], inplace=True)
+    
+    # Save the consolidated results
+    df.to_latex(OUTPUT_DIR + "results_all.tex", index=False, float_format="%.3f")
+    df.to_csv(OUTPUT_DIR + "results_all.csv", index=False)
+    # MultiEvaluator.save_df_to_pdf(df, OUTPUT_DIR + "results_all.pdf")

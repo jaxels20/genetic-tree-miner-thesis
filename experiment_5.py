@@ -21,6 +21,8 @@ BEST_PARAMS = "./best_parameters.csv"
 TIME_LIMIT = None
 STAGNATION_LIMIT = None
 MAX_GENERATIONS = 100
+TEST_DATASETS = ['2019', '2013-op', '2020-dd', '2020-ptc']
+
 colors = cycle(px.colors.qualitative.Pastel2)
 color_map = {
     "FootprintGuidedSequentialGenerator": next(colors),
@@ -49,10 +51,6 @@ def generate_monitors():
 
 
     for dataset_dir in dataset_dirs:
-        # Assume only one file per directory
-        if dataset_dir not in ["2013-cp", "2013-op", "Sepsis"]:
-            continue
-          
         xes_file = [f for f in os.listdir(f"{INPUT_DIR}{dataset_dir}") if f.endswith(".xes")]
         if len(xes_file) == 0:
             continue
