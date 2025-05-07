@@ -126,6 +126,29 @@ class Objective:
 
         return total_fitness
     
+    def fitness_from_pn(self, pm4py_pn, init, final):
+        total_fitness = 0.0
+        ftr_pn = PetriNet.from_pm4py(pm4py_pn, init, final).to_fast_token_based_replay()
+        for metric_name, weight in self.metric_weights.items():
+            metric_func = self.metric_functions.get(metric_name)
+            if not metric_func:
+                raise ValueError(f"Unknown metric: {metric_name}")
+
+            # Dynamically decide what to pass based on the metric
+            if metric_name.startswith("ftr_"):
+                score = metric_func(ftr_pn)
+            elif metric_name in ["simplicity", "refined_simplicity"]:
+                score = metric_func(pm4py_pn)
+            else:
+                score = metric_func(pm4py_pn, init, final)
+
+            total_fitness += weight * score
+
+        return total_fitness
+        
+        
+        
+    
     def evaluate_population(self, population: Population):
         for tree in population.trees:
             if tree.fitness is None:
