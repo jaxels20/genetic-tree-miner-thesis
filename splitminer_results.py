@@ -38,7 +38,14 @@ if __name__ == "__main__":
             percentage_of_fitting_traces = objective.percentage_of_fitting(pm4py_pn, im, fm)
             precision = objective.precision(pm4py_pn, im, fm)
             f1_score = 2 * (precision * log_fitness) / (precision + log_fitness + 1e-09)
-            #objective_fitness = objective.fitness(our_pt)
+            objective_fitness = objective.fitness_from_pn(pm4py_pn, im, fm)
+            
+            if dataset_dir == "2017":
+                for trace in our_log.traces:
+                    for event in trace.events:
+                        name = event.activity
+                        name = name.strip()
+                        event.activity = name              
             
             row = [
                 round(simplicity, 3),
@@ -48,14 +55,13 @@ if __name__ == "__main__":
                 round(log_fitness, 3),
                 round(percentage_of_fitting_traces, 3),
                 round(precision, 3),
-                "-",
+                round(objective_fitness, 3),
                 round(f1_score, 3),
                 dataset_dir,
                 "Split Miner",  # or any miner name you used
                 "-"
             ]
             rows.append(row)
-            #print(f"Processed {dataset_dir} with {xes_file[0]}")
         else:
             raise ValueError("More than one xes file in the directory")
     
