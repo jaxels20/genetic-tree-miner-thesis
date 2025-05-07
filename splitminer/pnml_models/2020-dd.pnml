@@ -5,9 +5,54 @@
       <text></text>
     </name>
     <page id="n0">
+      <place id="ent_node25">
+        <name>
+          <text>ent_node25</text>
+        </name>
+      </place>
+      <place id="exi_node3">
+        <name>
+          <text>exi_node3</text>
+        </name>
+      </place>
+      <place id="ent_node16">
+        <name>
+          <text>ent_node16</text>
+        </name>
+      </place>
       <place id="ent_node22">
         <name>
           <text>ent_node22</text>
+        </name>
+      </place>
+      <place id="exi_node7">
+        <name>
+          <text>exi_node7</text>
+        </name>
+      </place>
+      <place id="exi_node28">
+        <name>
+          <text>exi_node28</text>
+        </name>
+      </place>
+      <place id="ent_node10">
+        <name>
+          <text>ent_node10</text>
+        </name>
+      </place>
+      <place id="sink">
+        <name>
+          <text>sink</text>
+        </name>
+      </place>
+      <place id="ent_node12">
+        <name>
+          <text>ent_node12</text>
+        </name>
+      </place>
+      <place id="ent_node9">
+        <name>
+          <text>ent_node9</text>
         </name>
       </place>
       <place id="ent_node23">
@@ -23,194 +68,149 @@
           <text>1</text>
         </initialMarking>
       </place>
-      <place id="exi_node3">
-        <name>
-          <text>exi_node3</text>
-        </name>
-      </place>
-      <place id="exi_node7">
-        <name>
-          <text>exi_node7</text>
-        </name>
-      </place>
-      <place id="exi_node28">
-        <name>
-          <text>exi_node28</text>
-        </name>
-      </place>
-      <place id="sink">
-        <name>
-          <text>sink</text>
-        </name>
-      </place>
-      <place id="ent_node16">
-        <name>
-          <text>ent_node16</text>
-        </name>
-      </place>
-      <place id="ent_node25">
-        <name>
-          <text>ent_node25</text>
-        </name>
-      </place>
-      <place id="ent_node9">
-        <name>
-          <text>ent_node9</text>
-        </name>
-      </place>
-      <place id="ent_node10">
-        <name>
-          <text>ent_node10</text>
-        </name>
-      </place>
-      <place id="ent_node12">
-        <name>
-          <text>ent_node12</text>
-        </name>
-      </place>
-      <transition id="node11">
-        <name>
-          <text>Declaration SUBMITTED by EMPLOYEE</text>
-        </name>
-      </transition>
-      <transition id="node26">
-        <name>
-          <text>Declaration FINAL_APPROVED by SUPERVISOR</text>
-        </name>
-      </transition>
-      <transition id="node17">
-        <name>
-          <text>Declaration REJECTED by EMPLOYEE</text>
-        </name>
-      </transition>
-      <transition id="node12">
-        <name>
-          <text>node12</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="3a875937-9d3b-47a9-aeac-fa5f7a7599a4"/>
-      </transition>
-      <transition id="node27">
-        <name>
-          <text>Declaration FOR_APPROVAL by PRE_APPROVER</text>
-        </name>
-      </transition>
-      <transition id="node5">
-        <name>
-          <text>Declaration REJECTED by BUDGET OWNER</text>
-        </name>
-      </transition>
-      <transition id="node22">
-        <name>
-          <text>Payment Handled</text>
-        </name>
-      </transition>
-      <transition id="node18">
-        <name>
-          <text>Declaration REJECTED by ADMINISTRATION</text>
-        </name>
-      </transition>
-      <transition id="node13">
-        <name>
-          <text>Declaration FOR_APPROVAL by SUPERVISOR</text>
-        </name>
-      </transition>
-      <transition id="15987ea3-fbdb-4679-9440-12ce8b64db26">
-        <name>
-          <text>15987ea3-fbdb-4679-9440-12ce8b64db26</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="f9f38476-1d91-40e3-b905-47d329839477"/>
-      </transition>
-      <transition id="node23">
-        <name>
-          <text>Request Payment</text>
-        </name>
-      </transition>
-      <transition id="node2">
-        <name>
-          <text>Declaration REJECTED by MISSING</text>
-        </name>
-      </transition>
-      <transition id="node21">
-        <name>
-          <text>Declaration REJECTED by SUPERVISOR</text>
-        </name>
-      </transition>
-      <transition id="node20">
-        <name>
-          <text>Declaration APPROVED by PRE_APPROVER</text>
-        </name>
-      </transition>
-      <transition id="node6">
-        <name>
-          <text>Declaration SAVED by EMPLOYEE</text>
-        </name>
-      </transition>
-      <transition id="node0">
-        <name>
-          <text>Declaration APPROVED by BUDGET OWNER</text>
-        </name>
-      </transition>
-      <transition id="sfl_edge23">
-        <name>
-          <text>sfl_edge23</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="b5e936b4-fd1b-41de-b4bd-e664134c4ea2"/>
-      </transition>
-      <transition id="node4">
+      <transition id="Declaration APPROVED by ADMINISTRATION">
         <name>
           <text>Declaration APPROVED by ADMINISTRATION</text>
         </name>
       </transition>
-      <transition id="node15">
+      <transition id="Declaration SUBMITTED by EMPLOYEE">
+        <name>
+          <text>Declaration SUBMITTED by EMPLOYEE</text>
+        </name>
+      </transition>
+      <transition id="Declaration FOR_APPROVAL by ADMINISTRATION">
         <name>
           <text>Declaration FOR_APPROVAL by ADMINISTRATION</text>
         </name>
       </transition>
-      <transition id="node24">
+      <transition id="Declaration APPROVED by BUDGET OWNER">
+        <name>
+          <text>Declaration APPROVED by BUDGET OWNER</text>
+        </name>
+      </transition>
+      <transition id="tau_1">
+        <name>
+          <text>tau_1</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="9fd9a3f6-135d-4a45-bc00-b7b0a3342883"/>
+      </transition>
+      <transition id="Declaration FINAL_APPROVED by SUPERVISOR">
+        <name>
+          <text>Declaration FINAL_APPROVED by SUPERVISOR</text>
+        </name>
+      </transition>
+      <transition id="tau_2">
+        <name>
+          <text>tau_2</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="cedbfbf9-5564-481f-a8fe-464e86ce600f"/>
+      </transition>
+      <transition id="Declaration REJECTED by MISSING">
+        <name>
+          <text>Declaration REJECTED by MISSING</text>
+        </name>
+      </transition>
+      <transition id="Declaration SAVED by EMPLOYEE">
+        <name>
+          <text>Declaration SAVED by EMPLOYEE</text>
+        </name>
+      </transition>
+      <transition id="Payment Handled">
+        <name>
+          <text>Payment Handled</text>
+        </name>
+      </transition>
+      <transition id="Declaration FOR_APPROVAL by PRE_APPROVER">
+        <name>
+          <text>Declaration FOR_APPROVAL by PRE_APPROVER</text>
+        </name>
+      </transition>
+      <transition id="tau_0">
+        <name>
+          <text>tau_0</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="4d5c0653-3f6c-4883-9f1a-d131a0e354ac"/>
+      </transition>
+      <transition id="Declaration REJECTED by SUPERVISOR">
+        <name>
+          <text>Declaration REJECTED by SUPERVISOR</text>
+        </name>
+      </transition>
+      <transition id="Declaration APPROVED by PRE_APPROVER">
+        <name>
+          <text>Declaration APPROVED by PRE_APPROVER</text>
+        </name>
+      </transition>
+      <transition id="Declaration REJECTED by BUDGET OWNER">
+        <name>
+          <text>Declaration REJECTED by BUDGET OWNER</text>
+        </name>
+      </transition>
+      <transition id="Request Payment">
+        <name>
+          <text>Request Payment</text>
+        </name>
+      </transition>
+      <transition id="Declaration REJECTED by PRE_APPROVER">
         <name>
           <text>Declaration REJECTED by PRE_APPROVER</text>
         </name>
       </transition>
-      <arc id="132964393333248" source="exi_node3" target="sfl_edge23"/>
-      <arc id="132964386912784" source="exi_node7" target="node21"/>
-      <arc id="132964386912304" source="exi_node7" target="node0"/>
-      <arc id="132964386912880" source="exi_node28" target="node13"/>
-      <arc id="132964386912400" source="exi_node3" target="node6"/>
-      <arc id="132964386907792" source="node27" target="ent_node16"/>
-      <arc id="132964392744624" source="ent_node12" target="node12"/>
-      <arc id="132964386911920" source="exi_node28" target="node15"/>
-      <arc id="132964386907216" source="node0" target="ent_node25"/>
-      <arc id="132964386912976" source="exi_node28" target="node24"/>
-      <arc id="132964386909904" source="node15" target="ent_node9"/>
-      <arc id="132964386911440" source="node23" target="ent_node22"/>
-      <arc id="132964393321200" source="source" target="15987ea3-fbdb-4679-9440-12ce8b64db26"/>
-      <arc id="132964386910960" source="node11" target="exi_node28"/>
-      <arc id="132964386910384" source="node18" target="ent_node10"/>
-      <arc id="132964386912496" source="exi_node28" target="node4"/>
-      <arc id="132964386907888" source="node20" target="ent_node25"/>
-      <arc id="132964392744192" source="ent_node22" target="node22"/>
-      <arc id="132964386912016" source="ent_node9" target="node11"/>
-      <arc id="132964386910480" source="node2" target="ent_node9"/>
-      <arc id="132964386908944" source="node12" target="sink"/>
-      <arc id="132964386910288" source="node13" target="ent_node16"/>
-      <arc id="132964386911536" source="node4" target="exi_node7"/>
-      <arc id="132964386911824" source="ent_node25" target="node26"/>
-      <arc id="132964386906448" source="sfl_edge23" target="ent_node9"/>
-      <arc id="132964386912592" source="exi_node28" target="node27"/>
-      <arc id="132964386911056" source="15987ea3-fbdb-4679-9440-12ce8b64db26" target="exi_node3"/>
-      <arc id="132964393323360" source="ent_node23" target="node23"/>
-      <arc id="132964386910576" source="node22" target="ent_node12"/>
-      <arc id="132964386909040" source="node21" target="ent_node10"/>
-      <arc id="132964386912112" source="ent_node10" target="node17"/>
-      <arc id="132964386911632" source="ent_node16" target="node2"/>
-      <arc id="132964386909616" source="node24" target="ent_node10"/>
-      <arc id="132964386908080" source="node26" target="ent_node23"/>
-      <arc id="132964386912688" source="exi_node28" target="node20"/>
-      <arc id="132964386909712" source="node17" target="ent_node9"/>
-      <arc id="132964386912208" source="exi_node7" target="node5"/>
-      <arc id="132964386911248" source="node5" target="ent_node10"/>
-      <arc id="132964386910192" source="node6" target="ent_node12"/>
-      <arc id="132964386911728" source="exi_node28" target="node18"/>
+      <transition id="Declaration REJECTED by EMPLOYEE">
+        <name>
+          <text>Declaration REJECTED by EMPLOYEE</text>
+        </name>
+      </transition>
+      <transition id="Declaration REJECTED by ADMINISTRATION">
+        <name>
+          <text>Declaration REJECTED by ADMINISTRATION</text>
+        </name>
+      </transition>
+      <transition id="Declaration FOR_APPROVAL by SUPERVISOR">
+        <name>
+          <text>Declaration FOR_APPROVAL by SUPERVISOR</text>
+        </name>
+      </transition>
+      <arc id="4783299072" source="exi_node7" target="Declaration REJECTED by BUDGET OWNER"/>
+      <arc id="4783296768" source="Declaration FOR_APPROVAL by SUPERVISOR" target="ent_node16"/>
+      <arc id="4783296384" source="ent_node9" target="Declaration SUBMITTED by EMPLOYEE"/>
+      <arc id="4783295232" source="tau_1" target="sink"/>
+      <arc id="4783299600" source="Declaration FOR_APPROVAL by ADMINISTRATION" target="ent_node9"/>
+      <arc id="4783298064" source="Declaration REJECTED by MISSING" target="ent_node9"/>
+      <arc id="4783295376" source="ent_node16" target="Declaration REJECTED by MISSING"/>
+      <arc id="4783294608" source="exi_node28" target="Declaration REJECTED by PRE_APPROVER"/>
+      <arc id="4783294224" source="exi_node28" target="Declaration FOR_APPROVAL by ADMINISTRATION"/>
+      <arc id="4783293840" source="exi_node3" target="Declaration SAVED by EMPLOYEE"/>
+      <arc id="4783299984" source="ent_node23" target="Request Payment"/>
+      <arc id="4783298976" source="ent_node12" target="tau_1"/>
+      <arc id="4783294368" source="Declaration SAVED by EMPLOYEE" target="ent_node12"/>
+      <arc id="4783293984" source="exi_node28" target="Declaration APPROVED by ADMINISTRATION"/>
+      <arc id="4783293600" source="ent_node25" target="Declaration FINAL_APPROVED by SUPERVISOR"/>
+      <arc id="4783300272" source="Declaration REJECTED by BUDGET OWNER" target="ent_node10"/>
+      <arc id="4783298352" source="Declaration APPROVED by BUDGET OWNER" target="ent_node25"/>
+      <arc id="4783297200" source="exi_node28" target="Declaration APPROVED by PRE_APPROVER"/>
+      <arc id="4783296048" source="Declaration REJECTED by PRE_APPROVER" target="ent_node10"/>
+      <arc id="4783300800" source="exi_node28" target="Declaration FOR_APPROVAL by PRE_APPROVER"/>
+      <arc id="4783299648" source="Declaration APPROVED by PRE_APPROVER" target="ent_node25"/>
+      <arc id="4783298496" source="exi_node28" target="Declaration FOR_APPROVAL by SUPERVISOR"/>
+      <arc id="4783297344" source="exi_node7" target="Declaration REJECTED by SUPERVISOR"/>
+      <arc id="4783300416" source="Declaration REJECTED by SUPERVISOR" target="ent_node10"/>
+      <arc id="4783300944" source="exi_node3" target="tau_2"/>
+      <arc id="4783300560" source="Declaration APPROVED by ADMINISTRATION" target="exi_node7"/>
+      <arc id="4783299408" source="Declaration FOR_APPROVAL by PRE_APPROVER" target="ent_node16"/>
+      <arc id="4783296720" source="Declaration REJECTED by ADMINISTRATION" target="ent_node10"/>
+      <arc id="4783295184" source="exi_node7" target="Declaration APPROVED by BUDGET OWNER"/>
+      <arc id="4783293264" source="tau_0" target="exi_node3"/>
+      <arc id="4783301472" source="ent_node22" target="Payment Handled"/>
+      <arc id="4783300704" source="tau_2" target="ent_node9"/>
+      <arc id="4783299168" source="Declaration SUBMITTED by EMPLOYEE" target="exi_node28"/>
+      <arc id="4783298016" source="Declaration FINAL_APPROVED by SUPERVISOR" target="ent_node23"/>
+      <arc id="4783296096" source="ent_node10" target="Declaration REJECTED by EMPLOYEE"/>
+      <arc id="4783300320" source="Payment Handled" target="ent_node12"/>
+      <arc id="4783299696" source="exi_node28" target="Declaration REJECTED by ADMINISTRATION"/>
+      <arc id="4783296240" source="Request Payment" target="ent_node22"/>
+      <arc id="4783295856" source="Declaration REJECTED by EMPLOYEE" target="ent_node9"/>
+      <arc id="4783308528" source="source" target="tau_0"/>
     </page>
     <finalmarkings>
       <marking>

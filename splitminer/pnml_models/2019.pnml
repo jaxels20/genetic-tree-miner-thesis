@@ -1,0 +1,493 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<pnml>
+  <net id="" type="http://www.pnml.org/version-2009/grammar/pnmlcoremodel">
+    <name>
+      <text></text>
+    </name>
+    <page id="n0">
+      <place id="ent_node48">
+        <name>
+          <text>ent_node48</text>
+        </name>
+      </place>
+      <place id="ent_node27">
+        <name>
+          <text>ent_node27</text>
+        </name>
+      </place>
+      <place id="ent_node16">
+        <name>
+          <text>ent_node16</text>
+        </name>
+      </place>
+      <place id="ent_node4">
+        <name>
+          <text>ent_node4</text>
+        </name>
+      </place>
+      <place id="exi_node12">
+        <name>
+          <text>exi_node12</text>
+        </name>
+      </place>
+      <place id="ent_node38">
+        <name>
+          <text>ent_node38</text>
+        </name>
+      </place>
+      <place id="ent_node29">
+        <name>
+          <text>ent_node29</text>
+        </name>
+      </place>
+      <place id="ent_node22">
+        <name>
+          <text>ent_node22</text>
+        </name>
+      </place>
+      <place id="ent_node36">
+        <name>
+          <text>ent_node36</text>
+        </name>
+      </place>
+      <place id="ent_node39">
+        <name>
+          <text>ent_node39</text>
+        </name>
+      </place>
+      <place id="exi_node41">
+        <name>
+          <text>exi_node41</text>
+        </name>
+      </place>
+      <place id="ent_node51">
+        <name>
+          <text>ent_node51</text>
+        </name>
+      </place>
+      <place id="ent_node24">
+        <name>
+          <text>ent_node24</text>
+        </name>
+      </place>
+      <place id="ent_node31">
+        <name>
+          <text>ent_node31</text>
+        </name>
+      </place>
+      <place id="exi_node33">
+        <name>
+          <text>exi_node33</text>
+        </name>
+      </place>
+      <place id="exi_node40">
+        <name>
+          <text>exi_node40</text>
+        </name>
+      </place>
+      <place id="sink">
+        <name>
+          <text>sink</text>
+        </name>
+      </place>
+      <place id="exi_node28">
+        <name>
+          <text>exi_node28</text>
+        </name>
+      </place>
+      <place id="ent_node10">
+        <name>
+          <text>ent_node10</text>
+        </name>
+      </place>
+      <place id="ent_node47">
+        <name>
+          <text>ent_node47</text>
+        </name>
+      </place>
+      <place id="ent_node18">
+        <name>
+          <text>ent_node18</text>
+        </name>
+      </place>
+      <place id="ent_node6">
+        <name>
+          <text>ent_node6</text>
+        </name>
+      </place>
+      <place id="ent_node57">
+        <name>
+          <text>ent_node57</text>
+        </name>
+      </place>
+      <place id="ent_node19">
+        <name>
+          <text>ent_node19</text>
+        </name>
+      </place>
+      <place id="ent_node46">
+        <name>
+          <text>ent_node46</text>
+        </name>
+      </place>
+      <place id="ent_node2">
+        <name>
+          <text>ent_node2</text>
+        </name>
+      </place>
+      <place id="exi_node56">
+        <name>
+          <text>exi_node56</text>
+        </name>
+      </place>
+      <place id="exi_node3">
+        <name>
+          <text>exi_node3</text>
+        </name>
+      </place>
+      <place id="ent_node17">
+        <name>
+          <text>ent_node17</text>
+        </name>
+      </place>
+      <place id="source">
+        <name>
+          <text>source</text>
+        </name>
+        <initialMarking>
+          <text>1</text>
+        </initialMarking>
+      </place>
+      <place id="ent_node55">
+        <name>
+          <text>ent_node55</text>
+        </name>
+      </place>
+      <transition id="Release Purchase Order">
+        <name>
+          <text>Release Purchase Order</text>
+        </name>
+      </transition>
+      <transition id="Block Purchase Order Item">
+        <name>
+          <text>Block Purchase Order Item</text>
+        </name>
+      </transition>
+      <transition id="Vendor creates invoice">
+        <name>
+          <text>Vendor creates invoice</text>
+        </name>
+      </transition>
+      <transition id="Cancel Subsequent Invoice">
+        <name>
+          <text>Cancel Subsequent Invoice</text>
+        </name>
+      </transition>
+      <transition id="SRM_ Complete">
+        <name>
+          <text>SRM_ Complete</text>
+        </name>
+      </transition>
+      <transition id="Change Delivery Indicator">
+        <name>
+          <text>Change Delivery Indicator</text>
+        </name>
+      </transition>
+      <transition id="Record Service Entry Sheet">
+        <name>
+          <text>Record Service Entry Sheet</text>
+        </name>
+      </transition>
+      <transition id="SRM_ Transaction Completed">
+        <name>
+          <text>SRM_ Transaction Completed</text>
+        </name>
+      </transition>
+      <transition id="Vendor creates debit memo">
+        <name>
+          <text>Vendor creates debit memo</text>
+        </name>
+      </transition>
+      <transition id="Record Goods Receipt">
+        <name>
+          <text>Record Goods Receipt</text>
+        </name>
+      </transition>
+      <transition id="Change Quantity">
+        <name>
+          <text>Change Quantity</text>
+        </name>
+      </transition>
+      <transition id="Receive Order Confirmation">
+        <name>
+          <text>Receive Order Confirmation</text>
+        </name>
+      </transition>
+      <transition id="Cancel Goods Receipt">
+        <name>
+          <text>Cancel Goods Receipt</text>
+        </name>
+      </transition>
+      <transition id="Release Purchase Requisition">
+        <name>
+          <text>Release Purchase Requisition</text>
+        </name>
+      </transition>
+      <transition id="Change Price">
+        <name>
+          <text>Change Price</text>
+        </name>
+      </transition>
+      <transition id="Update Order Confirmation">
+        <name>
+          <text>Update Order Confirmation</text>
+        </name>
+      </transition>
+      <transition id="SRM_ Held">
+        <name>
+          <text>SRM_ Held</text>
+        </name>
+      </transition>
+      <transition id="Set Payment Block">
+        <name>
+          <text>Set Payment Block</text>
+        </name>
+      </transition>
+      <transition id="Create Purchase Requisition Item">
+        <name>
+          <text>Create Purchase Requisition Item</text>
+        </name>
+      </transition>
+      <transition id="SRM_ Incomplete">
+        <name>
+          <text>SRM_ Incomplete</text>
+        </name>
+      </transition>
+      <transition id="SRM_ Created">
+        <name>
+          <text>SRM_ Created</text>
+        </name>
+      </transition>
+      <transition id="tau_0">
+        <name>
+          <text>tau_0</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="c034fe3e-e11c-4db0-889b-f6a6c5ef500c"/>
+      </transition>
+      <transition id="SRM_ Document Completed">
+        <name>
+          <text>SRM_ Document Completed</text>
+        </name>
+      </transition>
+      <transition id="Record Invoice Receipt">
+        <name>
+          <text>Record Invoice Receipt</text>
+        </name>
+      </transition>
+      <transition id="Remove Payment Block">
+        <name>
+          <text>Remove Payment Block</text>
+        </name>
+      </transition>
+      <transition id="SRM_ Awaiting Approval">
+        <name>
+          <text>SRM_ Awaiting Approval</text>
+        </name>
+      </transition>
+      <transition id="Reactivate Purchase Order Item">
+        <name>
+          <text>Reactivate Purchase Order Item</text>
+        </name>
+      </transition>
+      <transition id="Change payment term">
+        <name>
+          <text>Change payment term</text>
+        </name>
+      </transition>
+      <transition id="Clear Invoice">
+        <name>
+          <text>Clear Invoice</text>
+        </name>
+      </transition>
+      <transition id="SRM_ Deleted">
+        <name>
+          <text>SRM_ Deleted</text>
+        </name>
+      </transition>
+      <transition id="Change Storage Location">
+        <name>
+          <text>Change Storage Location</text>
+        </name>
+      </transition>
+      <transition id="SRM_ Change was Transmitted">
+        <name>
+          <text>SRM_ Change was Transmitted</text>
+        </name>
+      </transition>
+      <transition id="SRM_ Transfer Failed (E.Sys.)">
+        <name>
+          <text>SRM_ Transfer Failed (E.Sys.)</text>
+        </name>
+      </transition>
+      <transition id="Change Approval for Purchase Order">
+        <name>
+          <text>Change Approval for Purchase Order</text>
+        </name>
+      </transition>
+      <transition id="tau_1">
+        <name>
+          <text>tau_1</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="ad620985-afae-4520-8f4b-827d4c9ff988"/>
+      </transition>
+      <transition id="SRM_ In Transfer to Execution Syst.">
+        <name>
+          <text>SRM_ In Transfer to Execution Syst.</text>
+        </name>
+      </transition>
+      <transition id="SRM_ Ordered">
+        <name>
+          <text>SRM_ Ordered</text>
+        </name>
+      </transition>
+      <transition id="Record Subsequent Invoice">
+        <name>
+          <text>Record Subsequent Invoice</text>
+        </name>
+      </transition>
+      <transition id="Change Final Invoice Indicator">
+        <name>
+          <text>Change Final Invoice Indicator</text>
+        </name>
+      </transition>
+      <transition id="Create Purchase Order Item">
+        <name>
+          <text>Create Purchase Order Item</text>
+        </name>
+      </transition>
+      <transition id="tau_2">
+        <name>
+          <text>tau_2</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="a9775119-17d9-407e-b396-c7ad830824f0"/>
+      </transition>
+      <transition id="Delete Purchase Order Item">
+        <name>
+          <text>Delete Purchase Order Item</text>
+        </name>
+      </transition>
+      <transition id="Cancel Invoice Receipt">
+        <name>
+          <text>Cancel Invoice Receipt</text>
+        </name>
+      </transition>
+      <transition id="Change Rejection Indicator">
+        <name>
+          <text>Change Rejection Indicator</text>
+        </name>
+      </transition>
+      <transition id="Change Currency">
+        <name>
+          <text>Change Currency</text>
+        </name>
+      </transition>
+      <arc id="4783876112" source="ent_node46" target="Change Currency"/>
+      <arc id="4783877648" source="Cancel Subsequent Invoice" target="ent_node24"/>
+      <arc id="4783880720" source="ent_node51" target="tau_2"/>
+      <arc id="4783879184" source="exi_node40" target="SRM_ Created"/>
+      <arc id="4783878704" source="exi_node41" target="tau_0"/>
+      <arc id="4783875632" source="ent_node18" target="Change Final Invoice Indicator"/>
+      <arc id="4783877168" source="Change Storage Location" target="ent_node6"/>
+      <arc id="4783880240" source="ent_node57" target="SRM_ Incomplete"/>
+      <arc id="4783881776" source="SRM_ Created" target="ent_node57"/>
+      <arc id="4783871552" source="ent_node4" target="SRM_ Complete"/>
+      <arc id="4783879760" source="exi_node3" target="SRM_ Transfer Failed (E.Sys.)"/>
+      <arc id="4783875152" source="exi_node12" target="SRM_ Change was Transmitted"/>
+      <arc id="4783876688" source="Release Purchase Order" target="ent_node17"/>
+      <arc id="4783878224" source="Receive Order Confirmation" target="ent_node2"/>
+      <arc id="4783881296" source="SRM_ Deleted" target="ent_node47"/>
+      <arc id="4783872080" source="Change Delivery Indicator" target="ent_node18"/>
+      <arc id="4783880816" source="exi_node56" target="Record Invoice Receipt"/>
+      <arc id="4783879280" source="SRM_ Document Completed" target="ent_node10"/>
+      <arc id="4783874672" source="exi_node28" target="Release Purchase Order"/>
+      <arc id="4783876208" source="exi_node28" target="Receive Order Confirmation"/>
+      <arc id="4783877744" source="ent_node19" target="Change Rejection Indicator"/>
+      <arc id="4783875728" source="Change payment term" target="ent_node6"/>
+      <arc id="4783877264" source="ent_node10" target="SRM_ In Transfer to Execution Syst."/>
+      <arc id="4783880336" source="exi_node3" target="SRM_ Ordered"/>
+      <arc id="4783881872" source="SRM_ Awaiting Approval" target="ent_node31"/>
+      <arc id="4783878800" source="Record Service Entry Sheet" target="ent_node6"/>
+      <arc id="4783871648" source="exi_node28" target="Change Quantity"/>
+      <arc id="4783879856" source="Change Final Invoice Indicator" target="ent_node51"/>
+      <arc id="4783875248" source="Cancel Invoice Receipt" target="ent_node24"/>
+      <arc id="4783876784" source="ent_node55" target="Cancel Subsequent Invoice"/>
+      <arc id="4783878320" source="Delete Purchase Order Item" target="ent_node19"/>
+      <arc id="4783881392" source="SRM_ Complete" target="ent_node27"/>
+      <arc id="4783872176" source="ent_node22" target="Vendor creates debit memo"/>
+      <arc id="4783879376" source="tau_0" target="ent_node51"/>
+      <arc id="4783874768" source="Create Purchase Order Item" target="exi_node28"/>
+      <arc id="4783876304" source="Record Subsequent Invoice" target="ent_node24"/>
+      <arc id="4783877840" source="ent_node6" target="Record Goods Receipt"/>
+      <arc id="4783880912" source="SRM_ Held" target="ent_node4"/>
+      <arc id="4783881968" source="Cancel Goods Receipt" target="ent_node6"/>
+      <arc id="4783878896" source="ent_node36" target="Create Purchase Order Item"/>
+      <arc id="4783880432" source="Vendor creates debit memo" target="ent_node55"/>
+      <arc id="4783875824" source="ent_node29" target="Reactivate Purchase Order Item"/>
+      <arc id="4783877360" source="exi_node28" target="Cancel Goods Receipt"/>
+      <arc id="4783879952" source="SRM_ Ordered" target="exi_node12"/>
+      <arc id="4783875344" source="Reactivate Purchase Order Item" target="ent_node6"/>
+      <arc id="4783876880" source="exi_node33" target="Remove Payment Block"/>
+      <arc id="4783878416" source="Update Order Confirmation" target="ent_node6"/>
+      <arc id="4783881488" source="Change Approval for Purchase Order" target="ent_node51"/>
+      <arc id="4783872272" source="SRM_ Transaction Completed" target="ent_node51"/>
+      <arc id="4783879472" source="ent_node27" target="SRM_ Awaiting Approval"/>
+      <arc id="4783876400" source="source" target="tau_1"/>
+      <arc id="4783874864" source="ent_node31" target="SRM_ Document Completed"/>
+      <arc id="4783877936" source="Remove Payment Block" target="ent_node24"/>
+      <arc id="4783881008" source="Change Price" target="ent_node46"/>
+      <arc id="4783871792" source="Change Currency" target="ent_node48"/>
+      <arc id="4783878992" source="SRM_ In Transfer to Execution Syst." target="exi_node3"/>
+      <arc id="4783875920" source="exi_node40" target="Create Purchase Requisition Item"/>
+      <arc id="4783877456" source="Block Purchase Order Item" target="ent_node51"/>
+      <arc id="4783880528" source="Clear Invoice" target="exi_node41"/>
+      <arc id="4783882064" source="ent_node47" target="Change Price"/>
+      <arc id="4783881584" source="Change Quantity" target="ent_node38"/>
+      <arc id="4783878512" source="exi_node28" target="Block Purchase Order Item"/>
+      <arc id="4783880048" source="ent_node2" target="Update Order Confirmation"/>
+      <arc id="4783875440" source="ent_node48" target="Vendor creates invoice"/>
+      <arc id="4783876976" source="Vendor creates invoice" target="ent_node22"/>
+      <arc id="4783872368" source="ent_node24" target="Clear Invoice"/>
+      <arc id="4783871360" source="Record Invoice Receipt" target="exi_node33"/>
+      <arc id="4783874960" source="exi_node3" target="SRM_ Transaction Completed"/>
+      <arc id="4783876496" source="exi_node28" target="Change payment term"/>
+      <arc id="4783878032" source="Create Purchase Requisition Item" target="ent_node16"/>
+      <arc id="4783881104" source="ent_node17" target="Change Approval for Purchase Order"/>
+      <arc id="4783879568" source="Record Goods Receipt" target="exi_node56"/>
+      <arc id="4783871888" source="exi_node28" target="Delete Purchase Order Item"/>
+      <arc id="4783879088" source="tau_2" target="sink"/>
+      <arc id="4783876016" source="Set Payment Block" target="ent_node51"/>
+      <arc id="4783877552" source="Change Rejection Indicator" target="ent_node29"/>
+      <arc id="4783880624" source="ent_node39" target="SRM_ Held"/>
+      <arc id="4783882160" source="exi_node56" target="Record Service Entry Sheet"/>
+      <arc id="4783878608" source="SRM_ Transfer Failed (E.Sys.)" target="ent_node51"/>
+      <arc id="4783880144" source="ent_node38" target="Change Delivery Indicator"/>
+      <arc id="4783875536" source="exi_node41" target="Record Subsequent Invoice"/>
+      <arc id="4783877072" source="tau_1" target="exi_node40"/>
+      <arc id="4783881680" source="exi_node12" target="SRM_ Deleted"/>
+      <arc id="4783871456" source="SRM_ Change was Transmitted" target="ent_node36"/>
+      <arc id="4783881200" source="exi_node33" target="Set Payment Block"/>
+      <arc id="4783879664" source="ent_node16" target="Release Purchase Requisition"/>
+      <arc id="4783875056" source="Release Purchase Requisition" target="ent_node36"/>
+      <arc id="4783876592" source="SRM_ Incomplete" target="ent_node39"/>
+      <arc id="4783878128" source="exi_node28" target="Change Storage Location"/>
+      <arc id="4783871984" source="exi_node33" target="Cancel Invoice Receipt"/>
+    </page>
+    <finalmarkings>
+      <marking>
+        <place idref="sink">
+          <text>1</text>
+        </place>
+      </marking>
+    </finalmarkings>
+  </net>
+</pnml>

@@ -229,8 +229,8 @@ class MultiEvaluator:
                     f"{row['precision']:.3f}",
                     f"{row['generalization']:.3f}",
                     f"{row['simplicity']:.3f}",
-                    f"{row['objective_fitness']:.3f}" if row['objective_fitness'] != "-" else "-",
-                    f"{row['time']:.3f}" if row['time'] != "-" else "-",
+                    f"{float(row['objective_fitness']):.3f}" if row['objective_fitness'] != "-" else "-",
+                    f"{float(row['time']):.3f}" if row['time'] != "-" else "-",
                 ])
 
         # Create the figure and add the table

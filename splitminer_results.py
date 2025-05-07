@@ -9,7 +9,7 @@ from pm4py.convert import convert_to_process_tree as convert_to_pt
 INPUT_DIR = "./real_life_datasets/"
 INPUT_PN_DIR = "./splitminer/pnml_models/"
 OUTPUT_DIR = "./splitminer/"
-OUTPUT_CSV = "./splitminer/results.csv"
+OUTPUT_CSV = "./experiment_1/results_temp_inductive.csv"
 
 if __name__ == "__main__":
     dataset_dirs = os.listdir(INPUT_DIR)
@@ -19,8 +19,6 @@ if __name__ == "__main__":
     rows = []
     for dataset_dir in dataset_dirs:
         print(f"Processing dataset: {dataset_dir}")
-        if dataset_dir in ["2019"]:  # delete later
-            continue
         xes_file = [f for f in os.listdir(f"{INPUT_DIR}{dataset_dir}") if f.endswith(".xes")]
         if len(xes_file) == 0:
             continue
@@ -28,10 +26,6 @@ if __name__ == "__main__":
             our_log = loader.load_eventlog(f"{INPUT_DIR}{dataset_dir}/{xes_file[0]}")
             our_pn = PetriNet.from_pnml(f"{INPUT_PN_DIR}{dataset_dir}.pnml")
             pm4py_pn, im, fm = our_pn.to_pm4py()
-
-            #our_pn.visualize(f"{OUTPUT_DIR}{dataset_dir}.png")
-            #pm4py_pt = convert_to_pt(pm4py_pn, im, fm)
-            #our_pt = ProcessTree.from_pm4py(pm4py_pt)
 
             objective = Objective({"simplicity": 10, "refined_simplicity": 10, "ftr_fitness": 50, "ftr_precision": 30})
             objective.set_event_log(our_log)

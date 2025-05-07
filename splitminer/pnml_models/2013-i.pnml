@@ -10,14 +10,19 @@
           <text>exi_node0</text>
         </name>
       </place>
-      <place id="sink">
+      <place id="exi_node8">
         <name>
-          <text>sink</text>
+          <text>exi_node8</text>
         </name>
       </place>
       <place id="ent_node1">
         <name>
           <text>ent_node1</text>
+        </name>
+      </place>
+      <place id="sink">
+        <name>
+          <text>sink</text>
         </name>
       </place>
       <place id="source">
@@ -28,55 +33,50 @@
           <text>1</text>
         </initialMarking>
       </place>
-      <place id="exi_node8">
+      <transition id="tau_0">
         <name>
-          <text>exi_node8</text>
+          <text>tau_0</text>
         </name>
-      </place>
-      <transition id="node7">
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="900dcda4-ad6b-4ad4-b37a-42e85071c953"/>
+      </transition>
+      <transition id="Queued">
         <name>
           <text>Queued</text>
         </name>
       </transition>
-      <transition id="node2">
+      <transition id="tau_1">
         <name>
-          <text>Unmatched</text>
+          <text>tau_1</text>
         </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="0aa01677-aeec-4de1-b668-3c746fafad3d"/>
       </transition>
-      <transition id="node3">
-        <name>
-          <text>Completed</text>
-        </name>
-      </transition>
-      <transition id="sfl_edge5">
-        <name>
-          <text>sfl_edge5</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="f2780c14-c622-43f1-96c8-1fa6b7d10363"/>
-      </transition>
-      <transition id="fab4abdf-27e3-4258-a75f-14ea438cd347">
-        <name>
-          <text>fab4abdf-27e3-4258-a75f-14ea438cd347</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="89948242-18e7-4aa3-b629-d38b74472c4f"/>
-      </transition>
-      <transition id="node6">
+      <transition id="Accepted">
         <name>
           <text>Accepted</text>
         </name>
       </transition>
-      <arc id="132964392412384" source="ent_node1" target="node6"/>
-      <arc id="132964392403072" source="node2" target="ent_node1"/>
-      <arc id="132964391584016" source="source" target="fab4abdf-27e3-4258-a75f-14ea438cd347"/>
-      <arc id="132964392411808" source="sfl_edge5" target="sink"/>
-      <arc id="132964392403744" source="node7" target="ent_node1"/>
-      <arc id="132964392409504" source="exi_node0" target="node3"/>
-      <arc id="132964392403504" source="fab4abdf-27e3-4258-a75f-14ea438cd347" target="ent_node1"/>
-      <arc id="132964392409024" source="exi_node0" target="node7"/>
-      <arc id="132964392411712" source="node6" target="exi_node0"/>
-      <arc id="132964392411232" source="exi_node8" target="sfl_edge5"/>
-      <arc id="132964392403696" source="node3" target="exi_node8"/>
-      <arc id="132964392411616" source="exi_node8" target="node2"/>
+      <transition id="Unmatched">
+        <name>
+          <text>Unmatched</text>
+        </name>
+      </transition>
+      <transition id="Completed">
+        <name>
+          <text>Completed</text>
+        </name>
+      </transition>
+      <arc id="4791239552" source="Unmatched" target="ent_node1"/>
+      <arc id="4791239648" source="Completed" target="exi_node8"/>
+      <arc id="4791239744" source="exi_node8" target="Unmatched"/>
+      <arc id="4791239840" source="exi_node0" target="Completed"/>
+      <arc id="4791239936" source="Queued" target="ent_node1"/>
+      <arc id="4791240032" source="tau_1" target="sink"/>
+      <arc id="4791240128" source="tau_0" target="ent_node1"/>
+      <arc id="4791240224" source="Accepted" target="exi_node0"/>
+      <arc id="4791240320" source="source" target="tau_0"/>
+      <arc id="4791240416" source="exi_node0" target="Queued"/>
+      <arc id="4791240512" source="ent_node1" target="Accepted"/>
+      <arc id="4791240608" source="exi_node8" target="tau_1"/>
     </page>
     <finalmarkings>
       <marking>

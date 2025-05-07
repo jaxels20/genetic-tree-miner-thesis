@@ -5,9 +5,9 @@
       <text></text>
     </name>
     <page id="n0">
-      <place id="ent_node0">
+      <place id="exi_node4">
         <name>
-          <text>ent_node0</text>
+          <text>exi_node4</text>
         </name>
       </place>
       <place id="sink">
@@ -20,11 +20,6 @@
           <text>ent_node6</text>
         </name>
       </place>
-      <place id="exi_node4">
-        <name>
-          <text>exi_node4</text>
-        </name>
-      </place>
       <place id="source">
         <name>
           <text>source</text>
@@ -33,42 +28,47 @@
           <text>1</text>
         </initialMarking>
       </place>
-      <transition id="node2">
+      <place id="ent_node0">
         <name>
-          <text>Queued</text>
+          <text>ent_node0</text>
         </name>
-      </transition>
-      <transition id="node5">
+      </place>
+      <transition id="Accepted">
         <name>
           <text>Accepted</text>
         </name>
       </transition>
-      <transition id="0009c89a-c1e3-4ecc-b5c9-6e0de1fefb2a">
+      <transition id="Queued">
         <name>
-          <text>0009c89a-c1e3-4ecc-b5c9-6e0de1fefb2a</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="c30f5d8e-9a21-468f-b966-c2852dc7154d"/>
-      </transition>
-      <transition id="node0">
-        <name>
-          <text>Completed</text>
+          <text>Queued</text>
         </name>
       </transition>
-      <transition id="node7">
+      <transition id="Unmatched">
         <name>
           <text>Unmatched</text>
         </name>
       </transition>
-      <arc id="132964389383936" source="source" target="0009c89a-c1e3-4ecc-b5c9-6e0de1fefb2a"/>
-      <arc id="132964389376784" source="exi_node4" target="node7"/>
-      <arc id="132964389376640" source="0009c89a-c1e3-4ecc-b5c9-6e0de1fefb2a" target="ent_node6"/>
-      <arc id="132964389377024" source="node0" target="sink"/>
-      <arc id="132964389376928" source="exi_node4" target="node2"/>
-      <arc id="132964389376544" source="ent_node6" target="node5"/>
-      <arc id="132964389377840" source="node2" target="ent_node6"/>
-      <arc id="132964389289424" source="ent_node0" target="node0"/>
-      <arc id="132964389376736" source="node5" target="exi_node4"/>
-      <arc id="132964389377648" source="node7" target="ent_node0"/>
+      <transition id="Completed">
+        <name>
+          <text>Completed</text>
+        </name>
+      </transition>
+      <transition id="tau_0">
+        <name>
+          <text>tau_0</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="a9eec6a0-0996-4312-9d94-dcd4891bc3ae"/>
+      </transition>
+      <arc id="4790896544" source="ent_node6" target="Accepted"/>
+      <arc id="4790896928" source="tau_0" target="ent_node6"/>
+      <arc id="4790897120" source="ent_node0" target="Completed"/>
+      <arc id="4790896736" source="source" target="tau_0"/>
+      <arc id="4790897312" source="exi_node4" target="Unmatched"/>
+      <arc id="4790897504" source="exi_node4" target="Queued"/>
+      <arc id="4790895200" source="Queued" target="ent_node6"/>
+      <arc id="4790895488" source="Accepted" target="exi_node4"/>
+      <arc id="4790897984" source="Completed" target="sink"/>
+      <arc id="4790898464" source="Unmatched" target="ent_node0"/>
     </page>
     <finalmarkings>
       <marking>
