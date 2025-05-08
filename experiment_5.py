@@ -212,4 +212,4 @@ def visualize_paper_figure():
 if __name__ == "__main__":    
     generate_monitors(['2013-op', '2020-dd', '2020-ptc', "2020-rfp"])
     visualize_paper_figure()
-    generate_monitors(['2019'])
+    #generate_monitors(['2019'])

@@ -28,7 +28,7 @@ def generate_data():
     dataset_dirs = [x for x in dataset_dirs if not os.path.isfile(f"{DATASET_DIR}{x}")]
     overall_df = pandas.DataFrame()
     for dataset_dir in dataset_dirs:
-        if dataset_dir != TEST_DATASETS[4]:
+        if dataset_dir != TEST_DATASETS[0]:
             continue
         
         # Load the event log
@@ -54,6 +54,8 @@ def generate_data():
             metrics['log_fitness'] = evaluator.get_replay_fitness()['log_fitness']
             metrics['dataset'] = dataset_dir
             metrics['objective_fitness'] = evaluator.get_objective_fitness(OBJECTIVE) / 100
+            metrics['precision'] = evaluator.get_precision()
+            metrics['f1_score'] = evaluator.get_f1_score(metrics['precision'], metrics['log_fitness'])
             data.append(metrics)
         
         # Convert the data to a pandas DataFrame
@@ -69,11 +71,12 @@ def generate_data():
         'precision': 'Precision',
         'simplicity': 'Simplicity',
         'generalization': 'Generalization',
+        'f1_score': 'F1 Score',
     }, inplace=True)
         
     # Melt the DataFrame for Seaborn
     df_melted = overall_df.melt(id_vars='Dataset', 
-                        value_vars=['Replay Fitness', 'Objective Fitness'],
+                        value_vars=['Replay Fitness', 'Objective Fitness', "Precision", "F1 Score"],
                         var_name='Metric', 
                         value_name='Score')
     
@@ -136,11 +139,10 @@ def plot_data():
     # save the plot
     fig.write_image("./experiment_2/experiment_2.pdf")
     
-    
 
 if __name__ == "__main__":
-    raise RuntimeError("BE CAREFUL")
-    #generate_data()
-    plot_data()
+    raise NotImplementedError("This experiment is not implemented yet")
+    generate_data()
+    #plot_data()
 
     
