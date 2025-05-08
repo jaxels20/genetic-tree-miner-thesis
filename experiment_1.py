@@ -13,7 +13,7 @@ INPUT_DIR = "./real_life_datasets/"
 OUTPUT_DIR = "./experiment_1/"
 BEST_PARAMS = "./best_parameters.csv"
 STAGNATION_LIMIT = 50
-TIME_LIMIT = 60
+# TIME_LIMIT = 60
 CPU_COUNT = 1
 OBJECTIVE_WEIGHTS = {"simplicity": 10, "refined_simplicity": 10, "ftr_fitness": 50, "ftr_precision": 30}
 
@@ -87,8 +87,6 @@ def run_experiment():
     eventlogs = []
 
     for dataset_dir in dataset_dirs:
-        if dataset_dir != "2020-pl":
-            continue
         xes_file = [f for f in os.listdir(f"{INPUT_DIR}{dataset_dir}") if f.endswith(".xes")]
         if len(xes_file) == 1:
             loaded_log = loader.load_eventlog(f"{INPUT_DIR}{dataset_dir}/{xes_file[0]}")
@@ -101,10 +99,24 @@ def run_experiment():
 
     # Define the methods to be used
     methods_dict = {
+        "Genetic Miner (1 minute)": lambda log: Discovery.genetic_algorithm(
+            log,
+            stagnation_limit=STAGNATION_LIMIT,
+            time_limit=60,
+            percentage_of_log=0.05,
+            **hyperparams,
+        ),
         "Genetic Miner (5 minutes)": lambda log: Discovery.genetic_algorithm(
             log,
             stagnation_limit=STAGNATION_LIMIT,
-            time_limit=TIME_LIMIT,
+            time_limit=60*5,
+            percentage_of_log=0.05,
+            **hyperparams,
+        ),
+        "Genetic Miner (30 minutes)": lambda log: Discovery.genetic_algorithm(
+            log,
+            stagnation_limit=STAGNATION_LIMIT,
+            time_limit=60*30,
             percentage_of_log=0.05,
             **hyperparams,
         ),
@@ -129,36 +141,29 @@ def consolidate_results(input_dir):
     
 if __name__ == "__main__":
     # Run some experiments producing csv files
-    # result_df = run_experiment()
-    # result_df.to_csv(OUTPUT_DIR + "/csvs/" + "results_genetic_pl_1.csv", index=False)
+    produce_csv = True
+    if produce_csv:
+        result_df = run_experiment()
+        result_df.to_csv(OUTPUT_DIR + "/csvs/" + "results_genetic_all.csv", index=False)
     
-    # Consolidate all results
-    df = consolidate_results("./experiment_1/csvs/")
-    column_order = ['dataset', 'miner', 'f1_score', 'log_fitness', 'precision', 'objective_fitness', 'generalization', 'simplicity', 'time']
-    df = df[column_order]
-    df.rename(columns={
-        'dataset': 'Dataset',
-        'miner': 'Discovery Method',
-        'f1_score': 'F1 Score',
-        'log_fitness': 'Log Fitness',
-        'precision': 'Precision',
-        'objective_fitness': 'Objective Fitness',
-        'generalization': 'Generalization',
-        'simplicity': 'Simplicity',
-        'time': 'Time (s)'
-    }, inplace=True)
-    df.sort_values(by=['Dataset', 'Discovery Method'], inplace=True)
-    
-    # Save the consolidated results
-    df_latex = df.copy()
-    columns_to_bold = df.columns.difference(['Dataset', 'Discovery Method'])
-
-    for dataset, group in df.groupby("Dataset"):
-        mask = group[columns_to_bold] == group[columns_to_bold].max()
-        for row_idx, col in zip(*mask.to_numpy().nonzero()):
-            real_row = group.index[row_idx]
-            value = df_latex.at[real_row, columns_to_bold[col]]
-            df_latex.at[real_row, columns_to_bold[col]] = f"\textbf{{{value}}}"
-    
-    df_latex.to_latex(OUTPUT_DIR + "results_all_test.tex", index=False, escape=False, float_format="%.2f")
-    # df.to_csv(OUTPUT_DIR + "results_all.csv", index=False)
+    consolidate_results_bool = False
+    if consolidate_results_bool:
+        df = consolidate_results("./experiment_1/csvs/")
+        column_order = ['dataset', 'miner', 'f1_score', 'log_fitness', 'precision', 'objective_fitness', 'generalization', 'simplicity', 'time']
+        df = df[column_order]
+        df.rename(columns={
+            'dataset': 'Dataset',
+            'miner': 'Discovery Method',
+            'f1_score': 'F1 Score',
+            'log_fitness': 'Log Fitness',
+            'precision': 'Precision',
+            'objective_fitness': 'Objective Fitness',
+            'generalization': 'Generalization',
+            'simplicity': 'Simplicity',
+            'time': 'Time (s)'
+        }, inplace=True)
+        df.sort_values(by=['Dataset', 'Discovery Method'], inplace=True)
+        
+        # Output results
+        df.to_latex(OUTPUT_DIR + "results_all_test.tex", index=False, escape=False, float_format="%.2f")
+        df.to_csv(OUTPUT_DIR + "results_all.csv", index=False)

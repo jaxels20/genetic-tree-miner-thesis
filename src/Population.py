@@ -61,8 +61,7 @@ class Population:
         # check if the number of elite trees is greater than the population size
         if num_best_trees > len(self.trees):
             raise ValueError("Number of elite trees is greater than the population size")
-        
-        return sorted(self.trees, key=lambda tree: tree.get_fitness(), reverse=True)[:num_best_trees]
+        return sorted(self.trees, key=lambda tree: (tree.get_fitness() is not None, tree.get_fitness()), reverse=True)[:num_best_trees]
     
     def get_best_tree(self) -> ProcessTree:
         """
