@@ -95,7 +95,7 @@ class GeneticAlgorithm:
         
         for generation in tqdm.tqdm(range(max_generations), desc="Discovering process tree", unit="generation"):   
             # Evaluate the fitness of each tree
-            objective.evaluate_population(population)
+            objective.evaluate_population(population, self.start_time, time_limit)
             
             # Observe the population
             self.monitor.observe(generation, population)

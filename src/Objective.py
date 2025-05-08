@@ -4,7 +4,7 @@ from src.SupressPrints import SuppressPrints
 from src.Population import Population
 from src.PetriNet import PetriNet
 import src.FastTokenBasedReplay as FastTokenBasedReplay
-
+import time
 from typing import Union
 from pm4py.algo.evaluation.replay_fitness.variants.token_replay import apply as replay_fitness
 from pm4py.algo.evaluation.precision.variants.etconformance_token import apply as precision
@@ -149,8 +149,13 @@ class Objective:
         
         
     
-    def evaluate_population(self, population: Population):
+    def evaluate_population(self, population: Population, start_time=None, time_limit=None):
         for tree in population.trees:
+            
+            if time_limit is not None:
+                if start_time is not None and time.time() - start_time >= time_limit:
+                    break
+            
             if tree.fitness is None:
                 tree.fitness = self.fitness(tree)
             else:
