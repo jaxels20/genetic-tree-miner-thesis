@@ -13,9 +13,8 @@ INPUT_DIR = "./real_life_datasets/"
 OUTPUT_DIR = "./experiment_1/"
 BEST_PARAMS = "./best_parameters.csv"
 STAGNATION_LIMIT = 50
-TIME_LIMIT = 60
+TIME_LIMIT = 60*5
 CPU_COUNT = 1
-TEST_DATASETS = ['Nasa', '2017', '2019', '2020-pl', '2013-i', '2013-op', '2020-ptc', '2020-id', '2020-rfp']
 OBJECTIVE_WEIGHTS = {"simplicity": 10, "refined_simplicity": 10, "ftr_fitness": 50, "ftr_precision": 30}
 
 def convert_json_to_hyperparamters(hyper_parameters: dict):
@@ -100,7 +99,7 @@ def run_experiment():
 
     # Define the methods to be used
     methods_dict = {
-        "Genetic Miner (1 minute)": lambda log: Discovery.genetic_algorithm(
+        "Genetic Miner (5 minutes)": lambda log: Discovery.genetic_algorithm(
             log,
             stagnation_limit=STAGNATION_LIMIT,
             time_limit=TIME_LIMIT,
@@ -129,12 +128,10 @@ def consolidate_results(input_dir):
 if __name__ == "__main__":
     # Run some experiments producing csv files
     # result_df = run_experiment()
-    # result_df.to_csv(OUTPUT_DIR + "/csvs/" + "results_genetic_1.csv", index=False)
+    # result_df.to_csv(OUTPUT_DIR + "/csvs/" + "results_genetic_ptc.csv", index=False)
     
     # Consolidate all results
     df = consolidate_results("./experiment_1/csvs/")
-    
-    # change column order in dataframe
     column_order = ['dataset', 'miner', 'f1_score', 'log_fitness', 'precision', 'objective_fitness', 'generalization', 'simplicity', 'time']
     df = df[column_order]
     df.rename(columns={
@@ -153,4 +150,3 @@ if __name__ == "__main__":
     # Save the consolidated results
     df.to_latex(OUTPUT_DIR + "results_all.tex", index=False, float_format="%.3f")
     df.to_csv(OUTPUT_DIR + "results_all.csv", index=False)
-    # MultiEvaluator.save_df_to_pdf(df, OUTPUT_DIR + "results_all.pdf")
