@@ -16,33 +16,14 @@ import pandas as pd
 
 INPUT_DIR = "./real_life_datasets/"
 OUTPUT_DIR = "./experiment_5"
-NUM_RUNS = 4
+NUM_RUNS = 1
 BEST_PARAMS = "./best_parameters.csv"
 TIME_LIMIT = None
 STAGNATION_LIMIT = None
-MAX_GENERATIONS = 100
-TEST_DATASETS = ['2019', '2013-op', '2020-dd', '2020-ptc']
+MAX_GENERATIONS = 300
+#TEST_DATASETS = ['2019', '2013-op', '2020-dd', '2020-ptc', "2020-rfp"]
 
-colors = cycle(px.colors.qualitative.Pastel2)
-color_map = {
-    "FootprintGuidedSequentialGenerator": next(colors),
-    "BottomUpRandomBinaryGenerator": next(colors),
-    "InductiveNoiseInjectionGenerator": next(colors),
-    "InductiveMinerGenerator": next(colors),
-    "Tourn.": next(colors),
-    "NonTourn.": next(colors)
-}
-marker_map = {
-    "FootprintGuidedSequentialGenerator": "circle",
-    "BottomUpRandomBinaryGenerator": "square",
-    "InductiveNoiseInjectionGenerator": "triangle-up",
-    "InductiveMinerGenerator": "hexagon",
-    "Tourn.": "triangle-down",
-    "NonTourn.": "star"
-}
-
-
-def generate_monitors():
+def generate_monitors(datasets):
     dataset_dirs = os.listdir(INPUT_DIR)
     dataset_dirs = [x for x in dataset_dirs if not os.path.isfile(f"{INPUT_DIR}{x}")]
     loader = FileLoader()
@@ -52,6 +33,10 @@ def generate_monitors():
 
     for dataset_dir in dataset_dirs:
         xes_file = [f for f in os.listdir(f"{INPUT_DIR}{dataset_dir}") if f.endswith(".xes")]
+        
+        if dataset_dir not in datasets:
+            continue
+        
         if len(xes_file) == 0:
             continue
         elif len(xes_file) == 1:
@@ -62,99 +47,24 @@ def generate_monitors():
 
     methods_dict = {}
 
-    # # Change the mutator to TournamentMutator if you want to use tournament selection
-    curr_hyperparams = deepcopy(hyperparams)
-    curr_hyperparams["mutator"] = TournamentMutator(
-        random_creation_rate=curr_hyperparams['random_creation_rate'],
-        elite_rate=curr_hyperparams['elite_rate'], 
-        tournament_size=curr_hyperparams['tournament_size'])
+
+    hyperparams["method_name"] = "Genetic Miner"
     
-    curr_hyperparams["method_name"] = "Tourn."
-    
-    methods_dict["Tourn."] = lambda log: Discovery.genetic_algorithm(
+    methods_dict["Genetic Miner"] = lambda log: Discovery.genetic_algorithm(
             log,
             export_monitor_path=f"{OUTPUT_DIR}",
             time_limit=TIME_LIMIT,
             stagnation_limit=STAGNATION_LIMIT,
             max_generations=MAX_GENERATIONS,
-            **curr_hyperparams
+            percentage_of_log=0.05,
+            **hyperparams,
         )
 
-    # NonTournament
-    curr_hyperparams1 = deepcopy(hyperparams)
-    curr_hyperparams1["mutator"] = Mutator(
-        random_creation_rate=curr_hyperparams1['random_creation_rate'], 
-        crossover_rate=curr_hyperparams1['crossover_rate'], 
-        mutation_rate=curr_hyperparams1['mutation_rate'], 
-        elite_rate=curr_hyperparams1['elite_rate'])
     
-    curr_hyperparams1["method_name"] = "NonTourn."
-    methods_dict["NonTourn."] = lambda log: Discovery.genetic_algorithm(
-        log,
-        export_monitor_path=f"{OUTPUT_DIR}",
-        time_limit=TIME_LIMIT,
-        stagnation_limit=STAGNATION_LIMIT,
-        max_generations=MAX_GENERATIONS,
-        **curr_hyperparams1
-    )
-    
-    # Sequential
-    curr_hyperparams2 = deepcopy(hyperparams)
-    curr_hyperparams2["generator"] = FootprintGuidedSequentialGenerator()
-    curr_hyperparams2["method_name"] = "FootprintGuidedSequentialGenerator"
-    methods_dict["FootprintGuidedSequentialGenerator"] = lambda log: Discovery.genetic_algorithm(
-        log,
-        export_monitor_path=f"{OUTPUT_DIR}",
-        time_limit=TIME_LIMIT,
-        stagnation_limit=STAGNATION_LIMIT,
-        max_generations=MAX_GENERATIONS,
-        **curr_hyperparams2
-    )
-    # BottomUp
-    curr_hyperparams3 = deepcopy(hyperparams)
-    curr_hyperparams3["generator"] = BottomUpRandomBinaryGenerator()
-    curr_hyperparams3["method_name"] = "BottomUpRandomBinaryGenerator"
-    methods_dict["BottomUpRandomBinaryGeneratorUp"] = lambda log: Discovery.genetic_algorithm(
-        log,
-        export_monitor_path=f"{OUTPUT_DIR}",
-        time_limit=TIME_LIMIT,
-        stagnation_limit=STAGNATION_LIMIT,
-        max_generations=MAX_GENERATIONS,
-        **curr_hyperparams3
-    )
-    # Injection
-    curr_hyperparams4 = deepcopy(hyperparams)
-    curr_hyperparams4["generator"] = InductiveNoiseInjectionGenerator(curr_hyperparams4["log_filtering"])
-    curr_hyperparams4["method_name"] = "InductiveNoiseInjectionGenerator"
-    methods_dict["InductiveNoiseInjectionGenerator"] = lambda log: Discovery.genetic_algorithm(
-        log,
-        export_monitor_path=f"{OUTPUT_DIR}",
-        time_limit=TIME_LIMIT,
-        stagnation_limit=STAGNATION_LIMIT,
-        max_generations=MAX_GENERATIONS,
-        **curr_hyperparams4
-    )
-    
-    # Injection
-    method_name = "InductiveMinerGenerator"
-    curr_hyperparams5 = deepcopy(hyperparams)
-    curr_hyperparams5["generator"] = InductiveMinerGenerator()
-    curr_hyperparams5["method_name"] = method_name
-    methods_dict[method_name] = lambda log: Discovery.genetic_algorithm(
-        log,
-        export_monitor_path=f"{OUTPUT_DIR}",
-        time_limit=TIME_LIMIT,
-        stagnation_limit=STAGNATION_LIMIT,
-        max_generations=MAX_GENERATIONS,
-        **curr_hyperparams5
-    )
-    
-
     for i in range(NUM_RUNS):
         multi_evaluator = MultiEvaluator(eventlogs, methods_dict)
 
     #multi_evaluator.plot_monitor_data()
-
 
 def visualize(folder_path, mutator: bool):
     df = pd.DataFrame()
@@ -229,8 +139,77 @@ def visualize_all():
     for subfolder in subfolders:
         visualize(subfolder, mutator=True)
         visualize(subfolder, mutator=False)
-        
 
+
+def visualize_paper_figure():
+    subfolders = [f.path for f in os.scandir(OUTPUT_DIR) if f.is_dir()]
+    data = []
+    
+    for subfolder in subfolders:
+        pkl_files = [f for f in os.listdir(subfolder + "/monitors") if f.endswith('.pkl')]
+        
+        for pkl_file in pkl_files:
+            with open(os.path.join(subfolder, "monitors", pkl_file), 'rb') as f:
+                dataset_name, method_name, result_dict = pickle.load(f)
+                
+            generations = list(result_dict.keys())
+            fitness_values = list(result_dict.values())
+            
+            # remove every second element from generations and fitness_values
+            # generations = generations[::2]
+            # fitness_values = fitness_values[::2]
+            
+            for i in range(len(generations)):
+                data.append(
+                    {
+                        "Generation": generations[i],
+                        "Fitness": fitness_values[i],
+                        "Method": method_name,
+                        "Dataset": dataset_name
+                    }
+                )
+            
+    # create a dataframe
+    df = pd.DataFrame(data)
+    
+    # group by dataset and mean fitness
+    df = df.groupby(["Dataset", "Generation"], as_index=False).mean(numeric_only=True)
+    
+    
+
+    
+    fig = go.Figure()
+    for dataset in df["Dataset"].unique():
+        dataset_df = df[df["Dataset"] == dataset]
+        fig.add_trace(go.Scatter
+            (
+                x=dataset_df["Generation"],
+                y=dataset_df["Fitness"],
+                mode='lines+markers',
+                name=f"{dataset}",
+            )
+        )
+    fig.update_layout(title=None,
+                        xaxis_title="Generation",
+                        yaxis_title="Objective Fitness",
+                        width=900,
+                        template='simple_white',
+                        height=600,
+                        legend=dict(
+                            font=dict(size=14),
+                            orientation="v",
+                            yanchor="bottom",
+                            y=0.01,
+                            xanchor="right",
+                            x=0.99
+                        )
+        )
+    
+    # write the file to the output directory
+    fig.write_image(f"{OUTPUT_DIR}/paper_figure.pdf")
+    
+    
 if __name__ == "__main__":    
-    generate_monitors()
-    visualize_all()
+    generate_monitors(['2013-op', '2020-dd', '2020-ptc', "2020-rfp"])
+    visualize_paper_figure()
+    #generate_monitors(['2019'])
