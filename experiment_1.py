@@ -13,7 +13,7 @@ INPUT_DIR = "./real_life_datasets/"
 OUTPUT_DIR = "./experiment_1/"
 BEST_PARAMS = "./best_parameters.csv"
 STAGNATION_LIMIT = 50
-TIME_LIMIT = 60*5
+TIME_LIMIT = 60
 CPU_COUNT = 1
 OBJECTIVE_WEIGHTS = {"simplicity": 10, "refined_simplicity": 10, "ftr_fitness": 50, "ftr_precision": 30}
 
@@ -87,6 +87,8 @@ def run_experiment():
     eventlogs = []
 
     for dataset_dir in dataset_dirs:
+        if dataset_dir != "2020-pl":
+            continue
         xes_file = [f for f in os.listdir(f"{INPUT_DIR}{dataset_dir}") if f.endswith(".xes")]
         if len(xes_file) == 1:
             loaded_log = loader.load_eventlog(f"{INPUT_DIR}{dataset_dir}/{xes_file[0]}")
@@ -128,7 +130,7 @@ def consolidate_results(input_dir):
 if __name__ == "__main__":
     # Run some experiments producing csv files
     # result_df = run_experiment()
-    # result_df.to_csv(OUTPUT_DIR + "/csvs/" + "results_genetic_ptc.csv", index=False)
+    # result_df.to_csv(OUTPUT_DIR + "/csvs/" + "results_genetic_pl_1.csv", index=False)
     
     # Consolidate all results
     df = consolidate_results("./experiment_1/csvs/")
@@ -148,5 +150,15 @@ if __name__ == "__main__":
     df.sort_values(by=['Dataset', 'Discovery Method'], inplace=True)
     
     # Save the consolidated results
-    df.to_latex(OUTPUT_DIR + "results_all.tex", index=False, float_format="%.3f")
-    df.to_csv(OUTPUT_DIR + "results_all.csv", index=False)
+    df_latex = df.copy()
+    columns_to_bold = df.columns.difference(['Dataset', 'Discovery Method'])
+
+    for dataset, group in df.groupby("Dataset"):
+        mask = group[columns_to_bold] == group[columns_to_bold].max()
+        for row_idx, col in zip(*mask.to_numpy().nonzero()):
+            real_row = group.index[row_idx]
+            value = df_latex.at[real_row, columns_to_bold[col]]
+            df_latex.at[real_row, columns_to_bold[col]] = f"\textbf{{{value}}}"
+    
+    df_latex.to_latex(OUTPUT_DIR + "results_all_test.tex", index=False, escape=False, float_format="%.2f")
+    # df.to_csv(OUTPUT_DIR + "results_all.csv", index=False)
