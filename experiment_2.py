@@ -28,8 +28,6 @@ def generate_data():
     dataset_dirs = [x for x in dataset_dirs if not os.path.isfile(f"{DATASET_DIR}{x}")]
     overall_df = pandas.DataFrame()
     for dataset_dir in dataset_dirs:
-        if not dataset_dir in ["2013-cp", "2013-op"]:
-            continue
         # Load the event log
         eventlog = EventLog.load_xes(f"{DATASET_DIR}{dataset_dir}/{dataset_dir}.xes")
 
@@ -59,26 +57,26 @@ def generate_data():
         # concatenate the curr ent DataFrame with the overall DataFrame
         overall_df = pandas.concat([overall_df, cur__df], ignore_index=True)
     
-     # Rename the columns
-    overall_df.rename(columns={
-        'dataset': 'Dataset',
-        'objective_fitness': 'Objective Fitness',
-    }, inplace=True)
+        # Rename the columns
+        overall_df.rename(columns={
+            'dataset': 'Dataset',
+            'objective_fitness': 'Objective Fitness',
+        }, inplace=True)
         
-    # Melt the DataFrame for Seaborn
-    df_melted = overall_df.melt(id_vars='Dataset', 
-                        value_vars=['Objective Fitness'],
-                        var_name='Metric', 
-                        value_name='Score')
+        # Melt the DataFrame for Seaborn
+        df_melted = overall_df.melt(id_vars='Dataset', 
+                            value_vars=['Objective Fitness'],
+                            var_name='Metric', 
+                            value_name='Score')
     
-    # Check if the file already exists if it does append to it
-    if os.path.exists("./experiment_2/experiment_2.csv"):
-        # Load the existing data
-        existing_df = pandas.read_csv("./experiment_2/experiment_2.csv")
-        # Concatenate the new data with the existing data
-        df_melted = pandas.concat([existing_df, df_melted], ignore_index=True)
+        # Check if the file already exists if it does append to it
+        if os.path.exists("./experiment_2/experiment_2.csv"):
+            # Load the existing data
+            existing_df = pandas.read_csv("./experiment_2/experiment_2.csv")
+            # Concatenate the new data with the existing data
+            df_melted = pandas.concat([existing_df, df_melted], ignore_index=True)
     
-    df_melted.to_csv("./experiment_2/experiment_2.csv", index=False)
+        df_melted.to_csv("./experiment_2/experiment_2.csv", index=False)
 
 def plot_data():
     # Load the data
