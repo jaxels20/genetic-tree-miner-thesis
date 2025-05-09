@@ -141,12 +141,12 @@ def consolidate_results(input_dir):
     
 if __name__ == "__main__":
     # Run some experiments producing csv files
-    produce_csv = True
+    produce_csv = False
     if produce_csv:
         result_df = run_experiment()
         result_df.to_csv(OUTPUT_DIR + "/csvs/" + "results_genetic_all.csv", index=False)
     
-    consolidate_results_bool = False
+    consolidate_results_bool = True
     if consolidate_results_bool:
         df = consolidate_results("./experiment_1/csvs/")
         column_order = ['dataset', 'miner', 'f1_score', 'log_fitness', 'precision', 'objective_fitness', 'generalization', 'simplicity', 'time']

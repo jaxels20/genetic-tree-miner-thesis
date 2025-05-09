@@ -18,7 +18,7 @@ OBJECTIVE = {
     "ftr_precision": 30
 }
 
-TEST_DATASETS = ['2019', '2013-op', '2020-dd', '2020-ptc', "2020-rfp"]
+# TEST_DATASETS = ['2019', '2013-op', '2020-dd', '2020-ptc', "2020-rfp"]
 
 def generate_data():
     # convert the hyper parameters to a normalize
@@ -28,9 +28,8 @@ def generate_data():
     dataset_dirs = [x for x in dataset_dirs if not os.path.isfile(f"{DATASET_DIR}{x}")]
     overall_df = pandas.DataFrame()
     for dataset_dir in dataset_dirs:
-        if dataset_dir != TEST_DATASETS[0]:
+        if not dataset_dir in ["2013-cp", "2013-op"]:
             continue
-        
         # Load the event log
         eventlog = EventLog.load_xes(f"{DATASET_DIR}{dataset_dir}/{dataset_dir}.xes")
 
@@ -51,11 +50,8 @@ def generate_data():
             
             # Get the evaluation metrics
             metrics = {}
-            metrics['log_fitness'] = evaluator.get_replay_fitness()['log_fitness']
             metrics['dataset'] = dataset_dir
             metrics['objective_fitness'] = evaluator.get_objective_fitness(OBJECTIVE) / 100
-            metrics['precision'] = evaluator.get_precision()
-            metrics['f1_score'] = evaluator.get_f1_score(metrics['precision'], metrics['log_fitness'])
             data.append(metrics)
         
         # Convert the data to a pandas DataFrame
@@ -65,18 +61,13 @@ def generate_data():
     
      # Rename the columns
     overall_df.rename(columns={
-        'log_fitness': 'Replay Fitness',
-        'objective_fitness': 'Objective Fitness',
         'dataset': 'Dataset',
-        'precision': 'Precision',
-        'simplicity': 'Simplicity',
-        'generalization': 'Generalization',
-        'f1_score': 'F1 Score',
+        'objective_fitness': 'Objective Fitness',
     }, inplace=True)
         
     # Melt the DataFrame for Seaborn
     df_melted = overall_df.melt(id_vars='Dataset', 
-                        value_vars=['Replay Fitness', 'Objective Fitness', "Precision", "F1 Score"],
+                        value_vars=['Objective Fitness'],
                         var_name='Metric', 
                         value_name='Score')
     
@@ -86,7 +77,6 @@ def generate_data():
         existing_df = pandas.read_csv("./experiment_2/experiment_2.csv")
         # Concatenate the new data with the existing data
         df_melted = pandas.concat([existing_df, df_melted], ignore_index=True)
-    
     
     df_melted.to_csv("./experiment_2/experiment_2.csv", index=False)
 
@@ -103,7 +93,7 @@ def plot_data():
     # Create a boxplot
     fig = go.Figure()
     # Add one boxplot trace for each metric
-    for metric in ['Replay Fitness', 'Objective Fitness']:
+    for metric in ['Objective Fitness']:
         metric_df = df_melted[df_melted['Metric'] == metric]
         color = next(colors)
         fig.add_trace(go.Box(
@@ -141,8 +131,8 @@ def plot_data():
     
 
 if __name__ == "__main__":
-    raise NotImplementedError("This experiment is not implemented yet")
+    # raise NotImplementedError("This experiment is not implemented yet")
     generate_data()
-    #plot_data()
+    plot_data()
 
     

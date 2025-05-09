@@ -56,8 +56,11 @@ class GeneticAlgorithm:
     
     def _update_best_tree(self, population: Population):
         best_tree = population.get_best_tree()
-        if self.best_tree is None or best_tree.get_fitness() > self.best_tree.get_fitness():
-            self.best_tree = best_tree
+        try:
+            if self.best_tree is None or best_tree.get_fitness() > self.best_tree.get_fitness():
+                self.best_tree = best_tree
+        except Exception as e:
+            print(f"Exception raised in _update_best_tree: {e}")
     
     def run(self,
             eventlog: EventLog,
