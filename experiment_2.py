@@ -26,7 +26,7 @@ def generate_data():
     
     dataset_dirs = os.listdir(DATASET_DIR)
     dataset_dirs = [x for x in dataset_dirs if not os.path.isfile(f"{DATASET_DIR}{x}")]
-    overall_df = pandas.DataFrame()
+
     for dataset_dir in dataset_dirs:
         # Load the event log
         eventlog = EventLog.load_xes(f"{DATASET_DIR}{dataset_dir}/{dataset_dir}.xes")
@@ -54,26 +54,20 @@ def generate_data():
         
         # Convert the data to a pandas DataFrame
         cur__df = pandas.DataFrame(data)
-        # concatenate the curr ent DataFrame with the overall DataFrame
-        overall_df = pandas.concat([overall_df, cur__df], ignore_index=True)
-    
-        # Rename the columns
-        overall_df.rename(columns={
+        cur__df.rename(columns={
             'dataset': 'Dataset',
             'objective_fitness': 'Objective Fitness',
         }, inplace=True)
         
         # Melt the DataFrame for Seaborn
-        df_melted = overall_df.melt(id_vars='Dataset', 
+        df_melted = cur__df.melt(id_vars='Dataset', 
                             value_vars=['Objective Fitness'],
                             var_name='Metric', 
                             value_name='Score')
     
         # Check if the file already exists if it does append to it
         if os.path.exists("./experiment_2/experiment_2.csv"):
-            # Load the existing data
             existing_df = pandas.read_csv("./experiment_2/experiment_2.csv")
-            # Concatenate the new data with the existing data
             df_melted = pandas.concat([existing_df, df_melted], ignore_index=True)
     
         df_melted.to_csv("./experiment_2/experiment_2.csv", index=False)
@@ -130,7 +124,7 @@ def plot_data():
 
 if __name__ == "__main__":
     # raise NotImplementedError("This experiment is not implemented yet")
-    generate_data()
+    # generate_data()
     plot_data()
 
     
