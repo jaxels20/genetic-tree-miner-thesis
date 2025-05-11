@@ -21,9 +21,8 @@ BEST_PARAMS = "./best_parameters.csv"
 TIME_LIMIT = None
 STAGNATION_LIMIT = None
 MAX_GENERATIONS = 300
-#TEST_DATASETS = ['2019', '2013-op', '2020-dd', '2020-ptc', "2020-rfp"]
 
-def generate_monitors(datasets):
+def generate_monitors():
     dataset_dirs = os.listdir(INPUT_DIR)
     dataset_dirs = [x for x in dataset_dirs if not os.path.isfile(f"{INPUT_DIR}{x}")]
     loader = FileLoader()
@@ -31,25 +30,16 @@ def generate_monitors(datasets):
     hyperparams = load_hyperparameters_from_csv(BEST_PARAMS)
 
 
-    for dataset_dir in dataset_dirs:
+    for dataset_dir in dataset_dirs:        
         xes_file = [f for f in os.listdir(f"{INPUT_DIR}{dataset_dir}") if f.endswith(".xes")]
-        
-        if dataset_dir not in datasets:
-            continue
-        
-        if len(xes_file) == 0:
-            continue
-        elif len(xes_file) == 1:
+        if len(xes_file) == 1:
             loaded_log = loader.load_eventlog(f"{INPUT_DIR}{dataset_dir}/{xes_file[0]}")
             eventlogs.append(loaded_log)
         else:
-            raise ValueError("More than one xes file in the directory")
+            raise ValueError("None or more than one xes file in the directory")
 
     methods_dict = {}
-
-
     hyperparams["method_name"] = "Genetic Miner"
-    
     methods_dict["Genetic Miner"] = lambda log: Discovery.genetic_algorithm(
             log,
             export_monitor_path=f"{OUTPUT_DIR}",
@@ -140,7 +130,6 @@ def visualize_all():
         visualize(subfolder, mutator=True)
         visualize(subfolder, mutator=False)
 
-
 def visualize_paper_figure():
     subfolders = [f.path for f in os.scandir(OUTPUT_DIR) if f.is_dir()]
     data = []
@@ -210,6 +199,5 @@ def visualize_paper_figure():
     
     
 if __name__ == "__main__":    
-    generate_monitors(['2013-op', '2020-dd', '2020-ptc', "2020-rfp"])
+    # generate_monitors()
     visualize_paper_figure()
-    #generate_monitors(['2019'])
