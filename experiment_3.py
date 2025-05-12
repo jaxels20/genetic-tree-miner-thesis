@@ -129,6 +129,10 @@ def plot_data(df):
             dim['tickvals'] = y_tick_vals[col_label]
 
         dim['label'] = col_label.upper().replace(" ", "_")
+        if col_label == "Mutation Rate":
+            dim['label'] = "MUTATION_PROBABILITY"
+        if col_label == "Log Filtering":
+            dim['label'] = "INITAL_SAMPLING_RATE"
         
     # Create the parcoords plot
     fig = go.Figure()
