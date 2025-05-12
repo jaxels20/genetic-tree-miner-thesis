@@ -144,9 +144,8 @@ def visualize_paper_figure():
             generations = list(result_dict.keys())
             fitness_values = list(result_dict.values())
             
-            # remove every second element from generations and fitness_values
-            # generations = generations[::2]
-            # fitness_values = fitness_values[::2]
+            generations = generations[::5]
+            fitness_values = fitness_values[::5]
             
             for i in range(len(generations)):
                 data.append(
@@ -161,38 +160,63 @@ def visualize_paper_figure():
     # create a dataframe
     df = pd.DataFrame(data)
     
+    # sort on Fitness
+    df = df.sort_values(by=["Fitness"], ascending=False)
+    
     # group by dataset and mean fitness
     df = df.groupby(["Dataset", "Generation"], as_index=False).mean(numeric_only=True)
     
-    
+    colorblind_colors = [
+    "#E69F00", "#56B4E9", "#009E73", "#F0E442",
+    "#0072B2", "#D55E00", "#CC79A7", "#999999",
+    "#117733", "#332288", "#88CCEE", "#44AA99",
+    "#661100", "#6699CC"
+]
 
-    
+    marker_symbols = [
+        "circle", "square", "diamond", "cross", "x", "triangle-up", "triangle-down",
+        "triangle-left", "triangle-right", "star", "hexagram", "hourglass", "bowtie", "asterisk"
+    ]
+
+    # Step 1: Compute max fitness per dataset
+    dataset_order = (
+        df.groupby("Dataset")["Fitness"]
+        .max()
+        .sort_values(ascending=False)
+        .index
+        .tolist()
+    )
+
+    # Step 2: Plot traces in sorted order
     fig = go.Figure()
-    for dataset in df["Dataset"].unique():
+    for i, dataset in enumerate(dataset_order):
         dataset_df = df[df["Dataset"] == dataset]
-        fig.add_trace(go.Scatter
-            (
-                x=dataset_df["Generation"],
-                y=dataset_df["Fitness"],
-                mode='lines+markers',
-                name=f"{dataset}",
-            )
+        fig.add_trace(go.Scatter(
+            x=dataset_df["Generation"],
+            y=dataset_df["Fitness"],
+            mode='lines+markers',
+            name=f"{dataset}",
+            line=dict(color=colorblind_colors[i % len(colorblind_colors)]),
+            marker=dict(symbol=marker_symbols[i % len(marker_symbols)], size=8)
+        ))
+
+    # Step 3: Update layout
+    fig.update_layout(
+        title=None,
+        xaxis_title="Generation",
+        yaxis_title="Objective Fitness",
+        width=900,
+        height=600,
+        template='simple_white',
+        legend=dict(
+            font=dict(size=14),
+            orientation="v",
+            yanchor="bottom",
+            y=0.01,
+            xanchor="right",
+            x=0.99
         )
-    fig.update_layout(title=None,
-                        xaxis_title="Generation",
-                        yaxis_title="Objective Fitness",
-                        width=900,
-                        template='simple_white',
-                        height=600,
-                        legend=dict(
-                            font=dict(size=14),
-                            orientation="v",
-                            yanchor="bottom",
-                            y=0.01,
-                            xanchor="right",
-                            x=0.99
-                        )
-        )
+    )
     
     # write the file to the output directory
     fig.write_image(f"{OUTPUT_DIR}/paper_figure.pdf")
