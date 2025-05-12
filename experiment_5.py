@@ -94,8 +94,8 @@ def visualize(folder_path, mutator: bool):
                 y=method_df["Fitness"],
                 mode='lines+markers',
                 name=method,
-                line=dict(color=color_map[method], width=1),
-                marker=dict(symbol=marker_map[method], size=8, line=dict(width=1, color='black'))
+                # line=dict(color=color_map[method], width=1),
+                # marker=dict(symbol=marker_map[method], size=8, line=dict(width=1, color='black'))
             )
         )
     

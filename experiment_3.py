@@ -145,7 +145,7 @@ def plot_data(df):
 
     # Layout adjustments
     fig.update_layout(
-        font=dict(family='Arial', size=14),
+        font=dict(family='Times', size=14),
         # legend=dict(
         #     orientation='h',
         #     yanchor='bottom',

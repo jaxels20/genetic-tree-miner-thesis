@@ -100,7 +100,7 @@ def plot_data():
     # Layout adjustments
     fig.update_layout(
         boxmode='group',  # group boxes of same x-axis value
-        font=dict(family='Arial', size=14),
+        font=dict(family='Times', size=12),
         legend=dict(
             orientation='h',
             yanchor='bottom',
@@ -110,13 +110,13 @@ def plot_data():
         ),
         xaxis_title='Dataset',
         yaxis_title='Score',
-        margin=dict(l=60, r=30, t=50, b=60),
+        margin=dict(l=60, r=30, t=50, b=90),
         template='simple_white',
         height=500,
         width=900
     )
     # set the y axisto 0 to 1
-    fig.update_yaxes(range=[0.6, 1], dtick=0.1)
+    fig.update_yaxes(range=[0., 1], dtick=0.1)
     
     # save the plot
     fig.write_image("./experiment_2/experiment_2.pdf")
@@ -125,6 +125,8 @@ def plot_data():
 if __name__ == "__main__":
     # raise NotImplementedError("This experiment is not implemented yet")
     # generate_data()
+    
+    #garbage graph
     plot_data()
 
     
