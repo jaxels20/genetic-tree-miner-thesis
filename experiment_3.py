@@ -127,7 +127,13 @@ def plot_data(df):
         if col_label in custom_ylim:
             dim['range'] = custom_ylim[col_label]
             dim['tickvals'] = y_tick_vals[col_label]
-    
+
+        dim['label'] = col_label.upper().replace(" ", "_")
+        if col_label == "Mutation Rate":
+            dim['label'] = "MUTATION_PROBABILITY"
+        if col_label == "Log Filtering":
+            dim['label'] = "INITAL_SAMPLING_RATE"
+        
     # Create the parcoords plot
     fig = go.Figure()
     fig = fig.add_trace(
@@ -145,7 +151,7 @@ def plot_data(df):
 
     # Layout adjustments
     fig.update_layout(
-        font=dict(family='Times', size=14),
+        font=dict(family='Courier New', size=14),
         # legend=dict(
         #     orientation='h',
         #     yanchor='bottom',

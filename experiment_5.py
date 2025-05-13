@@ -144,9 +144,8 @@ def visualize_paper_figure():
             generations = list(result_dict.keys())
             fitness_values = list(result_dict.values())
             
-            # remove every second element from generations and fitness_values
-            # generations = generations[::2]
-            # fitness_values = fitness_values[::2]
+            generations = generations[::5]
+            fitness_values = fitness_values[::5]
             
             for i in range(len(generations)):
                 data.append(
@@ -161,38 +160,104 @@ def visualize_paper_figure():
     # create a dataframe
     df = pd.DataFrame(data)
     
+    # sort on Fitness
+    df = df.sort_values(by=["Fitness"], ascending=False)
+    
     # group by dataset and mean fitness
     df = df.groupby(["Dataset", "Generation"], as_index=False).mean(numeric_only=True)
     
     
-
+    speeds = {
+        '2012': 5, 
+        '2013-cp': 0.1, 
+        '2013-i': 2, 
+        '2013-op': 63, 
+        '2017': 4, 
+        '2019': 2, 
+        '2020-dd': 0.1, 
+        '2020-id': 43, 
+        '2020-pl': 0.1, 
+        '2020-ptc': 65, 
+        '2020-rfp': 43, 
+        'Nasa': 43, 
+        'RTF': 54, 
+        'Sepsis': 94,
+        }
     
+    
+    
+    colorblind_colors = [
+    "#E69F00", "#56B4E9", "#009E73", "#F0E442",
+    "#0072B2", "#D55E00", "#CC79A7", "#999999",
+    "#117733", "#332288", "#88CCEE", "#44AA99",
+    "#661100", "#6699CC"
+]
+
+    marker_symbols = [
+        "circle", "square", "diamond", "cross", "x", "triangle-up", "triangle-down",
+        "triangle-left", "triangle-right", "star", "hexagram", "hourglass", "arrow", "bowtie",
+    ]
+
+    # Step 1: Compute max fitness per dataset
+    dataset_order = (
+        df.groupby("Dataset")["Fitness"]
+        .max()
+        .sort_values(ascending=False)
+        .index
+        .tolist()
+    )
+
+    step = 10  # how often to place a marker
     fig = go.Figure()
-    for dataset in df["Dataset"].unique():
-        dataset_df = df[df["Dataset"] == dataset]
-        fig.add_trace(go.Scatter
-            (
-                x=dataset_df["Generation"],
-                y=dataset_df["Fitness"],
-                mode='lines+markers',
-                name=f"{dataset}",
+    for i, dataset in enumerate(dataset_order):
+        dataset_df = df[df["Dataset"] == dataset].reset_index(drop=True)
+        
+        # Main line without markers
+        fig.add_trace(go.Scatter(
+            x=dataset_df["Generation"],
+            y=dataset_df["Fitness"],
+            mode='lines',
+            showlegend=False,
+            name=f"{dataset}",
+            line=dict(color=colorblind_colors[i])
+        ))
+
+        # Offset index so markers are staggered
+        offset = i % step  # e.g., dataset 0 starts at 0, dataset 1 at 1, etc.
+        marker_df = dataset_df.iloc[offset::step]  # start from 'offset', then every 'step'
+
+        # Add trace with only markers
+        fig.add_trace(go.Scatter(
+            x=marker_df["Generation"],
+            y=marker_df["Fitness"],
+            mode='markers',
+            name=f"{dataset} ({speeds[dataset]}s)",
+            showlegend=True,
+            marker=dict(
+                symbol=marker_symbols[i],
+                size=8,
+                color=colorblind_colors[i]
             )
+        ))
+
+    # Step 3: Update layout
+    fig.update_layout(
+        title=None,
+        xaxis_title="Generation",
+        yaxis_title="Objective Fitness",
+        width=900,
+        height=600,
+        template='simple_white',
+        legend=dict(
+            font=dict(size=12, family="Time New Roman"),
+            orientation="h",
+            yanchor="bottom",
+            #entrywidth=55,
+            y=0.01,
+            xanchor="right",
+            x=0.99
         )
-    fig.update_layout(title=None,
-                        xaxis_title="Generation",
-                        yaxis_title="Objective Fitness",
-                        width=900,
-                        template='simple_white',
-                        height=600,
-                        legend=dict(
-                            font=dict(size=14),
-                            orientation="v",
-                            yanchor="bottom",
-                            y=0.01,
-                            xanchor="right",
-                            x=0.99
-                        )
-        )
+    )
     
     # write the file to the output directory
     fig.write_image(f"{OUTPUT_DIR}/paper_figure.pdf")
