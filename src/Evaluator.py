@@ -49,6 +49,13 @@ class SingleEvaluator:
         simplicity_value = simplicity(self.pm4py_pn)
         return simplicity_value
     
+    def get_refined_simplicity(self):
+        max_places = 100
+        simplicity = len(self.pm4py_pn.get_places()) / max_places
+        simplicity = 1 - simplicity
+        simplicity = max(0, simplicity)
+        return simplicity 
+    
     def get_generalization(self):
         generalization_value = generalization(self.event_log_pm4py, self.pm4py_pn, self.init_marking, self.final_marking)
         return generalization_value
