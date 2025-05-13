@@ -1,7 +1,6 @@
 import pandas
 import os
 import time
-from itertools import cycle
 from src.Discovery import Discovery
 from src.EventLog import EventLog 
 from src.Evaluator import SingleEvaluator
@@ -178,11 +177,7 @@ def plot_data():
     
 
 if __name__ == "__main__":
-    # generate_data()
-<<<<<<< HEAD
-=======
-    
->>>>>>> 0369241f0ab9093e359dd8b18404b919f8227dfe
-    plot_data()
+    generate_data()
+    # plot_data()
 
     
