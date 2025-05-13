@@ -112,10 +112,12 @@ def plot_data():
         "RTFP": "*RTP",
         "2012": "*2012",
     })
-        
+    
     
     # Sort the DataFrame by 'Dataset' and 'Metric'
     df_melted.sort_values(by=['Dataset', 'Metric'], inplace=True)
+    
+    df_melted["Score"] = df_melted["Score"] / 100
     
     # Create a color palette
     #colors = cycle(px.colors.qualitative.Pastel2)
