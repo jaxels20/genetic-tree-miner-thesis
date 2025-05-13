@@ -166,6 +166,8 @@ def visualize_paper_figure():
     # group by dataset and mean fitness
     df = df.groupby(["Dataset", "Generation"], as_index=False).mean(numeric_only=True)
     
+    # Remove Nasa datasets
+    df = df[~df['Dataset'].str.contains("Nasa")]
     
     speeds = {
         '2012': 11, 
@@ -179,7 +181,6 @@ def visualize_paper_figure():
         '2020-pl': 6.5, 
         '2020-ptc': 0.3, 
         '2020-rfp':5, 
-        'Nasa': 13, 
         'RTF': 1.6, 
         'Sepsis': 0.6,
         }
@@ -257,6 +258,10 @@ def visualize_paper_figure():
             xanchor="right",
             x=0.99
         )
+    )
+    
+    fig.update_yaxes(
+        range=[45, 100],
     )
     
     # write the file to the output directory

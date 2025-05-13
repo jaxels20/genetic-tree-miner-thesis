@@ -101,6 +101,8 @@ def generate_data():
 def plot_data():
     # Load the data
     df_melted = pandas.read_csv("./experiment_2/experiment_2.csv")
+    # Remove all rows with Nasa as the dataset
+    df_melted = df_melted[~df_melted['Dataset'].str.contains("Nasa")]
     
     # rename the dataset values 
     df_melted['Dataset'] = df_melted['Dataset'].replace({
@@ -108,7 +110,6 @@ def plot_data():
         '2017': '*2017',
         '2020-id': '*2020-id',
         "2020-pl": "*2020-pl",
-        "Nasa": "*Nasa",
         "RTFP": "*RTP",
         "2012": "*2012",
     })
@@ -116,9 +117,7 @@ def plot_data():
     
     # Sort the DataFrame by 'Dataset' and 'Metric'
     df_melted.sort_values(by=['Dataset', 'Metric'], inplace=True)
-    
-    df_melted["Score"] = df_melted["Score"] / 100
-    
+        
     # Create a color palette
     #colors = cycle(px.colors.qualitative.Pastel2)
     fig = go.Figure()
@@ -136,16 +135,12 @@ def plot_data():
         # Sort datasets by IQR
         sorted_datasets = iqr_df.sort_values('IQR')['Dataset'].tolist()
 
-        # Filter color if needed
-        color = color  # replace with your actual color logic if needed
-
-        fig.add_trace(go.Box(
+        fig.add_trace(go.Scatter(
             x=metric_df['Dataset'],
             y=metric_df['Score'],
+            mode='markers',
             name=metric,
-            boxpoints='outliers',
-            fillcolor=color,
-            line={'width': 1, 'color': 'black'}
+            marker=dict(color=color, size=6, line=dict(width=1, color='black'))
         ))
 
         # Update x-axis order
@@ -172,14 +167,17 @@ def plot_data():
         width=900
     )
     # set the y axisto 0 to 1
-    fig.update_yaxes(range=[0.6, 1], dtick=0.1)
+    fig.update_yaxes(range=[60, 100], dtick=10)
+    
+    # Rotate x-axis labels
+    fig.update_xaxes(tickangle=45, tickmode='array', tickvals=sorted_datasets)
     
     # save the plot
     fig.write_image("./experiment_2/experiment_2.pdf")
     
 
 if __name__ == "__main__":
-    generate_data()
-    # plot_data()
+    #generate_data()
+    plot_data()
 
     
