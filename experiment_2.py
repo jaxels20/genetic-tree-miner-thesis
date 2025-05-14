@@ -11,6 +11,9 @@ from experiment_1 import load_hyperparameters_from_csv
 BEST_PARAMS = "./best_parameters.csv"
 DATASET_DIR = "./real_life_datasets/"
 NUM_DATA_POINTS = 5
+TIME_LIMIT = 60*5
+STAGNATION_LIMIT = 50
+PERCENTAGE_OF_LOG = 0.05
 OBJECTIVE = {
     "simplicity": 10,
     "refined_simplicity": 10,
@@ -33,18 +36,18 @@ def generate_data():
             start = time.time()
             discovered_net = Discovery.genetic_algorithm(
                 eventlog,
-                time_limit=60*5,
-                stagnation_limit=50,
+                time_limit=TIME_LIMIT,
+                stagnation_limit=STAGNATION_LIMIT,
+                percentage_of_log=PERCENTAGE_OF_LOG,
                 **hyper_parameters,
-                percentage_of_log=0.05,
             )
             time_taken = time.time() - start
             
             # Export the discovered net to a file
-            os.makedirs(f"./experiment_2/discovered_nets/pdfs", exist_ok=True)
-            discovered_net.visualize(f"./experiment_2/discovered_nets/pdfs/{dataset_dir}_{i}")
-            os.makedirs(f"./experiment_2/discovered_nets/pnmls", exist_ok=True)
-            discovered_net.to_pnml(f"./experiment_2/discovered_nets/pnmls/{dataset_dir}_{i}")
+            os.makedirs(f"./geneticminer/pdfs", exist_ok=True)
+            discovered_net.visualize(f"./geneticminer/pdfs/{dataset_dir}_{i}")
+            os.makedirs(f"./geneticminer/pnmls", exist_ok=True)
+            discovered_net.to_pnml(f"./geneticminer/pnmls/{dataset_dir}_{i}")
             
             evaluator = SingleEvaluator(
                 discovered_net,
@@ -57,41 +60,30 @@ def generate_data():
             
             metrics = {}
             metrics['dataset'] = dataset_dir
-            metrics['replay_fitness'] = fitness
+            metrics['miner'] = "GM"
+            metrics['model'] = i
+            metrics['log_fitness'] = fitness
             metrics['precision'] = precision
             metrics['f1_score'] = evaluator.get_f1_score(precision, fitness)
             metrics['objective_fitness'] = evaluator.get_objective_fitness(OBJECTIVE)
             metrics['generalization'] = evaluator.get_generalization()
             metrics['simplicity'] = evaluator.get_simplicity()
-            metrics['refined_simplicity'] = evaluator.get_refined_simplicity()
             metrics['time'] = time_taken
             data.append(metrics)
         
         # Convert the data to a pandas DataFrame
-        cur_df = pandas.DataFrame(data)
-        cur_df.rename(columns={
-            'dataset': 'Dataset',
-            'objective_fitness': 'Objective Fitness',
-            'replay_fitness': 'Replay Fitness',
-            'precision': 'Precision',
-            'f1_score': 'F1 Score',
-            'generalization': 'Generalization',
-            'simplicity': 'Simplicity',
-            'refined_simplicity': 'Refined Simplicity'
-        }, inplace=True)
-        
+        cur_df = pandas.DataFrame(data)        
         cur_df_copy = cur_df.copy()
-        if os.path.exists("./experiment_1/csvs/results_genetic.csv"):
-            read_df = pandas.read_csv("./experiment_1/csvs/results_genetic.csv")
-            cur_df = pandas.concat([read_df, cur_df], ignore_index=True)
-
-        cur_df.to_csv("./experiment_1/csvs/results_genetic.csv", index=False)
+        if os.path.exists(f"./experiment_1/results_genetic_{NUM_DATA_POINTS}_runs.csv"):
+            read_df = pandas.read_csv(f"./experiment_1/results_genetic_{NUM_DATA_POINTS}_runs.csv")
+            cur_df_copy = pandas.concat([read_df, cur_df_copy], ignore_index=True)
+        
+        cur_df_copy.to_csv(f"./experiment_1/results_genetic_{NUM_DATA_POINTS}_runs.csv", index=False)
         
         # Melt the DataFrame for Seaborn
-        df_melted = cur_df_copy.melt(id_vars='Dataset', var_name='Metric', value_name='Score')
-        df_melted = df_melted[df_melted['Metric'] == 'Objective Fitness']
+        df_melted = cur_df.melt(id_vars='dataset', var_name='Metric', value_name='Score')
+        df_melted = df_melted[df_melted['Metric'] == 'objective_fitness']
 
-        # Check if the file already exists if it does append to it
         if os.path.exists("./experiment_2/experiment_2.csv"):
             old = pandas.read_csv("./experiment_2/experiment_2.csv")
             df_melted = pandas.concat([old, df_melted], ignore_index=True)  
@@ -102,7 +94,9 @@ def plot_data():
     # Load the data
     df_melted = pandas.read_csv("./experiment_2/experiment_2.csv")
     
-    # rename the dataset values 
+    print(df_melted)
+    # rename the dataset values
+    df_melted.rename(columns={'dataset': 'Dataset'}, inplace=True)
     df_melted['Dataset'] = df_melted['Dataset'].replace({
         '2019': '*2019',
         '2017': '*2017',
@@ -179,7 +173,7 @@ def plot_data():
     
 
 if __name__ == "__main__":
-    generate_data()
-    # plot_data()
+    # generate_data()
+    plot_data()
 
     

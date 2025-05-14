@@ -1,17 +1,10 @@
 from src.FileLoader import FileLoader
 from src.Evaluator import MultiEvaluator
-from src.Mutator import Mutator, TournamentMutator
-from src.Objective import Objective
-from src.RandomTreeGenerator import BottomUpRandomBinaryGenerator, FootprintGuidedSequentialGenerator, InductiveNoiseInjectionGenerator, InductiveMinerGenerator
 from src.Discovery import Discovery
 import os
 import pickle
 import plotly.graph_objects as go
-from copy import deepcopy
 from experiment_1 import load_hyperparameters_from_csv
-import plotly.express as px
-from itertools import cycle
-from pprint import pprint
 import pandas as pd
 
 INPUT_DIR = "./real_life_datasets/"
@@ -30,7 +23,7 @@ def generate_monitors():
     hyperparams = load_hyperparameters_from_csv(BEST_PARAMS)
 
 
-    for dataset_dir in dataset_dirs:        
+    for dataset_dir in dataset_dirs:
         xes_file = [f for f in os.listdir(f"{INPUT_DIR}{dataset_dir}") if f.endswith(".xes")]
         if len(xes_file) == 1:
             loaded_log = loader.load_eventlog(f"{INPUT_DIR}{dataset_dir}/{xes_file[0]}")
@@ -53,8 +46,6 @@ def generate_monitors():
     
     for i in range(NUM_RUNS):
         multi_evaluator = MultiEvaluator(eventlogs, methods_dict)
-
-    #multi_evaluator.plot_monitor_data()
 
 def visualize(folder_path, mutator: bool):
     df = pd.DataFrame()
@@ -264,5 +255,5 @@ def visualize_paper_figure():
     
     
 if __name__ == "__main__":    
-    # generate_monitors()
-    visualize_paper_figure()
+    generate_monitors()
+    # visualize_paper_figure()

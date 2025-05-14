@@ -1,71 +1,71 @@
-Dataset,Metric,Score
-2012,Objective Fitness,84.04997196421215
-2012,Objective Fitness,76.05384140339832
-2012,Objective Fitness,73.99811315810159
-2012,Objective Fitness,78.05078894512766
-2012,Objective Fitness,78.63660693364153
-2020-ptc,Objective Fitness,93.01347647544802
-2020-ptc,Objective Fitness,91.95509939989418
-2020-ptc,Objective Fitness,92.94737958080134
-2020-ptc,Objective Fitness,91.74818324884052
-2020-ptc,Objective Fitness,92.84736807138776
-2013-op,Objective Fitness,95.64930847703822
-2013-op,Objective Fitness,95.64930847703822
-2013-op,Objective Fitness,95.6238639791841
-2013-op,Objective Fitness,95.64930847703822
-2013-op,Objective Fitness,95.19667114812655
-RTF,Objective Fitness,94.75457363608449
-RTF,Objective Fitness,95.35253184112398
-RTF,Objective Fitness,94.55152016293316
-RTF,Objective Fitness,94.11234066492942
-RTF,Objective Fitness,94.73563314529768
-2020-dd,Objective Fitness,93.71902620372984
-2020-dd,Objective Fitness,94.34397120044864
-2020-dd,Objective Fitness,93.7456300970898
-2020-dd,Objective Fitness,93.57258318838068
-2020-dd,Objective Fitness,89.57201426614431
-2020-id,Objective Fitness,85.77204654191314
-2020-id,Objective Fitness,73.69196208419804
-2020-id,Objective Fitness,88.51010217846574
-2020-id,Objective Fitness,87.86885177680385
-2020-id,Objective Fitness,85.81226774304976
-2017,Objective Fitness,69.10674776817606
-2017,Objective Fitness,69.67598116178995
-2017,Objective Fitness,73.13772467364022
-2017,Objective Fitness,68.5857452657871
-2017,Objective Fitness,68.73917045132426
-2019,Objective Fitness,65.28787222236808
-2019,Objective Fitness,65.12944620935987
-2019,Objective Fitness,65.21485035919234
-2019,Objective Fitness,65.01416939721139
-2019,Objective Fitness,66.68222059957793
-2020-pl,Objective Fitness,73.86760542976072
-2020-pl,Objective Fitness,64.80180842436886
-2020-pl,Objective Fitness,65.43890011063051
-2020-pl,Objective Fitness,71.76596795824086
-2020-pl,Objective Fitness,70.31619337527613
-2020-rfp,Objective Fitness,93.49498639758431
-2020-rfp,Objective Fitness,91.7328271530379
-2020-rfp,Objective Fitness,91.22648812681092
-2020-rfp,Objective Fitness,91.756822730515
-2020-rfp,Objective Fitness,85.50828217158791
-2013-i,Objective Fitness,95.3077498834469
-2013-i,Objective Fitness,94.57029358858316
-2013-i,Objective Fitness,94.57029358858316
-2013-i,Objective Fitness,95.00066208666934
-2013-i,Objective Fitness,94.57029358858316
-2013-cp,Objective Fitness,95.8357799822341
-2013-cp,Objective Fitness,95.62514778440612
-2013-cp,Objective Fitness,95.8357799822341
-2013-cp,Objective Fitness,95.8357799822341
-2013-cp,Objective Fitness,95.8357799822341
-Sepsis,Objective Fitness,92.9900865696651
-Sepsis,Objective Fitness,94.43602723561064
-Sepsis,Objective Fitness,94.14908370930652
-Sepsis,Objective Fitness,93.10997048628772
-Sepsis,Objective Fitness,94.01734964243454
-Nasa,Objective Fitness,69.69288650140024
-Nasa,Objective Fitness,69.6743508564406
-Nasa,Objective Fitness,70.0552175180953
-Nasa,Objective Fitness,69.72500770343638
-Nasa,Objective Fitness,69.9924353002649
+dataset,Metric,Score
+2012,objective_fitness,85.36460403174397
+2012,objective_fitness,87.15246148388604
+2012,objective_fitness,81.60975081572909
+2012,objective_fitness,87.68244699564983
+2012,objective_fitness,89.8554273556342
+2020-ptc,objective_fitness,93.18376453141964
+2020-ptc,objective_fitness,92.67076003524085
+2020-ptc,objective_fitness,92.12739524973472
+2020-ptc,objective_fitness,93.08704450939015
+2020-ptc,objective_fitness,92.06984213516102
+2013-op,objective_fitness,95.64930847703822
+2013-op,objective_fitness,95.41958579190825
+2013-op,objective_fitness,95.64930847703822
+2013-op,objective_fitness,95.64930847703822
+2013-op,objective_fitness,96.29376586437532
+RTF,objective_fitness,94.54999504674272
+RTF,objective_fitness,91.02177376642356
+RTF,objective_fitness,94.14930249618574
+RTF,objective_fitness,94.75457363608449
+RTF,objective_fitness,94.54890754250596
+2020-dd,objective_fitness,93.72776496691438
+2020-dd,objective_fitness,92.847731798337
+2020-dd,objective_fitness,93.7784276983507
+2020-dd,objective_fitness,93.86419699178632
+2020-dd,objective_fitness,93.306520969633
+2020-id,objective_fitness,90.24131311941392
+2020-id,objective_fitness,76.6296044329355
+2020-id,objective_fitness,75.0153126680763
+2020-id,objective_fitness,87.14816730500463
+2020-id,objective_fitness,90.91588503103064
+2017,objective_fitness,73.47188352408524
+2017,objective_fitness,71.99204459300192
+2017,objective_fitness,68.6342739343616
+2017,objective_fitness,76.44376418874339
+2017,objective_fitness,71.33933980964389
+2019,objective_fitness,65.18209645512525
+2019,objective_fitness,64.8282759352087
+2019,objective_fitness,67.98657273303641
+2019,objective_fitness,65.39875185238023
+2019,objective_fitness,65.46133483558839
+2020-pl,objective_fitness,78.03489128963153
+2020-pl,objective_fitness,75.29683583446976
+2020-pl,objective_fitness,66.26627670182094
+2020-pl,objective_fitness,64.7991936683471
+2020-pl,objective_fitness,79.9817436870697
+2020-rfp,objective_fitness,93.7488476116927
+2020-rfp,objective_fitness,93.81264538570238
+2020-rfp,objective_fitness,93.86240062235048
+2020-rfp,objective_fitness,94.06365908134704
+2020-rfp,objective_fitness,93.59069272412734
+2013-i,objective_fitness,94.57029358858316
+2013-i,objective_fitness,94.9786304982298
+2013-i,objective_fitness,94.9786304982298
+2013-i,objective_fitness,94.57029358858316
+2013-i,objective_fitness,94.57029358858316
+2013-cp,objective_fitness,95.8357799822341
+2013-cp,objective_fitness,95.64368101801892
+2013-cp,objective_fitness,95.62514778440612
+2013-cp,objective_fitness,95.8357799822341
+2013-cp,objective_fitness,95.8357799822341
+Sepsis,objective_fitness,92.64806134850846
+Sepsis,objective_fitness,94.85540372407333
+Sepsis,objective_fitness,93.93879794689944
+Sepsis,objective_fitness,94.48443325445854
+Sepsis,objective_fitness,94.24872866670714
+Nasa,objective_fitness,69.99843256486903
+Nasa,objective_fitness,69.8132998809988
+Nasa,objective_fitness,69.78236929725747
+Nasa,objective_fitness,69.76671597714783
+Nasa,objective_fitness,69.9967957076746

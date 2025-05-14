@@ -12,18 +12,13 @@ from src.Objective import Objective
 INPUT_DIR = "./real_life_datasets/"
 OUTPUT_DIR = "./experiment_1/"
 BEST_PARAMS = "./best_parameters.csv"
+
 STAGNATION_LIMIT = 50
-# TIME_LIMIT = 60
-CPU_COUNT = 1
+TIME_LIMIT = 60*5
+PERCENTAGE_OF_LOG = 0.05
 OBJECTIVE_WEIGHTS = {"simplicity": 10, "refined_simplicity": 10, "ftr_fitness": 50, "ftr_precision": 30}
 
-def convert_json_to_hyperparamters(hyper_parameters: dict):
-    # total = hyper_parameters['random_creation_rate'] + hyper_parameters['mutation_rate'] + hyper_parameters['crossover_rate'] + hyper_parameters['elite_rate']
-    # hyper_parameters['random_creation_rate'] = hyper_parameters['random_creation_rate'] / total
-    # hyper_parameters['mutation_rate'] = hyper_parameters['mutation_rate'] / total
-    # hyper_parameters['crossover_rate'] = hyper_parameters['crossover_rate'] / total
-    # hyper_parameters['elite_rate'] = hyper_parameters['elite_rate'] / total
-    
+def convert_json_to_hyperparamters(hyper_parameters: dict):    
     total = hyper_parameters['random_creation_rate'] + hyper_parameters['elite_rate'] + hyper_parameters["tournament_rate"]
     hyper_parameters['random_creation_rate'] = hyper_parameters['random_creation_rate'] / total
     hyper_parameters['elite_rate'] = hyper_parameters['elite_rate'] / total
@@ -42,11 +37,11 @@ def convert_json_to_hyperparamters(hyper_parameters: dict):
         raise ValueError("Invalid generator type")
     
     hyper_parameters['mutator'] = TournamentMutator(
-        hyper_parameters['random_creation_rate'],
-        hyper_parameters['elite_rate'],
-        hyper_parameters['tournament_size'],
-        hyper_parameters['tournament_rate'],
-        hyper_parameters['tournament_mutation_rate']
+        random_creation_rate = hyper_parameters['random_creation_rate'],
+        elite_rate = hyper_parameters['elite_rate'],
+        tournament_rate = hyper_parameters['tournament_rate'],
+        tournament_size = hyper_parameters['tournament_size'],
+        tournament_mutation_rate = hyper_parameters['tournament_mutation_rate']
     )
     
     return hyper_parameters
@@ -59,9 +54,7 @@ def load_hyperparameters_from_csv(path: str):
             hyper_parameters['random_creation_rate'] = float(row['random_creation_rate'])
             hyper_parameters['elite_rate'] = float(row['elite_rate'])
             hyper_parameters['population_size'] = int(row['population_size'])
-            # hyper_parameters['percentage_of_log'] = float(row['percentage_of_log'])
             hyper_parameters['generator'] = row['generator']
-            # hyper_parameters['mutator'] = row['mutator']
             
             hyper_parameters['tournament_size'] = float(row['tournament_size'])
             hyper_parameters['tournament_rate'] = float(row['tournament_rate'])
@@ -70,7 +63,6 @@ def load_hyperparameters_from_csv(path: str):
             if hyper_parameters['generator'] == 'InductiveNoiseInjectionGenerator':
                 hyper_parameters['log_filtering'] = float(row['log_filtering'])
             
-            hyper_parameters['method_name'] = "Genetic Miner"
             hyper_parameters['objective'] = Objective({
                 "simplicity": 10,
                 "refined_simplicity": 10,
@@ -99,31 +91,50 @@ def run_experiment():
 
     # Define the methods to be used
     methods_dict = {
-        "Genetic Miner (1 minute)": lambda log: Discovery.genetic_algorithm(
+        "GM 1": lambda log: Discovery.genetic_algorithm(
             log,
+            method_name="GM 1",
             stagnation_limit=STAGNATION_LIMIT,
-            time_limit=60,
-            percentage_of_log=0.05,
+            time_limit=TIME_LIMIT,
+            percentage_of_log=PERCENTAGE_OF_LOG,
             **hyperparams,
         ),
-        "Genetic Miner (5 minutes)": lambda log: Discovery.genetic_algorithm(
+        "GM 2": lambda log: Discovery.genetic_algorithm(
             log,
+            method_name="GM 2",
             stagnation_limit=STAGNATION_LIMIT,
-            time_limit=60*5,
-            percentage_of_log=0.05,
+            time_limit=TIME_LIMIT,
+            percentage_of_log=PERCENTAGE_OF_LOG,
             **hyperparams,
         ),
-        "Genetic Miner (30 minutes)": lambda log: Discovery.genetic_algorithm(
+        "GM 3": lambda log: Discovery.genetic_algorithm(
             log,
+            method_name="GM 3",
             stagnation_limit=STAGNATION_LIMIT,
-            time_limit=60*30,
-            percentage_of_log=0.05,
+            time_limit=TIME_LIMIT,
+            percentage_of_log=PERCENTAGE_OF_LOG,
             **hyperparams,
         ),
+        "GM 4": lambda log: Discovery.genetic_algorithm(
+            log,
+            method_name="GM 4",
+            stagnation_limit=STAGNATION_LIMIT,
+            time_limit=TIME_LIMIT,
+            percentage_of_log=PERCENTAGE_OF_LOG,
+            **hyperparams,
+        ),
+        "GM 1": lambda log: Discovery.genetic_algorithm(
+            log,
+            method_name="GM 5",
+            stagnation_limit=STAGNATION_LIMIT,
+            time_limit=TIME_LIMIT,
+            percentage_of_log=PERCENTAGE_OF_LOG,
+            **hyperparams,
+        )
     }
     
     # Run the methods on each event log
-    multi_evaluator = MultiEvaluator(eventlogs, methods_dict, CPU_COUNT)
+    multi_evaluator = MultiEvaluator(eventlogs, methods_dict)
     results_df = multi_evaluator.evaluate_all(OBJECTIVE_WEIGHTS)
     
     return results_df
@@ -137,33 +148,55 @@ def consolidate_results(input_dir):
         loaded_df = pd.read_csv(input_dir + file)
         df = pd.concat([df, loaded_df], ignore_index=True)
     
-    return df
+    # Manipulation
+    df.rename(columns={
+        'dataset': 'Dataset',
+        'miner': 'Discovery Method',
+        'f1_score': 'F1 Score',
+        'log_fitness': 'Log Fitness',
+        'precision': 'Precision',
+        'objective_fitness': 'Objective Fitness',
+        'generalization': 'Generalization',
+        'simplicity': 'Simplicity',
+        'time': 'Time (s)'
+    }, inplace=True)
+    column_order = ['Dataset', 'Discovery Method', 'F1 Score', 'Log Fitness', 'Precision', 'Generalization', 'Simplicity', 'Objective Fitness', 'Time (s)']
+    df = df[column_order]
+    df.sort_values(by=['Dataset', 'Discovery Method'], inplace=True)
+    df['Time (s)'] = df['Time (s)'].replace('-', 0)
+    
+    agg_df = df.copy()
+    agg_df = agg_df.groupby('Discovery Method').agg({
+        'F1 Score': 'mean',
+        'Log Fitness': 'mean',
+        'Precision': 'mean',
+        'Objective Fitness': 'mean',
+        'Generalization': 'mean',
+        'Simplicity': 'mean',
+        'Time (s)': 'mean'
+    }).reset_index()
+    agg_df['Dataset'] = 'Aggregated'
+    
+    collected_df = pd.concat([df, agg_df], ignore_index=True)
+    collected_df['Time (s)'] = collected_df['Time (s)'].round(2).astype(str)
+    collected_df.loc[(collected_df['Discovery Method'] == 'SM') & (collected_df['Time (s)'] == '0.0'), 'Time (s)'] = '-'
+    
+    return collected_df
+ 
+def get_genetic_miner_median_run(input_file, output_csv_name):
+    df = pd.read_csv(input_file)
+    median_idx = (
+        df
+        .groupby('dataset')['objective_fitness']
+        .apply(lambda x: (x - x.median()).abs().idxmin())    # idxmin returns the index of the first occurrence of the minimum value
+    )
+    filtered_df = df.loc[median_idx].reset_index(drop=True)
+    filtered_df.to_csv(output_csv_name, index=False)
     
 if __name__ == "__main__":
-    # Run some experiments producing csv files
-    produce_csv = False
-    if produce_csv:
-        result_df = run_experiment()
-        result_df.to_csv(OUTPUT_DIR + "/csvs/" + "results_genetic_all.csv", index=False)
-    
-    consolidate_results_bool = True
-    if consolidate_results_bool:
-        df = consolidate_results("./experiment_1/csvs/")
-        column_order = ['dataset', 'miner', 'f1_score', 'log_fitness', 'precision', 'objective_fitness', 'generalization', 'simplicity', 'time']
-        df = df[column_order]
-        df.rename(columns={
-            'dataset': 'Dataset',
-            'miner': 'Discovery Method',
-            'f1_score': 'F1 Score',
-            'log_fitness': 'Log Fitness',
-            'precision': 'Precision',
-            'objective_fitness': 'Objective Fitness',
-            'generalization': 'Generalization',
-            'simplicity': 'Simplicity',
-            'time': 'Time (s)'
-        }, inplace=True)
-        df.sort_values(by=['Dataset', 'Discovery Method'], inplace=True)
-        
-        # Output results
-        df.to_latex(OUTPUT_DIR + "results_all_test.tex", index=False, escape=False, float_format="%.2f")
-        df.to_csv(OUTPUT_DIR + "results_all.csv", index=False)
+    # A prerequise to run the script for experiment 2 that produces the csv file containing the results of the genetic miner over one or multiple runs
+    if not os.path.exists(OUTPUT_DIR + "miner_results/results_genetic.csv"):
+        get_genetic_miner_median_run("./experiment_1/results_genetic_5_runs.csv", OUTPUT_DIR + "miner_results/results_genetic.csv")
+    df = consolidate_results("./experiment_1/miner_results/")
+    df.to_csv(OUTPUT_DIR + "consolidated_results/results.csv", index=False, float_format="%.2f")
+    df.to_latex(OUTPUT_DIR + "consolidated_results/results.tex", index=False, escape=False, float_format="%.2f")
