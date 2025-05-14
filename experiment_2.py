@@ -45,10 +45,10 @@ def generate_data(runs: int, output_petri_nets: bool = False):
             
             # Export the discovered net to a file
             if output_petri_nets:
-                os.makedirs(f"./geneticminer/pdfs", exist_ok=True)
-                discovered_net.visualize(f"./geneticminer/pdfs/{dataset_dir}_{i}")
-                os.makedirs(f"./geneticminer/pnmls", exist_ok=True)
-                discovered_net.to_pnml(f"./geneticminer/pnmls/{dataset_dir}_{i}")
+                os.makedirs(f"./genetic_miner_nets/pdfs", exist_ok=True)
+                discovered_net.visualize(f"./genetic_miner_nets/pdfs/{dataset_dir}_{i}")
+                os.makedirs(f"./genetic_miner_nets/pnmls", exist_ok=True)
+                discovered_net.to_pnml(f"./genetic_miner_nets/pnmls/{dataset_dir}_{i}")
             
             evaluator = SingleEvaluator(
                 discovered_net,
