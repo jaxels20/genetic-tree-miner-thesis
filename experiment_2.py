@@ -94,9 +94,9 @@ def plot_data():
     # Load the data
     df_melted = pandas.read_csv("./experiment_2/experiment_2.csv")
     # Remove all rows with Nasa as the dataset
+    df_melted.rename(columns={'dataset': 'Dataset'}, inplace=True)
     df_melted = df_melted[~df_melted['Dataset'].str.contains("Nasa")]
     
-    print(df_melted)
     # rename the dataset values
     df_melted.rename(columns={'dataset': 'Dataset'}, inplace=True)
     df_melted['Dataset'] = df_melted['Dataset'].replace({
@@ -104,7 +104,7 @@ def plot_data():
         '2017': '*2017',
         '2020-id': '*2020-id',
         "2020-pl": "*2020-pl",
-        "RTFP": "*RTP",
+        "RTF": "*RTF",
         "2012": "*2012",
     })
     
@@ -116,7 +116,7 @@ def plot_data():
     #colors = cycle(px.colors.qualitative.Pastel2)
     fig = go.Figure()
     color = "lightgrey"
-    for metric in ['Objective Fitness']:
+    for metric in ['objective_fitness']:
         metric_df = df_melted[df_melted['Metric'] == metric]
 
         # Compute IQR per Dataset
