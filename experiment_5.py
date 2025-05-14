@@ -237,11 +237,13 @@ def visualize_paper_figure():
         title=None,
         xaxis_title="Generation",
         yaxis_title="Objective Fitness",
+        font=dict(family='Times', size=16),
+        margin=dict(l=60, r=30, t=50, b=120),
         width=900,
         height=600,
         template='simple_white',
         legend=dict(
-            font=dict(size=12, family="Time New Roman"),
+            font=dict(size=14, family="Time New Roman"),
             orientation="h",
             yanchor="bottom",
             #entrywidth=55,
@@ -260,5 +262,5 @@ def visualize_paper_figure():
     
     
 if __name__ == "__main__":    
-    generate_monitors()
-    # visualize_paper_figure()
+    # generate_monitors()
+    visualize_paper_figure()

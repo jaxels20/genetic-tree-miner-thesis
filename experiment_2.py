@@ -21,7 +21,7 @@ OBJECTIVE = {
     "ftr_precision": 30
 }
 
-def generate_data():
+def generate_data(runs: int, output_petri_nets: bool = False):
     # convert the hyper parameters to a normalize
     hyper_parameters = load_hyperparameters_from_csv(BEST_PARAMS)
     dataset_dirs = os.listdir(DATASET_DIR)
@@ -31,7 +31,7 @@ def generate_data():
         eventlog = EventLog.load_xes(f"{DATASET_DIR}{dataset_dir}/{dataset_dir}.xes")
 
         data = []
-        for i in range(NUM_DATA_POINTS):
+        for i in range(runs):
             print(f"Running discovery on dataset: {dataset_dir} iteration: {i}")
             start = time.time()
             discovered_net = Discovery.genetic_algorithm(
@@ -44,10 +44,11 @@ def generate_data():
             time_taken = time.time() - start
             
             # Export the discovered net to a file
-            os.makedirs(f"./geneticminer/pdfs", exist_ok=True)
-            discovered_net.visualize(f"./geneticminer/pdfs/{dataset_dir}_{i}")
-            os.makedirs(f"./geneticminer/pnmls", exist_ok=True)
-            discovered_net.to_pnml(f"./geneticminer/pnmls/{dataset_dir}_{i}")
+            if output_petri_nets:
+                os.makedirs(f"./geneticminer/pdfs", exist_ok=True)
+                discovered_net.visualize(f"./geneticminer/pdfs/{dataset_dir}_{i}")
+                os.makedirs(f"./geneticminer/pnmls", exist_ok=True)
+                discovered_net.to_pnml(f"./geneticminer/pnmls/{dataset_dir}_{i}")
             
             evaluator = SingleEvaluator(
                 discovered_net,
@@ -171,7 +172,7 @@ def plot_data():
     
 
 if __name__ == "__main__":
-    # generate_data()
-    plot_data()
+    generate_data(runs=1, output_petri_nets=False)
+    # plot_data()
 
     
