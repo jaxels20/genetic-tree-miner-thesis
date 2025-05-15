@@ -25,18 +25,18 @@ OBJECTIVE = {
 }
 
 # Result generation parameters
-GENERATE_RESULT_DF = False
+GENERATE_RESULT_DF = True
 NUM_DATA_POINTS = 5
 OUTPUT_DIR = "./experiment_1/"
-RESULT_FILE_NAME = OUTPUT_DIR + 'genetic_miner_test_run.csv'
-MEDIAN_RUN_FILE_NAME = OUTPUT_DIR + 'miner_results/' + 'results_test_run.csv' # only alter the last string
+RESULT_FILE_NAME = OUTPUT_DIR + 'genetic_miner_5_runs_new_objective.csv'
+MEDIAN_RUN_FILE_NAME = OUTPUT_DIR + 'miner_results/' + 'results_genetic_miner_new_objective.csv' # only alter the last string
 
 # Output petri nets
 OUTPUT_PETRI_NETS = False
 PETRI_NETS_SAVE_PATH = "./genetic_miner_nets/" 
 
 # Consolidation
-CONSOLIDATE_MINER_RESULTS = True
+CONSOLIDATE_MINER_RESULTS = False
 CONSOLIDATED_RESULTS_FILE_NAME = "consolidated_results"   # dont include extension
 
 def convert_json_to_hyperparamters(hyper_parameters: dict):    
@@ -98,8 +98,6 @@ def generate_data(method: callable, runs: int, results_file_name: str, output_pe
     dataset_dirs = [x for x in dataset_dirs if not os.path.isfile(f"{DATASET_DIR}{x}")]
 
     for dataset_dir in dataset_dirs:
-        if dataset_dir not in ['2013-cp', '2013-op']:
-            continue
         eventlog = EventLog.load_xes(f"{DATASET_DIR}{dataset_dir}/{dataset_dir}.xes")
 
         data = []
