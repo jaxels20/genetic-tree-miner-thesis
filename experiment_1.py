@@ -1,22 +1,43 @@
 import csv
 import os
 import pandas as pd
+import time
 from multiprocessing import cpu_count
 from src.Discovery import Discovery
 from src.Mutator import Mutator, TournamentMutator
 from src.RandomTreeGenerator import BottomUpRandomBinaryGenerator, FootprintGuidedSequentialGenerator, InductiveNoiseInjectionGenerator, InductiveMinerGenerator
-from src.Evaluator import MultiEvaluator, SingleEvaluator
-from src.FileLoader import FileLoader
+from src.EventLog import EventLog
+from src.Evaluator import SingleEvaluator
 from src.Objective import Objective
 
-INPUT_DIR = "./real_life_datasets/"
-OUTPUT_DIR = "./experiment_1/"
-BEST_PARAMS = "./best_parameters.csv"
+# Data parameters 
+DATASET_DIR = "./real_life_datasets/"
 
-STAGNATION_LIMIT = 50
+# Genetic Miner Configuration
+BEST_PARAMS = "./best_parameters.csv"
 TIME_LIMIT = 60*5
+STAGNATION_LIMIT = 50
 PERCENTAGE_OF_LOG = 0.05
-OBJECTIVE_WEIGHTS = {"simplicity": 10, "refined_simplicity": 10, "ftr_fitness": 50, "ftr_precision": 30}
+OBJECTIVE = {
+    "simplicity": 15,
+    "refined_simplicity": 15,
+    "ftr_f1_score": 70,
+}
+
+# Result generation parameters
+GENERATE_RESULT_DF = False
+NUM_DATA_POINTS = 5
+OUTPUT_DIR = "./experiment_1/"
+RESULT_FILE_NAME = OUTPUT_DIR + 'genetic_miner_test_run.csv'
+MEDIAN_RUN_FILE_NAME = OUTPUT_DIR + 'miner_results/' + 'results_test_run.csv' # only alter the last string
+
+# Output petri nets
+OUTPUT_PETRI_NETS = False
+PETRI_NETS_SAVE_PATH = "./genetic_miner_nets/" 
+
+# Consolidation
+CONSOLIDATE_MINER_RESULTS = True
+CONSOLIDATED_RESULTS_FILE_NAME = "consolidated_results"   # dont include extension
 
 def convert_json_to_hyperparamters(hyper_parameters: dict):    
     total = hyper_parameters['random_creation_rate'] + hyper_parameters['elite_rate'] + hyper_parameters["tournament_rate"]
@@ -72,72 +93,57 @@ def load_hyperparameters_from_csv(path: str):
 
     return convert_json_to_hyperparamters(hyper_parameters)
 
-def run_experiment():
-    dataset_dirs = os.listdir(INPUT_DIR)
-    dataset_dirs = [x for x in dataset_dirs if not os.path.isfile(f"{INPUT_DIR}{x}")]
-    loader = FileLoader()
-    eventlogs = []
+def generate_data(method: callable, runs: int, results_file_name: str, output_petri_nets: bool):    
+    dataset_dirs = os.listdir(DATASET_DIR)
+    dataset_dirs = [x for x in dataset_dirs if not os.path.isfile(f"{DATASET_DIR}{x}")]
 
     for dataset_dir in dataset_dirs:
-        xes_file = [f for f in os.listdir(f"{INPUT_DIR}{dataset_dir}") if f.endswith(".xes")]
-        if len(xes_file) == 1:
-            loaded_log = loader.load_eventlog(f"{INPUT_DIR}{dataset_dir}/{xes_file[0]}")
-            eventlogs.append(loaded_log)
-        else:
-            raise ValueError("More than one xes file in the directory")
-    
-    # Load the hyperparameters
-    hyperparams = load_hyperparameters_from_csv(BEST_PARAMS)
+        if dataset_dir not in ['2013-cp', '2013-op']:
+            continue
+        eventlog = EventLog.load_xes(f"{DATASET_DIR}{dataset_dir}/{dataset_dir}.xes")
 
-    # Define the methods to be used
-    methods_dict = {
-        "GM 1": lambda log: Discovery.genetic_algorithm(
-            log,
-            method_name="GM 1",
-            stagnation_limit=STAGNATION_LIMIT,
-            time_limit=TIME_LIMIT,
-            percentage_of_log=PERCENTAGE_OF_LOG,
-            **hyperparams,
-        ),
-        "GM 2": lambda log: Discovery.genetic_algorithm(
-            log,
-            method_name="GM 2",
-            stagnation_limit=STAGNATION_LIMIT,
-            time_limit=TIME_LIMIT,
-            percentage_of_log=PERCENTAGE_OF_LOG,
-            **hyperparams,
-        ),
-        "GM 3": lambda log: Discovery.genetic_algorithm(
-            log,
-            method_name="GM 3",
-            stagnation_limit=STAGNATION_LIMIT,
-            time_limit=TIME_LIMIT,
-            percentage_of_log=PERCENTAGE_OF_LOG,
-            **hyperparams,
-        ),
-        "GM 4": lambda log: Discovery.genetic_algorithm(
-            log,
-            method_name="GM 4",
-            stagnation_limit=STAGNATION_LIMIT,
-            time_limit=TIME_LIMIT,
-            percentage_of_log=PERCENTAGE_OF_LOG,
-            **hyperparams,
-        ),
-        "GM 1": lambda log: Discovery.genetic_algorithm(
-            log,
-            method_name="GM 5",
-            stagnation_limit=STAGNATION_LIMIT,
-            time_limit=TIME_LIMIT,
-            percentage_of_log=PERCENTAGE_OF_LOG,
-            **hyperparams,
-        )
-    }
-    
-    # Run the methods on each event log
-    multi_evaluator = MultiEvaluator(eventlogs, methods_dict)
-    results_df = multi_evaluator.evaluate_all(OBJECTIVE_WEIGHTS)
-    
-    return results_df
+        data = []
+        for i in range(runs):
+            print(f"Running discovery on dataset: {dataset_dir} iteration: {i}")
+            start = time.time()
+            discovered_net = method(eventlog)
+            time_taken = time.time() - start
+            
+            # Export the discovered net to a file
+            if output_petri_nets:
+                os.makedirs(PETRI_NETS_SAVE_PATH + "pdfs/", exist_ok=True)
+                discovered_net.visualize(PETRI_NETS_SAVE_PATH + f"/pdfs/{dataset_dir}_{i}")
+                os.makedirs(PETRI_NETS_SAVE_PATH + "/pnmls/", exist_ok=True)
+                discovered_net.to_pnml(PETRI_NETS_SAVE_PATH + f"/pnmls/{dataset_dir}_{i}")
+            
+            evaluator = SingleEvaluator(
+                discovered_net,
+                eventlog
+            )
+            
+            # Get the evaluation metrics
+            fitness = evaluator.get_replay_fitness()['log_fitness']
+            precision = evaluator.get_precision()
+            
+            metrics = {}
+            metrics['Dataset'] = dataset_dir
+            metrics['Discovery Method'] = "GM"
+            metrics['Model'] = i
+            metrics['Log Fitness'] = fitness
+            metrics['Precision'] = precision
+            metrics['F1 Score'] = evaluator.get_f1_score(precision, fitness)
+            metrics['Objective Fitness'] = evaluator.get_objective_fitness(OBJECTIVE)
+            metrics['Generalization'] = evaluator.get_generalization()
+            metrics['Simplicity'] = evaluator.get_simplicity()
+            metrics['Time (s)'] = time_taken
+            data.append(metrics)
+            
+            cur_df = pd.DataFrame(data)        
+            if os.path.exists(results_file_name):
+                read_df = pd.read_csv(results_file_name)
+                cur_df = pd.concat([read_df, cur_df], ignore_index=True)
+            
+            cur_df.to_csv(results_file_name, index=False)
     
 def consolidate_results(input_dir):
     # list all csv files in a directory
@@ -148,18 +154,7 @@ def consolidate_results(input_dir):
         loaded_df = pd.read_csv(input_dir + file)
         df = pd.concat([df, loaded_df], ignore_index=True)
     
-    # Manipulation
-    df.rename(columns={
-        'dataset': 'Dataset',
-        'miner': 'Discovery Method',
-        'f1_score': 'F1 Score',
-        'log_fitness': 'Log Fitness',
-        'precision': 'Precision',
-        'objective_fitness': 'Objective Fitness',
-        'generalization': 'Generalization',
-        'simplicity': 'Simplicity',
-        'time': 'Time (s)'
-    }, inplace=True)
+    # df manipulation
     column_order = ['Dataset', 'Discovery Method', 'F1 Score', 'Log Fitness', 'Precision', 'Generalization', 'Simplicity', 'Objective Fitness', 'Time (s)']
     df = df[column_order]
     df.sort_values(by=['Dataset', 'Discovery Method'], inplace=True)
@@ -187,16 +182,41 @@ def get_genetic_miner_median_run(input_file, output_csv_name):
     df = pd.read_csv(input_file)
     median_idx = (
         df
-        .groupby('dataset')['objective_fitness']
+        .groupby('Dataset')['Objective Fitness']
         .apply(lambda x: (x - x.median()).abs().idxmin())    # idxmin returns the index of the first occurrence of the minimum value
     )
-    filtered_df = df.loc[median_idx].reset_index(drop=True)
-    filtered_df.to_csv(output_csv_name, index=False)
+    df = df.loc[median_idx].reset_index(drop=True)
+    
+    if os.path.exists(output_csv_name):
+        existing_df = pd.read_csv(output_csv_name)
+        df = pd.concat([df, existing_df])
+    df.to_csv(output_csv_name, index=False)
     
 if __name__ == "__main__":
-    # A prerequise to run the script for experiment 2 that produces the csv file containing the results of the genetic miner over one or multiple runs
-    if not os.path.exists(OUTPUT_DIR + "miner_results/results_genetic.csv"):
-        get_genetic_miner_median_run("./experiment_1/results_genetic_5_runs.csv", OUTPUT_DIR + "miner_results/results_genetic.csv")
-    df = consolidate_results("./experiment_1/miner_results/")
-    df.to_csv(OUTPUT_DIR + "consolidated_results/results.csv", index=False, float_format="%.2f")
-    df.to_latex(OUTPUT_DIR + "consolidated_results/results.tex", index=False, escape=False, float_format="%.2f")
+    if GENERATE_RESULT_DF:
+        # convert the hyper parameters to a normalize
+        hyper_parameters = load_hyperparameters_from_csv(BEST_PARAMS)
+        hyper_parameters['objective'] = Objective(OBJECTIVE)   # DELETE DELETE DELETE DELETE DELETE LATER DELEEEEEEEEEEEEETE
+        
+        # Define model
+        genetic_miner = lambda log: Discovery.genetic_algorithm(
+            log,
+            time_limit=TIME_LIMIT,
+            stagnation_limit=STAGNATION_LIMIT,
+            percentage_of_log=PERCENTAGE_OF_LOG,
+            **hyper_parameters,
+        )
+        # Generate df with results over runs and write to csv
+        generate_data(
+            method = genetic_miner,
+            runs=NUM_DATA_POINTS,
+            results_file_name=RESULT_FILE_NAME,
+            output_petri_nets=OUTPUT_PETRI_NETS
+        )
+        # Take the median of multiple runs and write to csv
+        get_genetic_miner_median_run(input_file=RESULT_FILE_NAME, output_csv_name=MEDIAN_RUN_FILE_NAME)
+    
+    if CONSOLIDATE_MINER_RESULTS:
+        df = consolidate_results(OUTPUT_DIR + "miner_results/")
+        df.to_csv(OUTPUT_DIR + "consolidated_results/" + CONSOLIDATED_RESULTS_FILE_NAME + ".csv", index=False, float_format="%.2f")
+        df.to_latex(OUTPUT_DIR + "consolidated_results/" + CONSOLIDATED_RESULTS_FILE_NAME + ".tex", index=False, escape=False, float_format="%.2f")

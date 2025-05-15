@@ -25,6 +25,7 @@ class Objective:
         - 'precision'
         - 'ftr_fitness'
         - 'ftr_precision'
+        - 'ftr_f1_score'
     """
     def __init__(self, metric_weights: dict[str, float]):
         self.eventlog = None
@@ -43,6 +44,7 @@ class Objective:
             "precision": self.precision,
             "ftr_fitness": self.ftr_fitness,
             "ftr_precision": self.ftr_precision,
+            "ftr_f1_score": self.ftr_f1_score
         }
         
     def set_event_log(self, event_log: EventLog):
@@ -102,6 +104,15 @@ class Objective:
     def ftr_precision(self, ftr_petri_net):
         precision = FastTokenBasedReplay.calculate_precision(self.ftr_eventlog, ftr_petri_net)        
         return precision
+    
+    def ftr_f1_score(self, ftr_petri_net):
+        fitness = FastTokenBasedReplay.calculate_fitness(self.ftr_eventlog, ftr_petri_net, False, False)
+        precision = FastTokenBasedReplay.calculate_precision(self.ftr_eventlog, ftr_petri_net)
+        try:
+            f1_score = 2 * (precision * fitness) / (precision + fitness)
+        except ZeroDivisionError:
+            f1_score = 0.0
+        return f1_score
     
     def fitness(self, process_tree: ProcessTree) -> float:        
         pm4py_pn, initial_marking, final_marking = process_tree.to_pm4py_pn()

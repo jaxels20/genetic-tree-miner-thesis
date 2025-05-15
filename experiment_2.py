@@ -1,106 +1,29 @@
-import pandas
-import os
-import time
-from src.Discovery import Discovery
-from src.EventLog import EventLog 
-from src.Evaluator import SingleEvaluator
+import pandas as pd
 import plotly.graph_objects as go
-import plotly.express as px
-from experiment_1 import load_hyperparameters_from_csv
 
-BEST_PARAMS = "./best_parameters.csv"
-DATASET_DIR = "./real_life_datasets/"
-NUM_DATA_POINTS = 5
-TIME_LIMIT = 60*5
-STAGNATION_LIMIT = 50
-PERCENTAGE_OF_LOG = 0.05
-OBJECTIVE = {
-    "simplicity": 10,
-    "refined_simplicity": 10,
-    "ftr_fitness": 50,
-    "ftr_precision": 30
-}
+OUTPUT_PATH = "./experiment_2/"
 
-def generate_data(runs: int, output_petri_nets: bool = False):
-    # convert the hyper parameters to a normalize
-    hyper_parameters = load_hyperparameters_from_csv(BEST_PARAMS)
-    dataset_dirs = os.listdir(DATASET_DIR)
-    dataset_dirs = [x for x in dataset_dirs if not os.path.isfile(f"{DATASET_DIR}{x}")]
+# Parameters for generating the correctly formatted csv file
+PRODUCE_DF = True
+SOURCE_CSV = "./experiment_1/results_genetic_5_runs.csv"
+DF_FILE_NAME = 'data.csv'
 
-    for dataset_dir in dataset_dirs:
-        eventlog = EventLog.load_xes(f"{DATASET_DIR}{dataset_dir}/{dataset_dir}.xes")
+# Plot parameters
+PLOT_DF = True
+INPUT_DF = './experiment_2/data.csv'
+PLOT_FILE_NAME = 'plot.pdf'
 
-        data = []
-        for i in range(runs):
-            print(f"Running discovery on dataset: {dataset_dir} iteration: {i}")
-            start = time.time()
-            discovered_net = Discovery.genetic_algorithm(
-                eventlog,
-                time_limit=TIME_LIMIT,
-                stagnation_limit=STAGNATION_LIMIT,
-                percentage_of_log=PERCENTAGE_OF_LOG,
-                **hyper_parameters,
-            )
-            time_taken = time.time() - start
-            
-            # Export the discovered net to a file
-            if output_petri_nets:
-                os.makedirs(f"./genetic_miner_nets/pdfs", exist_ok=True)
-                discovered_net.visualize(f"./genetic_miner_nets/pdfs/{dataset_dir}_{i}")
-                os.makedirs(f"./genetic_miner_nets/pnmls", exist_ok=True)
-                discovered_net.to_pnml(f"./genetic_miner_nets/pnmls/{dataset_dir}_{i}")
-            
-            evaluator = SingleEvaluator(
-                discovered_net,
-                eventlog
-            )
-            
-            # Get the evaluation metrics
-            fitness = evaluator.get_replay_fitness()['log_fitness']
-            precision = evaluator.get_precision()
-            
-            metrics = {}
-            metrics['dataset'] = dataset_dir
-            metrics['miner'] = "GM"
-            metrics['model'] = i
-            metrics['log_fitness'] = fitness
-            metrics['precision'] = precision
-            metrics['f1_score'] = evaluator.get_f1_score(precision, fitness)
-            metrics['objective_fitness'] = evaluator.get_objective_fitness(OBJECTIVE)
-            metrics['generalization'] = evaluator.get_generalization()
-            metrics['simplicity'] = evaluator.get_simplicity()
-            metrics['time'] = time_taken
-            data.append(metrics)
-        
-        # Convert the data to a pandas DataFrame
-        cur_df = pandas.DataFrame(data)        
-        cur_df_copy = cur_df.copy()
-        if os.path.exists(f"./experiment_1/results_genetic_{NUM_DATA_POINTS}_runs.csv"):
-            read_df = pandas.read_csv(f"./experiment_1/results_genetic_{NUM_DATA_POINTS}_runs.csv")
-            cur_df_copy = pandas.concat([read_df, cur_df_copy], ignore_index=True)
-        
-        cur_df_copy.to_csv(f"./experiment_1/results_genetic_{NUM_DATA_POINTS}_runs.csv", index=False)
-        
-        # Melt the DataFrame for Seaborn
-        df_melted = cur_df.melt(id_vars='dataset', var_name='Metric', value_name='Score')
-        df_melted = df_melted[df_melted['Metric'] == 'objective_fitness']
-
-        if os.path.exists("./experiment_2/experiment_2.csv"):
-            old = pandas.read_csv("./experiment_2/experiment_2.csv")
-            df_melted = pandas.concat([old, df_melted], ignore_index=True)  
-        
-        df_melted.to_csv("./experiment_2/experiment_2.csv", index=False)
-
-def plot_data():
+def produce_df(csv_file, df_output_file_name):
     # Load the data
-    df_melted = pandas.read_csv("./experiment_2/experiment_2.csv")
-    # Remove all rows with Nasa as the dataset
-    df_melted.rename(columns={'dataset': 'Dataset'}, inplace=True)
-    df_melted = df_melted[~df_melted['Dataset'].str.contains("Nasa")]
+    df = pd.read_csv(csv_file)
+    
+    # melt the file 
+    df = df.melt(id_vars='Dataset', var_name='Metric', value_name='Score')
+    df = df[df['Metric'] == 'Objective Fitness']
+    df.sort_values(by=['Dataset', 'Metric'], inplace=True)
     
     # rename the dataset values
-    df_melted.rename(columns={'dataset': 'Dataset'}, inplace=True)
-    df_melted['Dataset'] = df_melted['Dataset'].replace({
+    df['Dataset'] = df['Dataset'].replace({
         '2019': '*2019',
         '2017': '*2017',
         '2020-id': '*2020-id',
@@ -109,39 +32,34 @@ def plot_data():
         "2012": "*2012",
     })
     
-    
-    # Sort the DataFrame by 'Dataset' and 'Metric'
-    df_melted.sort_values(by=['Dataset', 'Metric'], inplace=True)
+    df.to_csv(OUTPUT_PATH + df_output_file_name, index=False)
         
-    # Create a color palette
-    #colors = cycle(px.colors.qualitative.Pastel2)
+def plot_df(df, plot_file_name):    
     fig = go.Figure()
     color = "lightgrey"
-    for metric in ['objective_fitness']:
-        metric_df = df_melted[df_melted['Metric'] == metric]
 
-        # Compute IQR per Dataset
-        iqr_df = (
-            metric_df.groupby('Dataset')['Score']
-            .agg(lambda x: x.quantile(1) - x.quantile(0))
-            .reset_index(name='IQR')
-        )
+    # Compute IQR per Dataset
+    iqr_df = (
+        df.groupby('Dataset')['Score']
+        .agg(lambda x: x.quantile(1) - x.quantile(0))
+        .reset_index(name='IQR')
+    )
 
-        # Sort datasets by IQR
-        sorted_datasets = iqr_df.sort_values('IQR')['Dataset'].tolist()
+    # Sort datasets by IQR
+    sorted_datasets = iqr_df.sort_values('IQR')['Dataset'].tolist()
 
-        fig.add_trace(go.Scatter(
-            x=metric_df['Dataset'],
-            y=metric_df['Score'],
-            mode='markers',
-            name=metric,
-            marker=dict(color=color, size=6, line=dict(width=1, color='black'))
-        ))
+    fig.add_trace(go.Scatter(
+        x=df['Dataset'],
+        y=df['Score'],
+        mode='markers',
+        name='Objective Fitness',
+        marker=dict(color=color, size=6, line=dict(width=1, color='black'))
+    ))
 
-        # Update x-axis order
-        fig.update_layout(
-            xaxis=dict(categoryorder='array', categoryarray=sorted_datasets)
-        )
+    # Update x-axis order
+    fig.update_layout(
+        xaxis=dict(categoryorder='array', categoryarray=sorted_datasets)
+    )
 
     # Layout adjustments
     fig.update_layout(
@@ -168,11 +86,15 @@ def plot_data():
     fig.update_xaxes(tickangle=45, tickmode='array', tickvals=sorted_datasets)
     
     # save the plot
-    fig.write_image("./experiment_2/experiment_2.pdf")
+    fig.write_image(OUTPUT_PATH + plot_file_name)
     
 
 if __name__ == "__main__":
-    generate_data(runs=1, output_petri_nets=False)
-    # plot_data()
+    if PRODUCE_DF:
+        produce_df(csv_file=SOURCE_CSV, df_output_file_name=DF_FILE_NAME)
+    
+    if PLOT_DF:
+        df = pd.read_csv(INPUT_DF)
+        plot_df(df, plot_file_name=PLOT_FILE_NAME)
 
     

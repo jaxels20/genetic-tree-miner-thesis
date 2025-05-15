@@ -13,11 +13,7 @@ import pandas as pd
 import os
 
 if __name__ == "__main__":
-    df = pd.read_csv("./experiment_1/archive/results_genetic_5_runs.csv")
-    med = df.groupby('Dataset')['Objective Fitness'].transform('median')
-    filtered_df = df[df['Objective Fitness'] == med]
-    
-    filtered_df["Refined Simplicity"] = (1 - filtered_df["Refined Simplicity"]) * 100
-    filtered_df["Refined Simplicity"] = filtered_df["Refined Simplicity"].round(0).astype(int)
-    filtered_df.to_csv("./experiment_1/csvs/results_genetic.csv", index=False)
-    
+    df = pd.read_csv("./experiment_1/miner_results/results_split.csv")
+    df = df[['dataset','f1_score','log_fitness','precision','objective_fitness','generalization','simplicity', 'time']]
+    df.to_csv("./experiment_1/miner_results/results_split.csv", index=False)
+    # df.to_latex('./experiment_1/BottomUpBinaryGenerator_results.tex', index=False, float_format="%.2f")
