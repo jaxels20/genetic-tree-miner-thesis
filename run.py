@@ -11,9 +11,10 @@ from src.Objective import Objective
 import pm4py
 import pandas as pd
 import os
+from experiment_1 import get_genetic_miner_median_run
 
 if __name__ == "__main__":
-    df = pd.read_csv("./experiment_1/miner_results/results_split.csv")
-    df = df[['dataset','f1_score','log_fitness','precision','objective_fitness','generalization','simplicity', 'time']]
-    df.to_csv("./experiment_1/miner_results/results_split.csv", index=False)
-    # df.to_latex('./experiment_1/BottomUpBinaryGenerator_results.tex', index=False, float_format="%.2f")
+    get_genetic_miner_median_run("./experiment_1/random_results/results_genetic_miner_5_runs_new_objective.csv", "./median_run.csv")
+    df = pd.read_csv("./median_run.csv")
+    df = df[['Dataset','F1 Score','Log Fitness','Precision','Objective Fitness','Generalization','Simplicity', 'Time (s)']]
+    df.to_latex('./objective_results.tex', index=False, float_format="%.2f")

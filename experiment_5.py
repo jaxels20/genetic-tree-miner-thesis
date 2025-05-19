@@ -1,51 +1,34 @@
-from src.FileLoader import FileLoader
-from src.Evaluator import MultiEvaluator
+from src.RandomTreeGenerator import BottomUpRandomBinaryGenerator
 from src.Discovery import Discovery
+from src.EventLog import EventLog
+from src.FileLoader import FileLoader
 import os
 import pickle
 import plotly.graph_objects as go
 from experiment_1 import load_hyperparameters_from_csv
 import pandas as pd
 
-INPUT_DIR = "./real_life_datasets/"
+GENERATE_MONITORS = False
+GENERATE_PLOT = True
+DATASETS_DIR = "./real_life_datasets/"
 OUTPUT_DIR = "./experiment_5"
 NUM_RUNS = 1
 BEST_PARAMS = "./best_parameters.csv"
 TIME_LIMIT = None
 STAGNATION_LIMIT = None
+PERCENTAGE_OF_LOG = 0.05
 MAX_GENERATIONS = 300
 
-def generate_monitors():
-    dataset_dirs = os.listdir(INPUT_DIR)
-    dataset_dirs = [x for x in dataset_dirs if not os.path.isfile(f"{INPUT_DIR}{x}")]
-    loader = FileLoader()
-    eventlogs = []
-    hyperparams = load_hyperparameters_from_csv(BEST_PARAMS)
-
+def generate_monitors(method: callable, runs: int):
+    dataset_dirs = os.listdir(DATASETS_DIR)
+    dataset_dirs = [x for x in dataset_dirs if not os.path.isfile(f"{DATASETS_DIR}{x}")]
 
     for dataset_dir in dataset_dirs:
-        xes_file = [f for f in os.listdir(f"{INPUT_DIR}{dataset_dir}") if f.endswith(".xes")]
-        if len(xes_file) == 1:
-            loaded_log = loader.load_eventlog(f"{INPUT_DIR}{dataset_dir}/{xes_file[0]}")
-            eventlogs.append(loaded_log)
-        else:
-            raise ValueError("None or more than one xes file in the directory")
-
-    methods_dict = {}
-    hyperparams["method_name"] = "Genetic Miner"
-    methods_dict["Genetic Miner"] = lambda log: Discovery.genetic_algorithm(
-            log,
-            export_monitor_path=f"{OUTPUT_DIR}",
-            time_limit=TIME_LIMIT,
-            stagnation_limit=STAGNATION_LIMIT,
-            max_generations=MAX_GENERATIONS,
-            percentage_of_log=0.05,
-            **hyperparams,
-        )
-
+        print(f'Processing {dataset_dir}')
+        eventlog = FileLoader.load_eventlog(f"{DATASETS_DIR}{dataset_dir}/{dataset_dir}.xes")
+        for i in range(runs):
+            method(eventlog)   # Each run will export monitor object to specified export path
     
-    for i in range(NUM_RUNS):
-        multi_evaluator = MultiEvaluator(eventlogs, methods_dict)
 
 def visualize(folder_path, mutator: bool):
     df = pd.DataFrame()
@@ -121,8 +104,8 @@ def visualize_all():
         visualize(subfolder, mutator=True)
         visualize(subfolder, mutator=False)
 
-def visualize_paper_figure():
-    subfolders = [f.path for f in os.scandir(OUTPUT_DIR) if f.is_dir()]
+def visualize_paper_figure(input_dir, output_file_name):
+    subfolders = [f.path for f in os.scandir(input_dir) if f.is_dir()]
     data = []
     
     for subfolder in subfolders:
@@ -183,7 +166,7 @@ def visualize_paper_figure():
     "#0072B2", "#D55E00", "#CC79A7", "#999999",
     "#117733", "#332288", "#88CCEE", "#44AA99",
     "#661100", "#6699CC"
-]
+    ]
 
     marker_symbols = [
         "circle", "square", "diamond", "cross", "x", "triangle-up", "triangle-down",
@@ -254,13 +237,31 @@ def visualize_paper_figure():
     )
     
     fig.update_yaxes(
-        range=[45, 100],
+        range=[20, 100],
     )
     
     # write the file to the output directory
-    fig.write_image(f"{OUTPUT_DIR}/paper_figure.pdf")
+    fig.write_image(f"{OUTPUT_DIR}/{output_file_name}.pdf")
     
     
-if __name__ == "__main__":    
-    # generate_monitors()
-    visualize_paper_figure()
+if __name__ == "__main__": 
+    if GENERATE_MONITORS:   
+        hyper_parameters = load_hyperparameters_from_csv(BEST_PARAMS)
+        hyper_parameters['generator'] = BottomUpRandomBinaryGenerator()
+
+        # Define model
+        genetic_miner = lambda log: Discovery.genetic_algorithm(
+            log,
+            method_name="Genetic_miner",
+            export_monitor_path='./experiment_5/plot_3_random_tree_generator_v2',
+            percentage_of_log=PERCENTAGE_OF_LOG,
+            max_generations=MAX_GENERATIONS,
+            **hyper_parameters,
+        )
+        generate_monitors(genetic_miner, 1)
+    
+    if GENERATE_PLOT:
+        visualize_paper_figure(
+            input_dir='./experiment_5/plot_1_inductive_tree_generator/',
+            output_file_name='inductive_generator'
+        )

@@ -194,7 +194,6 @@ if __name__ == "__main__":
     if GENERATE_RESULT_DF:
         # convert the hyper parameters to a normalize
         hyper_parameters = load_hyperparameters_from_csv(BEST_PARAMS)
-        hyper_parameters['objective'] = Objective(OBJECTIVE)   # DELETE DELETE DELETE DELETE DELETE LATER DELEEEEEEEEEEEEETE
         
         # Define model
         genetic_miner = lambda log: Discovery.genetic_algorithm(
