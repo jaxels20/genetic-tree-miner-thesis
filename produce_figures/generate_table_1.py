@@ -1,9 +1,7 @@
 import pm4py
 from pm4py.objects.log.importer.xes import importer as xes_importer
 import os 
-import sys
 import pandas as pd
-from itertools import combinations
 
 def collect_all_xes_files(root_dir):
     xes_files = []

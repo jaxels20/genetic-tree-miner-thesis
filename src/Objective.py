@@ -27,7 +27,7 @@ class Objective:
         - 'ftr_precision'
         - 'ftr_f1_score'
     """
-    def __init__(self, metric_weights: dict[str, float]):
+    def __init__(self, metric_weights: dict):
         self.eventlog = None
         self.event_log_pm4py = None
         self.ftr_eventlog = None

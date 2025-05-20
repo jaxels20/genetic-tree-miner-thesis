@@ -1,12 +1,7 @@
-from src.RandomTreeGenerator import BottomUpRandomBinaryGenerator
 from src.Discovery import Discovery
-from src.EventLog import EventLog
 from src.FileLoader import FileLoader
+from src.utils import load_hyperparameters_from_csv
 import os
-import pickle
-import plotly.graph_objects as go
-from experiment_1 import load_hyperparameters_from_csv
-import pandas as pd
 
 DATASETS_DIR = "./real_life_datasets/"
 OUTPUT_DIR = "./data/figure_5c/inductive_tree_generator/"

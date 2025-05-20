@@ -2,7 +2,6 @@ import os
 import pickle
 import plotly.graph_objects as go
 import pandas as pd
-from plotly.colors import qualitative
 
 INPUT_DIR = './data/figure_5d/'
 OUTPUT_FILE = "./figures/figure_5d.pdf"
@@ -41,7 +40,7 @@ def visualize_paper_figure():
                     )
 
     df = pd.DataFrame(data)
-    df.replace({"Line Type": {"plot_1_inductive_tree_generator": "InductiveNoiseInjectionGenerator", "plot_2_random_tree_generator": "BottomUpRandomBinaryGenerator"}}, inplace=True)
+    df.replace({"Line Type": {"inductive_tree_generator": "IM Tree Generator", "random_tree_generator": "Random Tree Generator"}}, inplace=True)
     
     # Aggregate 
     aggregated = df.groupby(["Line Type", "Generation"], as_index=False).mean(numeric_only=True)

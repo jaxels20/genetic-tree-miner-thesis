@@ -4,16 +4,13 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import pandas as pd
 import plotly.graph_objects as go
-import plotly.express as px
 from sklearn.preprocessing import LabelEncoder
 import numpy as np
-from src.utils import load_hyperparameters_from_csv
 
 INPUT_FILE = "./data/figure_5a/figure_5a.csv"
 OUTPUT_DIR = "./figures"
 
 def plot_data(df):
-
     df.rename(columns={
         'random_creation_rate': 'Random Creation Rate',
         'elite_rate': 'Elite Rate',

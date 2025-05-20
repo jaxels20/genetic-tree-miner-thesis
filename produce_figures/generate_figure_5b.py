@@ -2,7 +2,7 @@ import plotly.graph_objects as go
 import pandas as pd
 
 
-INPUT_FILE = "./data/table_2/evaluation_results/results_GTM.csv"
+INPUT_FILE = "./data/figure_5b/data.csv"
 OUTPUT_PATH = "./figures/figure_5b.pdf"
 
 def plot_df(df):

@@ -68,7 +68,7 @@ class SingleEvaluator:
         precision_value = precision(self.event_log_pm4py, self.pm4py_pn, self.init_marking, self.final_marking)
         return precision_value
     
-    def get_objective_fitness(self, objective_metric_weights: dict[str, float]={"simplicity": 10, "refined_simplicity": 10, "ftr_fitness": 50, "ftr_precision": 30}):
+    def get_objective_fitness(self, objective_metric_weights: dict):
         pm4py_pt = convert_to_pt(self.pm4py_pn, self.init_marking, self.final_marking)
         our_pt = ProcessTree.from_pm4py(pm4py_pt)
         objective = Objective(objective_metric_weights)

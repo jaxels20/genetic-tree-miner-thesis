@@ -4,7 +4,6 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-
 import optuna
 from src.Discovery import Discovery
 from src.FileLoader import FileLoader
@@ -22,14 +21,14 @@ OPTUNA_TIMEOUT_LIMIT = 60*60*18
 INPUT_DIR = "./real_life_datasets/"
 OUTPUT_DIR = "./data/figure_5a/" 
 
-FITNESS_WEIGHTS = {
+OBJECTIVE = {
     "simplicity": 10,
     "refined_simplicity": 10,
     "ftr_fitness": 50,
     "ftr_precision": 30
 }
 
-def objective(trial, event_log, fitness_weights=dict[str, float]):
+def objective(trial, event_log):
     # Suggest hyperparameters
     random_creation_rate = trial.suggest_float("random_creation_rate", 0.0, 1.0)
     elite_rate = trial.suggest_float("elite_rate", 0.0, 1.0)
@@ -62,7 +61,7 @@ def objective(trial, event_log, fitness_weights=dict[str, float]):
         petri_net = Discovery.genetic_algorithm(
             event_log,
             method_name="Genetic Miner",
-            objective=Objective(metric_weights=FITNESS_WEIGHTS),
+            objective=Objective(metric_weights=OBJECTIVE),
             mutator=mutator,
             generator=generator,
             percentage_of_log=PERCENTAGE_OF_LOG,
@@ -73,7 +72,7 @@ def objective(trial, event_log, fitness_weights=dict[str, float]):
 
         # Evaluate fitness — should return a single value (higher is better)
         evaluator = SingleEvaluator(petri_net, event_log)
-        fitness_score = evaluator.get_objective_fitness(fitness_weights)
+        fitness_score = evaluator.get_objective_fitness(OBJECTIVE)
 
         return fitness_score
     except Exception as e:
@@ -96,7 +95,7 @@ def optimize_dataset(dataset):
     )
     
     study.optimize(
-        lambda trial: objective(trial, eventlog, FITNESS_WEIGHTS),
+        lambda trial: objective(trial, eventlog),
         show_progress_bar=False,
         n_trials=None,
         timeout=OPTUNA_TIMEOUT_LIMIT
