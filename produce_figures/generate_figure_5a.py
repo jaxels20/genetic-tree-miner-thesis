@@ -131,7 +131,7 @@ def plot_data(df):
         width=850
     )
     # Save the figure
-    fig.write_image(os.path.join(OUTPUT_DIR, "figure_5a.png"))
+    fig.write_image(os.path.join(OUTPUT_DIR, "figure_5a.pdf"))
 
 if __name__ == "__main__":
     df = pd.read_csv(INPUT_FILE)
