@@ -26,8 +26,6 @@ def plot_data(df):
 
     df.rename(columns={
         'random_creation_rate': 'Random Creation Rate',
-        # 'mutation_rate': 'Mutation Rate',
-        # 'crossover_rate': 'Crossover Rate',
         'elite_rate': 'Elite Rate',
         'population_size': 'Population Size',
         'percentage_of_log': 'Percentage of Log',
@@ -35,17 +33,10 @@ def plot_data(df):
         'tournament_size': 'Tournament Size',
         'tournament_rate': 'Tournament Rate',
         'tournament_mutation_rate': 'Mutation Rate',
-        # 'mutator': 'Mutator',
         'generator': 'Generator',
         'objective': 'Objective',
         'dataset': 'Dataset',
     }, inplace=True)
-    
-    # df['Mutator'].replace({
-    #     'Tournament': 'Tourn.',
-    #     'NonTournament': 'NonTourn.',
-    # }, inplace=True)
-
 
     skip_cols = ['Dataset', 'Objective', "Generator"]
     dimension_cols = [col for col in df.columns if col not in skip_cols]

@@ -29,81 +29,6 @@ def generate_monitors(method: callable, runs: int):
         for i in range(runs):
             method(eventlog)   # Each run will export monitor object to specified export path
     
-
-def visualize(folder_path, mutator: bool):
-    df = pd.DataFrame()
-    pkl_files = [f for f in os.listdir(folder_path + "/monitors") if f.endswith('.pkl')]
-    fig = go.Figure()
-    for pkl_file in pkl_files:
-        if not "Tourn" in pkl_file and mutator:
-            continue
-        if "Tourn" in pkl_file and not mutator:
-            continue
-        
-        with open(os.path.join(folder_path, "monitors", pkl_file), 'rb') as f:
-            dataset_name, method_name, result_dict = pickle.load(f)
-            
-        generations = list(result_dict.keys())
-        fitness_values = list(result_dict.values())
-        
-        # remove every second element from generations and fitness_values
-        generations = generations[::2]
-        fitness_values = fitness_values[::2]
-        
-        temp_df = pd.DataFrame({
-            "Generation": generations,
-            "Fitness": fitness_values,
-            "Method": method_name
-        })
-        df = pd.concat([df, temp_df], ignore_index=True)
-    # group by method and generation and mean fitness 
-    df = df.groupby(["Method", "Generation"]).mean().reset_index()
-    
-    fig = go.Figure()
-    for method in df["Method"].unique():
-        method_df = df[df["Method"] == method]
-        fig.add_trace(go.Scatter
-            (
-                x=method_df["Generation"],
-                y=method_df["Fitness"],
-                mode='lines+markers',
-                name=method,
-                # line=dict(color=color_map[method], width=1),
-                # marker=dict(symbol=marker_map[method], size=8, line=dict(width=1, color='black'))
-            )
-        )
-    
-    fig.update_layout(title=None,
-                      xaxis_title="Generation",
-                      yaxis_title="Objective Fitness",
-                      width=900,
-                      template='simple_white',
-                      height=600,
-                      legend=dict(
-                          font=dict(size=14),
-                          orientation="v",
-                          yanchor="bottom",
-                          y=0.01,
-                          xanchor="right",
-                          x=0.99
-                      )
-    )
-    
-    # set the x axis to be 0 to max generations
-    fig.update_xaxes(range=[0, 100])
-    if mutator:
-        fig.write_image(f"{folder_path}/mutator_comparison.png")
-    else:
-        fig.write_image(f"{folder_path}/generator_comparison.png")
-            
-def visualize_all():
-    folder = "./experiment_5"
-    subfolders = [f.path for f in os.scandir(folder) if f.is_dir()]
-    
-    for subfolder in subfolders:
-        visualize(subfolder, mutator=True)
-        visualize(subfolder, mutator=False)
-
 def visualize_paper_figure(input_dir, output_file_name):
     subfolders = [f.path for f in os.scandir(input_dir) if f.is_dir()]
     data = []
@@ -237,7 +162,7 @@ def visualize_paper_figure(input_dir, output_file_name):
     )
     
     fig.update_yaxes(
-        range=[20, 100],
+        range=[45, 100],
     )
     
     # write the file to the output directory

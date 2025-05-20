@@ -33,7 +33,7 @@ MEDIAN_RUN_FILE_NAME = OUTPUT_DIR + 'miner_results/' + 'results_genetic_miner_ne
 
 # Output petri nets
 OUTPUT_PETRI_NETS = False
-PETRI_NETS_SAVE_PATH = "./genetic_miner_nets/" 
+PETRI_NETS_SAVE_PATH = "./discovered_nets/" 
 
 # Consolidation
 CONSOLIDATE_MINER_RESULTS = False
@@ -109,9 +109,9 @@ def generate_data(method: callable, runs: int, results_file_name: str, output_pe
             
             # Export the discovered net to a file
             if output_petri_nets:
-                os.makedirs(PETRI_NETS_SAVE_PATH + "pdfs/", exist_ok=True)
+                os.makedirs(PETRI_NETS_SAVE_PATH + "pdf/", exist_ok=True)
                 discovered_net.visualize(PETRI_NETS_SAVE_PATH + f"/pdfs/{dataset_dir}_{i}")
-                os.makedirs(PETRI_NETS_SAVE_PATH + "/pnmls/", exist_ok=True)
+                os.makedirs(PETRI_NETS_SAVE_PATH + "/pnml_models/", exist_ok=True)
                 discovered_net.to_pnml(PETRI_NETS_SAVE_PATH + f"/pnmls/{dataset_dir}_{i}")
             
             evaluator = SingleEvaluator(

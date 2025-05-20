@@ -4,13 +4,13 @@ import plotly.graph_objects as go
 import pandas as pd
 from plotly.colors import qualitative
 
-OUTPUT_DIR = './experiment_5'
+OUTPUT_DIR = './experiment_7'
 
 def visualize_paper_figure(input_dir, output_file_name):
-    configurations = [f.path for f in os.scandir(input_dir) if f.is_dir()]
+    experiments = [f.path for f in os.scandir(input_dir) if f.is_dir()]
     data = []
     
-    for d in configurations:
+    for d in experiments:
         # Extract the folder name of d without the full path
         folder_name = os.path.basename(d)
         
@@ -26,6 +26,9 @@ def visualize_paper_figure(input_dir, output_file_name):
                 generations = list(result_dict.keys())
                 fitness_values = list(result_dict.values())
                 
+                generations = generations[::5]
+                fitness_values = fitness_values[::5]
+                
                 for i in range(len(generations)):
                     data.append(
                         {
@@ -37,36 +40,67 @@ def visualize_paper_figure(input_dir, output_file_name):
                     )
 
     df = pd.DataFrame(data)
+    df.replace({"Line Type": {"plot_1_inductive_tree_generator": "InductiveNoiseInjectionGenerator", "plot_2_random_tree_generator": "BottomUpRandomBinaryGenerator"}}, inplace=True)
     
-    # group by generation and line type and mean fitness
-    df = df.groupby(["Line Type", "Generation"], as_index=False).mean(numeric_only=True)
+    # Aggregate 
+    aggregated = df.groupby(["Line Type", "Generation"], as_index=False).mean(numeric_only=True)
+    aggregated["Dataset"] = "Aggregated"
+    
+    include_datasets = ["2019", "2017", "2020-pl"]
+    df = df[df["Dataset"].isin(include_datasets)]
 
-    print(df)
     # 1) build a color‐map for each Line Type
     line_types = df["Line Type"].unique()
-    colorblind_colors = ["grey", "lightblue"]
+    colorblind_colors = [
+        "#0072B2", "#D55E00", "#999999",
+        "#117733", "#332288", "#88CCEE", "#44AA99",
+        "#661100", "#6699CC"
+    ]
     color_map = {
         lt: colorblind_colors[i % len(colorblind_colors)]
         for i, lt in enumerate(line_types)
-    }  
-    ## 2) create the figure and add one trace per (Dataset, Line Type)
+    }
+    
+    marker_symbols = [
+        "circle", "square", "diamond", "cross", "x", "triangle-up", "triangle-down",
+        "triangle-left", "triangle-right", "star", "hexagram", "hourglass", "arrow", "bowtie",
+    ]
+    marker_map = {
+        lt: marker_symbols[i % len(marker_symbols)]
+        for i, lt in enumerate(line_types)
+    }
+    step = 10
+      
+    # 2) create the figure and add one trace per (Dataset, Line Type)
     fig = go.Figure()
-    seen = set()
 
-    for lt in line_types:
-        # filter the dataframe for the current Line Type
-        grp = df[df["Line Type"] == lt]
-        # add a trace for each Line Type
+    # Add the mean line for the aggregated data
+    for i, lt in enumerate(line_types):
+        grp_lt = aggregated[aggregated["Line Type"] == lt]
         fig.add_trace(go.Scatter(
-            x=grp["Generation"],
-            y=grp["Fitness"],
+            x=grp_lt["Generation"],
+            y=grp_lt["Fitness"],
             mode="lines",
-            name=lt,                    # legend entry label
-            legendgroup=lt,             # group traces of same Line Type
-            showlegend=(lt not in seen),# only show legend once per Line Type
-            line=dict(color=color_map[lt])
+            name=f"{lt}",
+            legendgroup=lt,
+            showlegend=False,
+            line=dict(color=color_map[lt], dash="solid", width=2)
         ))
-        seen.add(lt)
+        offset = i % step  # e.g., dataset 0 starts at 0, dataset 1 at 1, etc.
+        marker_df = grp_lt.iloc[offset::step]  # start from 'offset', then every 'step'
+        fig.add_trace(go.Scatter(
+            x=marker_df["Generation"],
+            y=marker_df["Fitness"],
+            mode="markers",
+            name=f"{lt}",
+            legendgroup=lt,
+            showlegend=True,
+            marker=dict(
+                symbol=marker_map[lt],
+                size=8,
+                color=color_map[lt]
+            )
+        ))
 
     # 3) Update layout
     fig.update_layout(
@@ -88,12 +122,12 @@ def visualize_paper_figure(input_dir, output_file_name):
         )
     )
 
-    fig.update_yaxes(range=[20, 100])
+    fig.update_yaxes(range=[35, 100])
     
     # write the file to the output directory
     fig.write_image(f"{OUTPUT_DIR}/{output_file_name}.pdf")
     
     
 if __name__ == "__main__":
-    visualize_paper_figure("./experiment_5", "figure_5")
+    visualize_paper_figure("./experiment_5", "selected_datasets")
     
