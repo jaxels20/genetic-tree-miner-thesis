@@ -56,7 +56,7 @@ This repository accompanies our research on process discovery, introducing an en
    
 ## ▶️ Usage
   ```bash
-    python GTM.py --log_path real_life_datasets/Sepsis.xes --output_path output.pdf
+    python3 GTM.py --log_path logs/2013-cp.xes --output_path output.pdf --max_generations 5
   ```
 
 ## 📊 Datasets

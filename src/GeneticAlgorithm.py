@@ -95,8 +95,18 @@ class GeneticAlgorithm:
         else:
             raise ValueError("Invalid generator type. Must be one of: BottomUpRandomBinaryGenerator, FootprintGuidedSequentialGenerator, InductiveNoiseInjectionGenerator, InductiveMinerGenerator.")
         
+        if max_generations is not None:
+            iterator = tqdm.tqdm(range(max_generations), desc="Discovering process tree", unit="generation")
         
-        for generation in tqdm.tqdm(range(max_generations), desc="Discovering process tree", unit="generation"):   
+        else:
+            def while_true_iterator():
+                while True:
+                    yield None
+                    
+            iterator = while_true_iterator()
+        
+        
+        for generation in iterator:   
             # Evaluate the fitness of each tree
             objective.evaluate_population(population, self.start_time, time_limit)
             

@@ -51,7 +51,7 @@ class SingleEvaluator:
     
     def get_refined_simplicity(self):
         max_places = 100
-        simplicity = len(self.pm4py_pn.get_places()) / max_places
+        simplicity = len(self.pm4py_pn.places) / max_places
         simplicity = 1 - simplicity
         simplicity = max(0, simplicity)
         return simplicity 
