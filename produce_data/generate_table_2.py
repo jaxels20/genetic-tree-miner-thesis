@@ -9,7 +9,7 @@ from src.utils import load_hyperparameters_from_csv
 from src.FileLoader import FileLoader
 
 # Data parameters 
-DATASET_DIR = "./real_life_datasets/"
+DATASET_DIR = "./logs/"
 
 # Genetic Miner Configuration
 BEST_PARAMS = "./best_parameters.csv"

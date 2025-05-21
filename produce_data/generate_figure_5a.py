@@ -18,7 +18,7 @@ TIME_LIMIT = 5*60
 STAGNATION_LIMIT = 50
 PERCENTAGE_OF_LOG = 0.05
 OPTUNA_TIMEOUT_LIMIT = 60*60*18
-INPUT_DIR = "./real_life_datasets/"
+INPUT_DIR = "./logs/"
 OUTPUT_DIR = "./data/figure_5a/" 
 
 OBJECTIVE = {

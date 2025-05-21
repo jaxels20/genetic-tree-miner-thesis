@@ -3,7 +3,7 @@ from src.FileLoader import FileLoader
 from src.utils import load_hyperparameters_from_csv
 import os
 
-DATASETS_DIR = "./real_life_datasets/"
+DATASETS_DIR = "./logs/"
 OUTPUT_DIR = "./data/figure_5c/inductive_tree_generator/"
 NUM_RUNS = 1
 BEST_PARAMS = "./best_parameters.csv"
