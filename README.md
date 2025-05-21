@@ -52,6 +52,7 @@ This repository accompanies our research on process discovery, introducing an en
    mkdir build && cd build
    cmake -DCMAKE_BUILD_TYPE=Release ..
    make
+   cd ../../..
    ```
    
 ## ▶️ Usage
