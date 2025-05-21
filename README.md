@@ -42,7 +42,7 @@ This repository accompanies our research on process discovery, introducing an en
    ```
 2. Install Dependencies
    ```bash
-   python3 -m venv .venv
+   python3 -r venv .venv
    source .venv/bin/activate
    pip install -m requirements.txt
    ```
