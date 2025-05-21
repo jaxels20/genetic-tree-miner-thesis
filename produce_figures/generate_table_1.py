@@ -12,7 +12,7 @@ def collect_all_xes_files(root_dir):
                 
     return xes_files 
 
-INPUT_DIR = "./real_life_datasets"
+INPUT_DIR = "./logs"
 OUTPUT_DIR = "./figures"
 
 if __name__ == "__main__":
