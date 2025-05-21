@@ -29,9 +29,12 @@ OUTPUT_DIR = "./data/table_2/"
 
 def generate_data(method: callable, runs: int):    
     datasets = os.listdir(DATASET_DIR)
+    
+    # Remove all non xes files
+    datasets = [dataset for dataset in datasets if dataset.endswith(".xes")]
 
     for dataset in datasets:
-        eventlog = FileLoader.load_eventlog(f"{DATASET_DIR}/{dataset}")
+        eventlog = FileLoader.load_eventlog(f"{DATASET_DIR}{dataset}")
 
         data = []
         for i in range(runs):
