@@ -42,9 +42,9 @@ This repository accompanies our research on process discovery, introducing an en
    ```
 2. Install Dependencies
    ```bash
-   python3 -r venv .venv
+   python3 -m venv .venv
    source .venv/bin/activate
-   pip install -m requirements.txt
+   pip install -r requirements.txt
    ```
 4. Build FastTokenBasedReplay (make sure cmake, pybind11, and gtest are installed)
    ```bash
