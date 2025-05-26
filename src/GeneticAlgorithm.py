@@ -74,6 +74,7 @@ class GeneticAlgorithm:
             stagnation_limit: int,
             time_limit: int, # Time limit in seconds
             export_monitor_path: str,
+            export_decomposed_objective_function_path: str,
         ) -> ProcessTree:
         # Start the timer
         self.start_time = time.time()
@@ -123,6 +124,9 @@ class GeneticAlgorithm:
         
         if export_monitor_path is not None:
             self.monitor.save_objective_results(export_monitor_path, filtered_eventlog.name, self.method_name)
+            
+        if export_decomposed_objective_function_path is not None:
+            self.monitor.save_decomposed_objective_fitness(export_decomposed_objective_function_path, eventlog)
         
         return self.best_tree
     
