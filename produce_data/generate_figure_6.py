@@ -11,8 +11,7 @@ import plotly.graph_objects as go
 DATASET_DIR = "./logs"
 OUTPUT_DIR = "./data/figure_6/"
 BEST_PARAMS = "./best_parameters.csv"
-TIME_LIMIT = 60*3
-# STAGNATION_LIMIT = 50
+MAX_GENERATIONS = 200
 PERCENTAGE_OF_LOG = 0.05
 OBJECTIVE = {
     "simplicity": 10,
@@ -40,7 +39,7 @@ if __name__ == "__main__":
         method_name="GTM",
         export_decomposed_objective_function_path=OUTPUT_DIR,
         percentage_of_log=PERCENTAGE_OF_LOG,
-        time_limit=TIME_LIMIT,
+        MAX_GENERATIONS=MAX_GENERATIONS,
         **hyper_parameters,
     )
     

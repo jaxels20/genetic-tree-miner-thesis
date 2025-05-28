@@ -13,7 +13,7 @@ DATASET_DIR = "./logs/"
 
 # Genetic Miner Configuration
 BEST_PARAMS = "./best_parameters.csv"
-TIME_LIMIT = 60*5
+TIME_LIMIT = 60*30
 STAGNATION_LIMIT = 50
 PERCENTAGE_OF_LOG = 0.05
 OBJECTIVE = {
@@ -24,27 +24,27 @@ OBJECTIVE = {
 }
 
 NUM_DATA_POINTS = 5
-OUTPUT_DIR = "./data/table_2/"
+OUTPUT_DIR = "./data/table_2"
 
 
 def generate_data(method: callable, runs: int):    
-    datasets = os.listdir(DATASET_DIR)
+    datasets = [f for f in os.listdir(DATASET_DIR) if f.endswith(".xes")]
     
-    # Remove all non xes files
-    datasets = [dataset for dataset in datasets if dataset.endswith(".xes")]
-
     for dataset in datasets:
+        dataset_name = dataset.split(".")[0]
+        if dataset != "RTF.xes":
+            continue
         eventlog = FileLoader.load_eventlog(f"{DATASET_DIR}{dataset}")
 
         data = []
         for i in range(runs):
-            print(f"Running discovery on dataset: {dataset} iteration: {i}")
+            print(f"Running discovery on dataset: {dataset_name} iteration: {i}")
             start = time.time()
             discovered_net = method(eventlog)
             time_taken = time.time() - start
             
             os.makedirs(f"{OUTPUT_DIR}/models/GTM", exist_ok=True)
-            discovered_net.to_pnml(f"{OUTPUT_DIR}/models/GTM/{dataset}_{i}")
+            discovered_net.to_pnml(f"{OUTPUT_DIR}/models/GTM/{dataset_name}_{i}")
             
             evaluator = SingleEvaluator(
                 discovered_net,
@@ -68,8 +68,8 @@ def generate_data(method: callable, runs: int):
             metrics['Time (s)'] = time_taken
             data.append(metrics)
             
-        df = pd.DataFrame(data)
-        df.to_csv(f"{OUTPUT_DIR}/evaluation_results/results_GTM.csv", index=False)
+    df = pd.DataFrame(data)
+    df.to_csv(f"{OUTPUT_DIR}/evaluation_results/results_GTM_RTF.csv", index=False)
     
 if __name__ == "__main__":
     # convert the hyper parameters to a normalize

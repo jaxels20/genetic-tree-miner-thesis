@@ -55,7 +55,7 @@ class Monitor:
                 })
         
         results_df = pd.DataFrame(results_list)
-        results_df.to_csv(f"{save_dir}/{eventlog.name}_data.csv", index=False)
+        results_df.to_csv(f"{save_dir}/{eventlog.name}.csv", index=False)
    
     
     def plot_fitness(self) -> None:
