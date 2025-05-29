@@ -72,7 +72,7 @@ def create_plot(df):
 
         # Layout settings
         fig.update_layout(
-            font=dict(family='Arial', size=12),
+            font=dict(family='Times New Roman', size=12),
             margin=dict(l=60, r=80, t=50, b=90),
             template='simple_white',
             height=500,
