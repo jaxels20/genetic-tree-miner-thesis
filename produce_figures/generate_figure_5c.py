@@ -123,10 +123,8 @@ def visualize_paper_figure():
         title=None,
         xaxis_title="Generation",
         yaxis_title="Objective Fitness",
-        font=dict(family='Times', size=16),
-        margin=dict(l=60, r=30, t=50, b=120),
-        width=900,
-        height=600,
+        font=dict(family='Times New Roman', size=20),
+        margin=dict(l=0, r=0, t=0, b=120),
         template='simple_white',
         legend=dict(
             font=dict(size=14, family="Time New Roman"),

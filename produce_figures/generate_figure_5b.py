@@ -35,7 +35,7 @@ def plot_df(df):
     # Layout adjustments
     fig.update_layout(
         boxmode='group',  # group boxes of same x-axis value
-        font=dict(family='Times', size=16),
+        font=dict(family='Times New Roman', size=20),
         legend=dict(
             orientation='h',
             yanchor='bottom',
@@ -45,10 +45,8 @@ def plot_df(df):
         ),
         xaxis_title='Dataset',
         yaxis_title='Objective Fitness',
-        margin=dict(l=60, r=30, t=50, b=120),
+        margin=dict(l=0, r=0, t=0, b=150),
         template='simple_white',
-        height=500,
-        width=900
     )
     # set the y axisto 0 to 1
     fig.update_yaxes(range=[60, 100], dtick=10)

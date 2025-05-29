@@ -69,7 +69,7 @@ def visualize_paper_figure():
         lt: marker_symbols[i % len(marker_symbols)]
         for i, lt in enumerate(line_types)
     }
-    step = 10
+    step = 2
       
     # 2) create the figure and add one trace per (Dataset, Line Type)
     fig = go.Figure()
@@ -86,8 +86,7 @@ def visualize_paper_figure():
             showlegend=False,
             line=dict(color=color_map[lt], dash="solid", width=2)
         ))
-        offset = i % step  # e.g., dataset 0 starts at 0, dataset 1 at 1, etc.
-        marker_df = grp_lt.iloc[offset::step]  # start from 'offset', then every 'step'
+        marker_df = grp_lt.iloc[::step]  # start from 'offset', then every 'step'
         fig.add_trace(go.Scatter(
             x=marker_df["Generation"],
             y=marker_df["Fitness"],
@@ -107,14 +106,12 @@ def visualize_paper_figure():
         title=None,
         xaxis_title="Generation",
         yaxis_title="Objective Fitness",
-        font=dict(family='Times', size=16),
-        margin=dict(l=60, r=30, t=50, b=120),
-        width=900,
-        height=600,
+        font=dict(family='Times New Roman', size=20),
+        margin=dict(l=0, r=0, t=0, b=120),
         template='simple_white',
         legend=dict(
-            font=dict(size=14, family="Times New Roman"),
-            orientation="h",
+            font=dict(size=18, family="Times New Roman"),
+            orientation="v",
             yanchor="bottom",
             y=0.01,
             xanchor="right",
