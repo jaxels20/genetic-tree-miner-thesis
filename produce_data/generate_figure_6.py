@@ -4,8 +4,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.FileLoader import FileLoader
 from src.Discovery import Discovery
 from src.utils import load_hyperparameters_from_csv
-import pandas as pd
-import plotly.graph_objects as go
 
 
 DATASET_DIR = "./logs"
@@ -24,8 +22,6 @@ def generate_data(method: callable):
     datasets = os.listdir(DATASET_DIR)
 
     for dataset in datasets:
-        if dataset != "Sepsis.xes":
-            continue
         print(f'Processing {dataset}')
         eventlog = FileLoader.load_eventlog(f"{DATASET_DIR}/{dataset}")
         method(eventlog)
@@ -39,7 +35,7 @@ if __name__ == "__main__":
         method_name="GTM",
         export_decomposed_objective_function_path=OUTPUT_DIR,
         percentage_of_log=PERCENTAGE_OF_LOG,
-        MAX_GENERATIONS=MAX_GENERATIONS,
+        max_generations=MAX_GENERATIONS,
         **hyper_parameters,
     )
     

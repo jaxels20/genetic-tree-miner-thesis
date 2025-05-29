@@ -13,7 +13,7 @@ DATASET_DIR = "./logs/"
 
 # Genetic Miner Configuration
 BEST_PARAMS = "./best_parameters.csv"
-TIME_LIMIT = 60*30
+TIME_LIMIT = 60
 STAGNATION_LIMIT = 50
 PERCENTAGE_OF_LOG = 0.05
 OBJECTIVE = {
@@ -32,8 +32,6 @@ def generate_data(method: callable, runs: int):
     
     for dataset in datasets:
         dataset_name = dataset.split(".")[0]
-        if dataset != "RTF.xes":
-            continue
         eventlog = FileLoader.load_eventlog(f"{DATASET_DIR}{dataset}")
 
         data = []
@@ -44,7 +42,7 @@ def generate_data(method: callable, runs: int):
             time_taken = time.time() - start
             
             os.makedirs(f"{OUTPUT_DIR}/models/GTM", exist_ok=True)
-            discovered_net.to_pnml(f"{OUTPUT_DIR}/models/GTM/{dataset_name}_{i}")
+            discovered_net.to_pnml(f"{OUTPUT_DIR}/models/GTM/{dataset_name}_1_min_{i}")
             
             evaluator = SingleEvaluator(
                 discovered_net,
@@ -69,7 +67,7 @@ def generate_data(method: callable, runs: int):
             data.append(metrics)
             
     df = pd.DataFrame(data)
-    df.to_csv(f"{OUTPUT_DIR}/evaluation_results/results_GTM_RTF.csv", index=False)
+    df.to_csv(f"{OUTPUT_DIR}/evaluation_results/results_GTM_1_min.csv", index=False)
     
 if __name__ == "__main__":
     # convert the hyper parameters to a normalize
@@ -78,6 +76,7 @@ if __name__ == "__main__":
     # Define model
     genetic_miner = lambda log: Discovery.genetic_algorithm(
         log,
+        method_name="GTM-1",
         time_limit=TIME_LIMIT,
         stagnation_limit=STAGNATION_LIMIT,
         percentage_of_log=PERCENTAGE_OF_LOG,

@@ -21,10 +21,10 @@ INPUT_DIR = "./logs/"
 DATASET = "2013-cp.xes"
 OUTPUT_DIR = "./data/figure_8/"
 
-TIME_LIMT = 60
+MAX_GENERATIONS = 100
 STAGNATION_LIMIT = None
 BEST_PARAMS = "./best_parameters.csv"
-percentage_of_logs = [0.001, 0.005, 0.01, 0.05, 0.1, 0.5]
+percentage_of_logs = [0.01, 0.05, 0.1, 0.3, 0.5]
 OBJECTIVE_WEIGHTS = {
     "simplicity": 10,
     "refined_simplicity": 10,
@@ -41,8 +41,6 @@ def produce_data():
     data = []
 
     for dataset in datasets:
-        if dataset != "2013-i.xes":
-            continue
         loaded_log = loader.load_eventlog(f"{INPUT_DIR}/{dataset}")
         eventlogs.append(loaded_log)
     
@@ -50,10 +48,10 @@ def produce_data():
         for percentage_of_log in percentage_of_logs:
             discovered_net = Discovery.genetic_algorithm(
                 eventlog,
-                time_limit=TIME_LIMT,
-                **best_hyper_parameters,
+                max_generations=MAX_GENERATIONS,
                 stagnation_limit=STAGNATION_LIMIT,
                 percentage_of_log=percentage_of_log,
+                **best_hyper_parameters,
             )
             
             evaluator = SingleEvaluator(
