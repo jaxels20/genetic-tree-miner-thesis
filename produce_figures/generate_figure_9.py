@@ -65,28 +65,11 @@ def plot_data(df):
             x=dataset_df["Time"],
             y=dataset_df["Fitness"],
             mode='lines',
-            showlegend=False,
+            showlegend=True,
             name=f"{dataset}",
             line=dict(color=colorblind_colors[i])
         ))
-
-        # Offset index so markers are staggered
-        offset = i % step  # e.g., dataset 0 starts at 0, dataset 1 at 1, etc.
-        marker_df = dataset_df.iloc[offset::step]  # start from 'offset', then every 'step'
-
-        # Add trace with only markers
-        fig.add_trace(go.Scatter(
-            x=marker_df["Time"],
-            y=marker_df["Fitness"],
-            mode='markers',
-            name=f"{dataset}",
-            showlegend=True,
-            marker=dict(
-                symbol=marker_symbols[i],
-                size=8,
-                color=colorblind_colors[i]
-            )
-        ))
+        
 
     # Step 3: Update layout
     fig.update_layout(
@@ -94,9 +77,7 @@ def plot_data(df):
         xaxis_title="Time (Minutes)",
         yaxis_title="Objective Fitness",
         font=dict(family='Times New Roman', size=20),
-        margin=dict(l=60, r=30, t=50, b=120),
-        width=900,
-        height=600,
+        margin=dict(l=0, r=0, t=0, b=120),
         template='simple_white',
         legend=dict(
             font=dict(size=14, family="Time New Roman"),
@@ -116,6 +97,8 @@ def plot_data(df):
     fig.update_xaxes(
         range=[0,15]
     )
+    
+    
     
     fig.write_image(OUTPUT_FILE, format='pdf')
     
