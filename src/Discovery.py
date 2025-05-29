@@ -27,6 +27,7 @@ class Discovery:
         mutator = kwargs.get("mutator")
         objective = kwargs.get("objective")
         export_monitor_path = kwargs.get("export_monitor_path", None)
+        export_decomposed_objective_function_path = kwargs.get("export_decomposed_objective_function_path", None)
         
         our_pt = ga.run(
             eventlog=event_log, 
@@ -40,6 +41,7 @@ class Discovery:
             stagnation_limit=stagnation_limit,
             time_limit=time_limit,
             export_monitor_path=export_monitor_path,
+            export_decomposed_objective_function_path=export_decomposed_objective_function_path
         )
         pm4py_net, init, end = our_pt.to_pm4py_pn()
         

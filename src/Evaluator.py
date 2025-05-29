@@ -9,7 +9,6 @@ from collections import defaultdict
 from multiprocessing import Pool, cpu_count
 
 from src.EventLog import EventLog
-from src.Discovery import Discovery
 from src.PetriNet import PetriNet
 from src.Objective import Objective
 from src.ProcessTree import ProcessTree
@@ -74,56 +73,7 @@ class SingleEvaluator:
         objective = Objective(objective_metric_weights)
         objective.set_event_log(self.eventlog)
         return objective.fitness(our_pt)
-    
-    def get_exact_matching(self, type):
-        """Runs the jbpt library to calculate the entropy-based precision metric.
-        
-        Args:
-        - type (str): The type of metric to calculate. Must be either "precision" or "recall".
-        """
-        
-        jar_path = os.path.join("src", "EntropyBasedMetrics", "jbpt-pm", "entropia", "jbpt-pm-entropia-1.7.jar")
-        
-        # Use a safe temporary directory
-        temp_dir = tempfile.gettempdir()
-        temp_path_pn = os.path.join(temp_dir, "petrinet.pnml")
-        temp_path_el = os.path.join(temp_dir, "eventlog.xes")
 
-        # rename all tau transitions to empty string so that they are recognized as silent transitions
-        for t in self.pm4py_pn.transitions:
-            if t.label == None:
-                t.label = ""
-        
-        # Convert event log and Petri net to required formats
-        self.eventlog.to_xes(temp_path_el)
-        pm4py_write.write_pnml(self.pm4py_pn, self.init_marking, self.final_marking, temp_path_pn)
-
-        # Java command to run jBPT Entropy-based Precision
-        if type == "precision":
-            type_flag = "-emp"
-        elif type == "recall":
-            type_flag = "-emr"
-        else:
-            raise ValueError("Invalid type. Must be 'precision' or 'recall'.")
-        
-        command = [
-            "java", "-jar", jar_path,
-            type_flag,
-            "-s",
-            "-rel=" + temp_path_el,
-            "-ret=" + temp_path_pn
-        ]
-
-        try:
-            result = subprocess.run(command, capture_output=True, text=True, check=True)
-        except subprocess.CalledProcessError as e:
-            print("Error running the jbpt library:", e.stderr.strip())
-            
-        # Remove the temporary files
-        os.remove(temp_path_pn)
-        os.remove(temp_path_el)
-        
-        return float(result.stdout)
     
     def get_f1_score(self, precision=None, fitness=None):
         if precision is None:

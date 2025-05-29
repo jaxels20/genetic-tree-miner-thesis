@@ -2,16 +2,20 @@ import pandas as pd
 import os
 
 INPUT_DIR = "./data/table_2/evaluation_results/"
-OUTPUT_FILE = "./figures/table_2.csv"
+OUTPUT_FILE = "./figures/table_2"
 
-def consolidate_results(GTM_df):
+def consolidate_results():
     # list all csv files in a directory
-    csv_files = [f for f in os.listdir(INPUT_DIR) if f.endswith('.csv') and f != "results_GTM.csv"]
-
-    df = GTM_df.copy()
+    csv_files = [f for f in os.listdir(INPUT_DIR) if f.endswith('.csv')]
+    
+    df = pd.DataFrame()
     for file in csv_files:
-        loaded_df = pd.read_csv(INPUT_DIR + file)
-        df = pd.concat([df, loaded_df], ignore_index=True)
+        if "GTM" in file:
+            gtm_df = get_genetic_miner_median_run(file)
+            df = pd.concat([df, gtm_df], ignore_index=True)
+        else:
+            loaded_df = pd.read_csv(INPUT_DIR + file)
+            df = pd.concat([df, loaded_df], ignore_index=True)
     
     # df manipulation
     column_order = ['Dataset', 'Discovery Method', 'F1 Score', 'Log Fitness', 'Precision', 'Generalization', 'Simplicity', 'Objective Fitness', 'Time (s)']
@@ -34,11 +38,12 @@ def consolidate_results(GTM_df):
     collected_df = pd.concat([df, agg_df], ignore_index=True)
     collected_df['Time (s)'] = collected_df['Time (s)'].round(2).astype(str)
     collected_df.loc[(collected_df['Discovery Method'] == 'SM') & (collected_df['Time (s)'] == '0.0'), 'Time (s)'] = '-'
+    collected_df['Objective Fitness'] = collected_df['Objective Fitness'] / 100
     
     return collected_df
  
-def get_genetic_miner_median_run():
-    df = pd.read_csv(INPUT_DIR + "results_GTM.csv")
+def get_genetic_miner_median_run(file_name):
+    df = pd.read_csv(INPUT_DIR + file_name)
     median_idx = (
         df
         .groupby('Dataset')['Objective Fitness']
@@ -49,7 +54,6 @@ def get_genetic_miner_median_run():
     return df
     
 if __name__ == "__main__":
-    # Take the median of multiple runs and write to csv
-    GTM_df = get_genetic_miner_median_run()
-    df = consolidate_results(GTM_df)
-    df.to_csv(OUTPUT_FILE, index=False, float_format="%.2f")
+    df = consolidate_results()
+    df.to_csv(OUTPUT_FILE + ".csv", index=False, float_format="%.2f")
+    df.to_latex(OUTPUT_FILE + ".tex", index=False, float_format="%.2f")

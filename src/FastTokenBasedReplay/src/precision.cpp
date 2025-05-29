@@ -164,6 +164,7 @@ double calculate_precision(const EventLog& log, const PetriNet& net){
     }
 
     if (total_allowed_tasks == 0) {
+        std::cerr << "error" << std::endl;
         return 0.0;
     }
     precision = 1.0 - static_cast<double>(total_escaping_edges) / static_cast<double>(total_allowed_tasks);
