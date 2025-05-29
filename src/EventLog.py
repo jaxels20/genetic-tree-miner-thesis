@@ -23,6 +23,11 @@ class Event:
 
     def __repr__(self):
         return f"Event(activity={self.activity}, timestamp={self.timestamp}, attributes={self.attributes})"
+    def __eq__(self, other):
+        """Check equality based on activity and timestamp."""
+        if not isinstance(other, Event):
+            return False
+        return (self.activity == other.activity)
 
 class Trace:
     """
@@ -53,6 +58,12 @@ class Trace:
         """Return the number of events in the trace."""
         return len(self.events)
 
+    def __eq__(self, other):
+        """Check equality based events."""
+        if not isinstance(other, Trace):
+            return False
+        return self.events == other.events
+    
 class EventLog:
     """
     Class representing an event log.
