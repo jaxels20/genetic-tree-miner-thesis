@@ -1,36 +1,27 @@
-
-
-# add the parent directory to the system path
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import pandas as pd
-import numpy as np
 import os
 from src.FileLoader import FileLoader
 from src.Discovery import Discovery
-from src.EventLog import EventLog 
 from src.Evaluator import SingleEvaluator
-from src.Objective import Objective
-import plotly.graph_objects as go
-import plotly.express as px
 from src.utils import load_hyperparameters_from_csv
 
 INPUT_DIR = "./logs/"
-DATASET = "2013-cp.xes"
 OUTPUT_DIR = "./data/figure_8/"
 
 MAX_GENERATIONS = 100
 STAGNATION_LIMIT = None
 BEST_PARAMS = "./best_parameters.csv"
-percentage_of_logs = [0.01, 0.05, 0.1, 0.3, 0.5]
 OBJECTIVE_WEIGHTS = {
     "simplicity": 10,
     "refined_simplicity": 10,
     "ftr_fitness": 50,
     "ftr_precision": 30
 }
+percentage_of_logs = [0.01, 0.05, 0.1, 0.3, 0.5]
 
 def produce_data():
     datasets = os.listdir(INPUT_DIR)
@@ -67,7 +58,6 @@ def produce_data():
             data.append(curr_data)
         
     df = pd.DataFrame(data)
-    # check if the output directory exists, if not create it
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     df.to_csv(OUTPUT_DIR + "data.csv", index=False)
     

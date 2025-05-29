@@ -22,7 +22,7 @@ OUTPUT_DIR = "./data/figure_7/"
 TIME_LIMT = 5 * 60
 STAGNATION_LIMIT = 50
 BEST_PARAMS = "./best_parameters.csv"
-NUM_SAMPLES = 5
+NUM_SAMPLES = 10
 OBJECTIVE_WEIGHTS = {
     "simplicity": 10,
     "refined_simplicity": 10,
@@ -46,11 +46,11 @@ def sample_hyperparameters(hyper_parameters, num_samples):
     for key, value in hyper_parameters.items():
         if isinstance(value, (int)):
             random = np.random.default_rng()
-            samples = random.uniform(value - limits[key], value + limits[key], num_samples)
+            samples = random.uniform(max(value - limits[key], 0), value + limits[key], num_samples)
             sampled_hyperparameters[key] = [int(sample) for sample in samples]
         elif isinstance(value, float):
             random = np.random.default_rng()
-            samples = random.uniform(value - limits[key], value + limits[key], num_samples)
+            samples = random.uniform(max(value - limits[key], 0), value + limits[key], num_samples)
             sampled_hyperparameters[key] = [round(sample, 2) for sample in samples]
     return sampled_hyperparameters
 

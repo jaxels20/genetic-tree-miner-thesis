@@ -30,11 +30,11 @@ OUTPUT_DIR = "./data/table_2"
 def generate_data(method: callable, runs: int):    
     datasets = [f for f in os.listdir(DATASET_DIR) if f.endswith(".xes")]
     
+    data = []
     for dataset in datasets:
         dataset_name = dataset.split(".")[0]
         eventlog = FileLoader.load_eventlog(f"{DATASET_DIR}{dataset}")
 
-        data = []
         for i in range(runs):
             print(f"Running discovery on dataset: {dataset_name} iteration: {i}")
             start = time.time()
