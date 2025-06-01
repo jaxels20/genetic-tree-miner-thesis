@@ -12,8 +12,7 @@ from src.utils import load_hyperparameters_from_csv
 INPUT_DIR = "./logs/"
 OUTPUT_DIR = "./data/figure_8/"
 
-MAX_GENERATIONS = 100
-STAGNATION_LIMIT = None
+TIME_LIMIT = 60*5
 BEST_PARAMS = "./best_parameters.csv"
 OBJECTIVE_WEIGHTS = {
     "simplicity": 10,
@@ -39,9 +38,8 @@ def produce_data():
         for percentage_of_log in percentage_of_logs:
             discovered_net = Discovery.genetic_algorithm(
                 eventlog,
-                max_generations=MAX_GENERATIONS,
-                stagnation_limit=STAGNATION_LIMIT,
                 percentage_of_log=percentage_of_log,
+                time_limit=TIME_LIMIT,
                 **best_hyper_parameters,
             )
             
@@ -51,7 +49,6 @@ def produce_data():
             )
             
             curr_data = {}
-            # Get the evaluation metrics
             curr_data['objective_fitness'] = evaluator.get_objective_fitness(OBJECTIVE_WEIGHTS) / 100
             curr_data['dataset'] = eventlog.name
             curr_data['percentage_of_log'] = percentage_of_log

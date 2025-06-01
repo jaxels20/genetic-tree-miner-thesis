@@ -12,6 +12,7 @@ from src.FileLoader import FileLoader
 DATASET_DIR = "./logs/"
 
 # Genetic Miner Configuration
+GENETIC_MINER_NAME = "GTM"
 BEST_PARAMS = "./best_parameters.csv"
 TIME_LIMIT = 60
 STAGNATION_LIMIT = 50
@@ -42,7 +43,7 @@ def generate_data(method: callable, runs: int):
             time_taken = time.time() - start
             
             os.makedirs(f"{OUTPUT_DIR}/models/GTM", exist_ok=True)
-            discovered_net.to_pnml(f"{OUTPUT_DIR}/models/GTM/{dataset_name}_1_min_{i}")
+            discovered_net.to_pnml(f"{OUTPUT_DIR}/models/GTM/{dataset_name}_{GENETIC_MINER_NAME}_{i}")
             
             evaluator = SingleEvaluator(
                 discovered_net,
@@ -55,7 +56,7 @@ def generate_data(method: callable, runs: int):
             
             metrics = {}
             metrics['Dataset'] = dataset.split(".")[0]
-            metrics['Discovery Method'] = "GM"
+            metrics['Discovery Method'] = GENETIC_MINER_NAME
             metrics['Model'] = i
             metrics['Log Fitness'] = fitness
             metrics['Precision'] = precision
@@ -67,7 +68,7 @@ def generate_data(method: callable, runs: int):
             data.append(metrics)
             
     df = pd.DataFrame(data)
-    df.to_csv(f"{OUTPUT_DIR}/evaluation_results/results_GTM_1_min.csv", index=False)
+    df.to_csv(f"{OUTPUT_DIR}/evaluation_results/results_{GENETIC_MINER_NAME}.csv", index=False)
     
 if __name__ == "__main__":
     # convert the hyper parameters to a normalize
@@ -76,7 +77,7 @@ if __name__ == "__main__":
     # Define model
     genetic_miner = lambda log: Discovery.genetic_algorithm(
         log,
-        method_name="GTM-1",
+        method_name=GENETIC_MINER_NAME,
         time_limit=TIME_LIMIT,
         stagnation_limit=STAGNATION_LIMIT,
         percentage_of_log=PERCENTAGE_OF_LOG,
