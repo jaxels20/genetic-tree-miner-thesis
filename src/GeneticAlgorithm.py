@@ -81,8 +81,9 @@ class GeneticAlgorithm:
         
         # Filter the log
         filtered_eventlog = Filtering.filter_eventlog_by_top_percentage_unique(eventlog, percentage_of_log, True)
-        objective.set_event_log(eventlog)
-        mutator.set_event_log(eventlog)
+        
+        objective.set_event_log(filtered_eventlog)
+        mutator.set_event_log(filtered_eventlog)
         
         # Generate initial population
         if isinstance(generator, BottomUpRandomBinaryGenerator):
