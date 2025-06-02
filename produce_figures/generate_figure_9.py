@@ -87,18 +87,21 @@ def plot_data(df):
             y=0.01,
             xanchor="right",
             x=0.99
-        )
+        ),
     )
     
     # set the x-axis to be logarithmic
     fig.update_xaxes(
         type="log",
         title_text="Time (minutes)",
+        dtick=1
     )
+    # remove the minor ticks from the x-axis
     
     fig.update_yaxes(
         range=[45, 100],
     )
+    
     
     # fig.update_xaxes(
     #     range=[0,15]

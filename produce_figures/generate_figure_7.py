@@ -165,6 +165,69 @@ def create_combined_plot(df, OUTPUT_DIR):
     fig.write_image(f"{OUTPUT_DIR}/combined_plot.pdf")
 
 
+def create_new_plot(df, baseline):
+    fig = go.Figure()
+    color = "lightgrey"
+    
+    df['objective_fitness'] = df['objective_fitness'] * 100  # Convert to percentage
+
+    # Compute IQR per Dataset
+    iqr_df = (
+        df.groupby('dataset')['objective_fitness']
+        .agg(lambda x: x.quantile(1) - x.quantile(0))
+        .reset_index(name='IQR')
+    )
+
+    # Sort datasets by IQR
+    sorted_datasets = iqr_df.sort_values('IQR')['dataset'].tolist()
+
+    fig.add_trace(go.Scatter(
+        x=df['dataset'],
+        y=df['objective_fitness'],
+        mode='markers',
+        name='Objective Fitness',
+        marker=dict(color=color, size=6, line=dict(width=1, color='black'))
+    ))
+    
+    fig.add_trace(go.Scatter(
+        x=baseline['dataset'],
+        y=baseline['objective_fitness'] * 100,  # Convert to percentage
+        mode='markers',
+        name='Baseline',
+        marker=dict(color='red', size=6, line=dict(width=1, color='black')),
+    ))
+
+    # Update x-axis order
+    fig.update_layout(
+        xaxis=dict(categoryorder='array', categoryarray=sorted_datasets)
+    )
+
+    # Layout adjustments
+    fig.update_layout(
+        boxmode='group',  # group boxes of same x-axis value
+        font=dict(family='Times New Roman', size=20),
+        legend=dict(
+            orientation='h',
+            yanchor='bottom',
+            xanchor='center',
+            y=1.05,        # slightly above the top of the plot
+            x=0.5
+        ),
+        xaxis_title='Dataset',
+        yaxis_title='Objective Fitness',
+        margin=dict(l=0, r=0, t=0, b=150),
+        template='simple_white',
+    )
+    # set the y axisto 0 to 1
+    
+    # Rotate x-axis labels
+    fig.update_xaxes(tickangle=45, tickmode='array', tickvals=sorted_datasets)
+    
+    # save the plot
+    fig.write_image(f"{OUTPUT_DIR}/new_plot.pdf")
+
+    
+
 
 if __name__ == "__main__":
     data = pd.read_csv(INPUT_DATA)
@@ -175,8 +238,9 @@ if __name__ == "__main__":
     #     baseline_value = baseline[(baseline['dataset'] == dataset)]['objective_fitness'].values[0]
     #     data.loc[data['dataset'] == dataset, 'objective_fitness'] = ((data.loc[data['dataset'] == dataset, 'objective_fitness'] - baseline_value) / baseline_value) * 100
     
-    # create_combined_plot(data, OUTPUT_DIR)
-    create_plot(data)
+    #create_combined_plot(data, OUTPUT_DIR)
+    #create_plot(data)
+    create_new_plot(data, baseline)
 
 
 
