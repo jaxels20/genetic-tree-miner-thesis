@@ -60,8 +60,8 @@ def create_plot(df):
                 line=dict(
                     color=df_dataset[color_col],
                     colorscale='Viridis',
-                    cmin=0.8,
-                    cmax=1.0, 
+                    cmin=0.6,
+                    cmax=1.0,
                     colorbar=dict(
                         title=dict(
                             text='Obj. Fitness', 
@@ -91,11 +91,92 @@ def create_plot(df):
         fig.write_image(f"{OUTPUT_DIR}/{dataset}.pdf")
 
 
+import numpy as np
+import os
+import plotly.graph_objects as go
+
+def create_combined_plot(df, OUTPUT_DIR):
+    color_col = 'objective_fitness'
+
+    # Dimensions = all except 'objective_fitness' and 'dataset'
+    dimension_cols = [col for col in df.columns if col not in [color_col, 'dataset']]
+
+    # Custom axis limits and ticks
+    custom_ylim = {
+        'random_creation_rate': [0, 1],
+        'elite_rate': [0, 1],
+        'population_size': [20, 70],
+        'tournament_size': [0.1, 0.3],
+        'log_filtering': [0.001, 0.200],
+        'tournament_rate': [0, 1],
+        'tournament_mutation_rate': [0, 1],
+    }
+
+    y_tick_vals = {
+        'random_creation_rate': [x / 100 for x in range(0, 102, 10)],
+        'elite_rate': [x / 100 for x in range(0, 102, 10)],
+        'population_size': list(range(20, 75, 5)),
+        'tournament_size': [x / 100 for x in range(10, 31, 2)],
+        'log_filtering': [x / 1000 for x in range(1, 202, 20)],
+        'tournament_rate': [x / 100 for x in range(0, 102, 10)],
+        'tournament_mutation_rate': [x / 100 for x in range(0, 102, 10)],
+    }
+
+    # Build dimensions
+    dimensions = []
+    for col in dimension_cols:
+        dim = dict(
+            label=col.replace('_', ' ').title(),
+            values=[x if not np.isnan(x) else None for x in df[col]]
+        )
+        if col in custom_ylim:
+            dim['range'] = custom_ylim[col]
+            dim['tickvals'] = y_tick_vals[col]
+        dimensions.append(dim)
+    
+    # print("Dimensions:", len(dimensions[0]['values']))
+
+    # Create the plot
+    fig = go.Figure(
+        data=go.Parcoords(
+            line=dict(
+                color=df[color_col],
+                colorscale='Viridis',
+                cmin=df[color_col].min(),
+                cmax=df[color_col].max(),
+                colorbar=dict(
+                    title=dict(text='Objective Fitness', font=dict(size=16)),
+                    tickfont=dict(size=16)
+                )
+            ),
+            dimensions=dimensions,
+            labelside='bottom',
+            labelangle=15
+        )
+    )
+
+    # Layout
+    fig.update_layout(
+        font=dict(family='Times New Roman', size=18),
+        margin=dict(l=80, r=50, t=10, b=50),
+        template='simple_white'
+    )
+
+    fig.write_image(f"{OUTPUT_DIR}/combined_plot.pdf")
+
 
 
 if __name__ == "__main__":
-    df = pd.read_csv(INPUT_DATA)
-    create_plot(df)
+    data = pd.read_csv(INPUT_DATA)
+    
+    baseline = pd.read_csv("./data/figure_7/baseline.csv")
+    
+    # for dataset in data['dataset'].unique():
+    #     baseline_value = baseline[(baseline['dataset'] == dataset)]['objective_fitness'].values[0]
+    #     data.loc[data['dataset'] == dataset, 'objective_fitness'] = ((data.loc[data['dataset'] == dataset, 'objective_fitness'] - baseline_value) / baseline_value) * 100
+    
+    # create_combined_plot(data, OUTPUT_DIR)
+    create_plot(data)
 
 
 
