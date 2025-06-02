@@ -90,13 +90,19 @@ def plot_data(df):
         )
     )
     
+    # set the x-axis to be logarithmic
+    fig.update_xaxes(
+        type="log",
+        title_text="Time (minutes)",
+    )
+    
     fig.update_yaxes(
         range=[45, 100],
     )
     
-    fig.update_xaxes(
-        range=[0,15]
-    )
+    # fig.update_xaxes(
+    #     range=[0,15]
+    # )
     
     
     

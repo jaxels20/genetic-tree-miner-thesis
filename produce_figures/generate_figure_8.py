@@ -17,7 +17,7 @@ def produce_figure(df):
     ]
     marker_symbols = [
         "circle", "square", "diamond", "cross", "x", "triangle-up", "triangle-down",
-        "triangle-left", "triangle-right", "star", "hexagram", "hourglass", "arrow", "bowtie",
+        "triangle-left", "triangle-right", "star", "hexagram", "hourglass", "bowtie", "circle",
     ]
     datasets = ['2013-cp', '2013-op', '2013-i', 'RTF', '2012', 'Sepsis', '2020-rfp', '2020-id', '2020-dd', '2017', '2020-ptc', '2019', '2020-pl']
     
@@ -35,6 +35,8 @@ def produce_figure(df):
         .index
         .tolist()
     )
+    
+    df["percentage_of_log"] = df["percentage_of_log"] * 100  # Convert to percentage
 
     # Add traces for each dataset
     for i, dataset in enumerate(dataset_order):
@@ -64,6 +66,10 @@ def produce_figure(df):
             font=dict(size=17)
         )  
     )
+    fig.update_yaxes(range=[50, 100])  # Set y-axis range from 0.5 to 1.0
+    
+    # Add percentage symbol to x-axis ticks
+    fig.update_xaxes(tickvals=[0, 20, 40, 60, 80, 100], ticktext=["0%", "20%", "40%", "60%", "80%", "100%"])
     
     # Write the figure to a PDF file
     fig.write_image(OUTPUT_FILE, format='pdf')
@@ -72,6 +78,7 @@ def produce_figure(df):
 if __name__ == "__main__":
     # Load the data
     df = pd.read_csv(INPUT_FILE)
+    df['objective_fitness'] = df['objective_fitness'] * 100
 
     # Produce the figure
     produce_figure(df)

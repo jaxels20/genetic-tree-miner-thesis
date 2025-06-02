@@ -42,6 +42,10 @@ def visualize_figure():
             concat_df = pd.concat([concat_df, df], ignore_index=True)
             
         df = concat_df.groupby('generation').mean().reset_index()
+        
+        #Multiply the values by 100 to convert to percentage
+        df[col] = df[col] * 100
+        
         # dataset_name = dataset.split('.')[0]
         fig.add_trace(go.Scatter(
             mode='lines',
@@ -91,7 +95,7 @@ def visualize_figure():
     )
     
     fig.update_xaxes(range=[0, 100])
-    fig.update_yaxes(range=[0.5, 1.])
+    fig.update_yaxes(range=[50, 100])
     fig.write_image(f"{OUTPUT_DIR}/figure_6.pdf")
     
 

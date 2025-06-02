@@ -72,7 +72,7 @@ def visualize_paper_figure():
 
     marker_symbols = [
         "circle", "square", "diamond", "cross", "x", "triangle-up", "triangle-down",
-        "triangle-left", "triangle-right", "star", "hexagram", "hourglass", "arrow", "bowtie",
+        "triangle-left", "triangle-right", "star", "hexagram", "hourglass", "bowtie", "bowtie",
     ]
 
     # Step 1: Compute max fitness per dataset
