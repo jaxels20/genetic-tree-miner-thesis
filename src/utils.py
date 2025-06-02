@@ -63,6 +63,6 @@ def calculate_percentage_of_log(num_unique_traces: int) -> float:
     """
     Calculate the number of traces to sample based on the percentage.
     """
-    a = 1.0112  # derived from fitting
-    b = 0.000192  # derived from fitting
+    a = 0.5647
+    b = 0.0001522
     return min(max(a * np.exp(-b * num_unique_traces), 0.01), 1.0)  # Ensure it's between 0.01 and 1.0
