@@ -52,9 +52,7 @@ def visualize_paper_figure():
     # 1) build a color‐map for each Line Type
     line_types = df["Line Type"].unique()
     colorblind_colors = [
-        "#0072B2", "#D55E00", "#999999",
-        "#117733", "#332288", "#88CCEE", "#44AA99",
-        "#661100", "#6699CC"
+        "black", "red"
     ]
     color_map = {
         lt: colorblind_colors[i % len(colorblind_colors)]
@@ -62,8 +60,7 @@ def visualize_paper_figure():
     }
     
     marker_symbols = [
-        "circle", "square", "diamond", "cross", "x", "triangle-up", "triangle-down",
-        "triangle-left", "triangle-right", "star", "hexagram", "hourglass", "arrow", "bowtie",
+        "x", "circle",
     ]
     marker_map = {
         lt: marker_symbols[i % len(marker_symbols)]
@@ -119,7 +116,7 @@ def visualize_paper_figure():
         )
     )
 
-    fig.update_yaxes(range=[35, 100])
+    fig.update_yaxes(range=[55, 100])
     
     # write the file to the output directory
     fig.write_image(OUTPUT_FILE)
