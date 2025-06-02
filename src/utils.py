@@ -3,7 +3,7 @@ from src.Mutator import TournamentMutator
 from src.Objective import Objective
 from src.FileLoader import FileLoader
 import csv
-
+import numpy as np
 
 def convert_json_to_hyperparamters(hyper_parameters: dict):    
     total = hyper_parameters['random_creation_rate'] + hyper_parameters['elite_rate'] + hyper_parameters["tournament_rate"]
@@ -58,3 +58,11 @@ def load_hyperparameters_from_csv(path: str):
             })
 
     return convert_json_to_hyperparamters(hyper_parameters)
+
+def calculate_percentage_of_log(num_unique_traces: int) -> float:
+    """
+    Calculate the number of traces to sample based on the percentage.
+    """
+    a = 1.0112  # derived from fitting
+    b = 0.000192  # derived from fitting
+    return min(max(a * np.exp(-b * num_unique_traces), 0.01), 1.0)  # Ensure it's between 0.01 and 1.0
