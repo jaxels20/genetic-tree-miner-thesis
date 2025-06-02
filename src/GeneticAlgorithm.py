@@ -11,6 +11,7 @@ import time
 from typing import Union
 import os
 import time
+from src.utils import calculate_percentage_of_log
 class GeneticAlgorithm:
     def __init__(self, method_name):
         """
@@ -26,7 +27,7 @@ class GeneticAlgorithm:
         
     def _check_stopping_criteria(self, generation: int, population: Population, stagnation_limit: int, time_limit: int, min_fitness: float) -> bool:
         # Update the best tree
-        epsilon = 0.05
+        epsilon = 0.01
         best_tree_b_update = self.best_tree.get_fitness() if self.best_tree is not None else None
         self._update_best_tree(population)
         
@@ -80,7 +81,7 @@ class GeneticAlgorithm:
         self.start_time = time.time()
         
         # Filter the log
-        filtered_eventlog = Filtering.filter_eventlog_by_top_percentage_unique(eventlog, percentage_of_log, True)
+        filtered_eventlog = Filtering.filter_eventlog_by_top_percentage_unique(eventlog, calculate_percentage_of_log(eventlog.get_num_unique_traces()), True)
         
         objective.set_event_log(filtered_eventlog)
         mutator.set_event_log(filtered_eventlog)
