@@ -16,13 +16,12 @@ import plotly.express as px
 from src.utils import load_hyperparameters_from_csv
 
 INPUT_DIR = "./logs/"
-DATASET = "2013-cp.xes"
 OUTPUT_DIR = "./data/figure_7/"
 
-TIME_LIMT = 5 * 60
+TIME_LIMT = 5*60
 STAGNATION_LIMIT = 50
 BEST_PARAMS = "./best_parameters.csv"
-NUM_SAMPLES = 5
+NUM_SAMPLES = 10
 OBJECTIVE_WEIGHTS = {
     "simplicity": 10,
     "refined_simplicity": 10,
@@ -32,7 +31,6 @@ OBJECTIVE_WEIGHTS = {
 
 
 def sample_hyperparameters(hyper_parameters, num_samples):
-    
     limits = {
         'random_creation_rate': 0.1,
         'elite_rate': 0.1,
@@ -46,11 +44,11 @@ def sample_hyperparameters(hyper_parameters, num_samples):
     for key, value in hyper_parameters.items():
         if isinstance(value, (int)):
             random = np.random.default_rng()
-            samples = random.uniform(value - limits[key], value + limits[key], num_samples)
+            samples = random.uniform(max(value - limits[key], 0), value + limits[key], num_samples)
             sampled_hyperparameters[key] = [int(sample) for sample in samples]
         elif isinstance(value, float):
             random = np.random.default_rng()
-            samples = random.uniform(value - limits[key], value + limits[key], num_samples)
+            samples = random.uniform(max(value - limits[key], 0), value + limits[key], num_samples)
             sampled_hyperparameters[key] = [round(sample, 2) for sample in samples]
     return sampled_hyperparameters
 
@@ -64,8 +62,6 @@ def produce_data():
     data = []
 
     for dataset in datasets:
-        if dataset == "2013-i.xes":
-            continue
         loaded_log = loader.load_eventlog(f"{INPUT_DIR}/{dataset}")
         eventlogs.append(loaded_log)
     
@@ -86,15 +82,16 @@ def produce_data():
             evaluator = SingleEvaluator(
                 discovered_net,
                 eventlog
-            )
-            
-            # Get the evaluation metrics
-            cur_hyper_parameters['objective_fitness'] = evaluator.get_objective_fitness(OBJECTIVE_WEIGHTS) / 100
+            )   
+            try:
+                cur_hyper_parameters['objective_fitness'] = evaluator.get_objective_fitness(OBJECTIVE_WEIGHTS) / 100
+            except Exception as e:
+                print(f"Error evaluating objective fitness for {eventlog.name}: {e} in run {i}")
+                continue
             cur_hyper_parameters['dataset'] = eventlog.name
             data.append(cur_hyper_parameters)
         
     df = pd.DataFrame(data)
-    # check if the output directory exists, if not create it
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     df.to_csv(OUTPUT_DIR + "data.csv", index=False)
     

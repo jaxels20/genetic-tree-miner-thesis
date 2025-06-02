@@ -62,7 +62,13 @@ def create_plot(df):
                     colorscale='Viridis',
                     cmin=0.8,
                     cmax=1.0, 
-                    colorbar=dict(title='Objective Fitness')
+                    colorbar=dict(
+                        title=dict(
+                            text='Obj. Fitness', 
+                            font=dict(size=16)
+                        ),
+                        tickfont=dict(size=16)
+                    )
                 ),
                 dimensions=dimensions,
                 labelside='bottom',
@@ -72,11 +78,9 @@ def create_plot(df):
 
         # Layout settings
         fig.update_layout(
-            font=dict(family='Times New Roman', size=12),
-            margin=dict(l=60, r=80, t=50, b=90),
-            template='simple_white',
-            height=500,
-            width=900
+            font=dict(family='Times New Roman', size=18),
+            margin=dict(l=80, r=50, t=10, b=50),
+            template='simple_white'
         )
 
         # make a directory of output_dir if it does not exist
