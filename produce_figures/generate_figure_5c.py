@@ -62,8 +62,7 @@ def visualize_paper_figure():
         'Sepsis': 0.6,
         }
     
-    
-    
+      
     colorblind_colors = [
     "#E69F00", "#56B4E9", "#009E73", "#F0E442",
     "#0072B2", "#D55E00", "#CC79A7", "#999999",

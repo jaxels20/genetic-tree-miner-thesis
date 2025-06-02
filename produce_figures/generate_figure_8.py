@@ -19,19 +19,36 @@ def produce_figure(df):
         "circle", "square", "diamond", "cross", "x", "triangle-up", "triangle-down",
         "triangle-left", "triangle-right", "star", "hexagram", "hourglass", "arrow", "bowtie",
     ]
+    datasets = ['2013-cp', '2013-op', '2013-i', 'RTF', '2012', 'Sepsis', '2020-rfp', '2020-id', '2020-dd', '2017', '2020-ptc', '2019', '2020-pl']
+    
+    color_map = {
+        ds: colors[i] for i, ds in enumerate(datasets)
+    }
+    marker_map = {
+        ds: marker_symbols[i] for i, ds in enumerate(datasets)
+    }
+        # Step 1: Compute max fitness per dataset
+    dataset_order = (
+        df.groupby("dataset")["objective_fitness"]
+        .max()
+        .sort_values(ascending=False)
+        .index
+        .tolist()
+    )
+
     # Add traces for each dataset
-    for i, dataset in enumerate(df['dataset'].unique()):
+    for i, dataset in enumerate(dataset_order):
         subset = df[df['dataset'] == dataset]
         fig.add_trace(go.Scatter(
             x=subset['percentage_of_log'],
             y=subset['objective_fitness'],
             mode='lines+markers',
             name=dataset,
-            line=dict(color=colors[i]),
+            line=dict(color=color_map[dataset]),
             marker=dict(
-                symbol=marker_symbols[i],
+                symbol=marker_map[dataset],
                 size=8,
-                color=colors[i]
+                color=color_map[dataset],
             )
         ))
 
