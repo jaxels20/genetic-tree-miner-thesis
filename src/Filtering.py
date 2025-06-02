@@ -67,6 +67,41 @@ class Filtering:
         return filtered_log
     
     @staticmethod
+    def filter_eventlog_by_top_n_unique(eventlog: EventLog, top_n: int, include_all_activities: bool) -> EventLog:
+        # Dictionary to count frequency of each trace variant
+        trace_freq = {}
+        trace_map = {}
+        for trace in eventlog.traces:
+            trace_str = tuple(event.activity for event in trace.events)
+            trace_freq[trace_str] = trace_freq.get(trace_str, 0) + 1
+            if trace_freq[trace_str] == 1:
+                trace_map[trace_str] = trace
+
+        # Sort the signatures by frequency in descending order.
+        sorted_traces = sorted(trace_freq.keys(), key=lambda k: trace_freq[k], reverse=True)
+        
+        # Build the filtered event log by including traces with a signature in top_signatures.
+        filtered_log = EventLog()
+        top_n_traces = sorted_traces[:top_n]
+        for trace_str in top_n_traces:
+            filtered_log.traces.append(trace_map[trace_str])
+        
+        # If include_all_activities is True, add all activities to the filtered log.
+        if include_all_activities:
+            all_activities = eventlog.unique_activities()
+            filtered_log_activities = filtered_log.unique_activities()
+            missing_activities = all_activities - filtered_log_activities
+            for activity in missing_activities:
+                for trace_str in sorted_traces:
+                    if activity in trace_str:
+                        filtered_log.traces.append(trace_map[trace_str])
+                        break
+        
+        filtered_log.set_unique_activities(filtered_log.unique_activities())
+        filtered_log.set_eventlog_name(eventlog.name)
+        return filtered_log
+    
+    @staticmethod
     def filter_eventlog_by_top_percentage(eventlog: EventLog, percentage: float) -> EventLog:
         """
         Filters an event log to include only the top percentage of most frequent traces (by total occurrences).
