@@ -1,0 +1,447 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<pnml>
+  <net id="" type="http://www.pnml.org/version-2009/grammar/pnmlcoremodel">
+    <name>
+      <text></text>
+    </name>
+    <page id="n0">
+      <place id="p_21">
+        <name>
+          <text>p_21</text>
+        </name>
+      </place>
+      <place id="p_27">
+        <name>
+          <text>p_27</text>
+        </name>
+      </place>
+      <place id="source">
+        <name>
+          <text>source</text>
+        </name>
+        <initialMarking>
+          <text>1</text>
+        </initialMarking>
+      </place>
+      <place id="p_18">
+        <name>
+          <text>p_18</text>
+        </name>
+      </place>
+      <place id="sink">
+        <name>
+          <text>sink</text>
+        </name>
+      </place>
+      <place id="p_20">
+        <name>
+          <text>p_20</text>
+        </name>
+      </place>
+      <place id="p_5">
+        <name>
+          <text>p_5</text>
+        </name>
+      </place>
+      <place id="p_25">
+        <name>
+          <text>p_25</text>
+        </name>
+      </place>
+      <place id="p_11">
+        <name>
+          <text>p_11</text>
+        </name>
+      </place>
+      <place id="p_32">
+        <name>
+          <text>p_32</text>
+        </name>
+      </place>
+      <place id="p_24">
+        <name>
+          <text>p_24</text>
+        </name>
+      </place>
+      <place id="p_16">
+        <name>
+          <text>p_16</text>
+        </name>
+      </place>
+      <place id="p_7">
+        <name>
+          <text>p_7</text>
+        </name>
+      </place>
+      <place id="p_19">
+        <name>
+          <text>p_19</text>
+        </name>
+      </place>
+      <place id="p_9">
+        <name>
+          <text>p_9</text>
+        </name>
+      </place>
+      <place id="p_10">
+        <name>
+          <text>p_10</text>
+        </name>
+      </place>
+      <place id="p_8">
+        <name>
+          <text>p_8</text>
+        </name>
+      </place>
+      <place id="p_30">
+        <name>
+          <text>p_30</text>
+        </name>
+      </place>
+      <place id="p_12">
+        <name>
+          <text>p_12</text>
+        </name>
+      </place>
+      <place id="p_23">
+        <name>
+          <text>p_23</text>
+        </name>
+      </place>
+      <place id="p_17">
+        <name>
+          <text>p_17</text>
+        </name>
+      </place>
+      <place id="p_31">
+        <name>
+          <text>p_31</text>
+        </name>
+      </place>
+      <place id="p_34">
+        <name>
+          <text>p_34</text>
+        </name>
+      </place>
+      <place id="p_22">
+        <name>
+          <text>p_22</text>
+        </name>
+      </place>
+      <place id="p_15">
+        <name>
+          <text>p_15</text>
+        </name>
+      </place>
+      <transition id="A_Submitted">
+        <name>
+          <text>A_Submitted</text>
+        </name>
+      </transition>
+      <transition id="O_Sent (mail and online)">
+        <name>
+          <text>O_Sent (mail and online)</text>
+        </name>
+      </transition>
+      <transition id="A_Accepted">
+        <name>
+          <text>A_Accepted</text>
+        </name>
+      </transition>
+      <transition id="tau_7">
+        <name>
+          <text>tau_7</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="7df89d9c-00a2-481c-93f3-15f34ed56a90"/>
+      </transition>
+      <transition id="tau_8">
+        <name>
+          <text>tau_8</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="b733d1db-3466-491a-b19a-8909cf2fb563"/>
+      </transition>
+      <transition id="tau_1">
+        <name>
+          <text>tau_1</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="5d58d000-9fae-4324-befc-bf5e92d9ef2f"/>
+      </transition>
+      <transition id="W_Call incomplete files">
+        <name>
+          <text>W_Call incomplete files</text>
+        </name>
+      </transition>
+      <transition id="W_Handle leads">
+        <name>
+          <text>W_Handle leads</text>
+        </name>
+      </transition>
+      <transition id="O_Accepted">
+        <name>
+          <text>O_Accepted</text>
+        </name>
+      </transition>
+      <transition id="tau_12">
+        <name>
+          <text>tau_12</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="c5dc98a8-7f9e-47e1-be83-b8b963081abb"/>
+      </transition>
+      <transition id="W_Personal Loan collection">
+        <name>
+          <text>W_Personal Loan collection</text>
+        </name>
+      </transition>
+      <transition id="tau_13">
+        <name>
+          <text>tau_13</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="fc9587cd-04a6-4e76-8b33-a00da79619bb"/>
+      </transition>
+      <transition id="tau_4">
+        <name>
+          <text>tau_4</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="18577050-f368-4148-838e-fccc36795a2a"/>
+      </transition>
+      <transition id="A_Cancelled">
+        <name>
+          <text>A_Cancelled</text>
+        </name>
+      </transition>
+      <transition id="W_Call after offers">
+        <name>
+          <text>W_Call after offers</text>
+        </name>
+      </transition>
+      <transition id="W_Complete application">
+        <name>
+          <text>W_Complete application</text>
+        </name>
+      </transition>
+      <transition id="W_Assess potential fraud">
+        <name>
+          <text>W_Assess potential fraud</text>
+        </name>
+      </transition>
+      <transition id="tau_5">
+        <name>
+          <text>tau_5</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="1545b8b0-1aee-47a2-88ba-7bf083e733f3"/>
+      </transition>
+      <transition id="O_Created">
+        <name>
+          <text>O_Created</text>
+        </name>
+      </transition>
+      <transition id="W_Shortened completion ">
+        <name>
+          <text>W_Shortened completion </text>
+        </name>
+      </transition>
+      <transition id="A_Denied">
+        <name>
+          <text>A_Denied</text>
+        </name>
+      </transition>
+      <transition id="tau_3">
+        <name>
+          <text>tau_3</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="7c89a63c-f041-4563-af4b-abfcacc3475e"/>
+      </transition>
+      <transition id="tau_10">
+        <name>
+          <text>tau_10</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="8db67a00-0e4e-41d0-85e5-10f061634a01"/>
+      </transition>
+      <transition id="A_Validating">
+        <name>
+          <text>A_Validating</text>
+        </name>
+      </transition>
+      <transition id="tau_9">
+        <name>
+          <text>tau_9</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="8f24ba4c-04d9-4fd1-b8b8-a7b4b4e3c978"/>
+      </transition>
+      <transition id="tau_0">
+        <name>
+          <text>tau_0</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="10c9cc5c-151a-4cc5-8309-d234a8d8161d"/>
+      </transition>
+      <transition id="A_Complete">
+        <name>
+          <text>A_Complete</text>
+        </name>
+      </transition>
+      <transition id="O_Returned">
+        <name>
+          <text>O_Returned</text>
+        </name>
+      </transition>
+      <transition id="A_Pending">
+        <name>
+          <text>A_Pending</text>
+        </name>
+      </transition>
+      <transition id="tau_6">
+        <name>
+          <text>tau_6</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="92a7fd03-abce-4fcb-af77-5514faeb9c9b"/>
+      </transition>
+      <transition id="O_Cancelled">
+        <name>
+          <text>O_Cancelled</text>
+        </name>
+      </transition>
+      <transition id="tau_11">
+        <name>
+          <text>tau_11</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="62ee401e-c0df-4dc3-a211-e31ded24485c"/>
+      </transition>
+      <transition id="A_Concept">
+        <name>
+          <text>A_Concept</text>
+        </name>
+      </transition>
+      <transition id="A_Create Application">
+        <name>
+          <text>A_Create Application</text>
+        </name>
+      </transition>
+      <transition id="tau_14">
+        <name>
+          <text>tau_14</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="1a9b9d76-837d-488d-bc0a-cd88325b9397"/>
+      </transition>
+      <transition id="O_Refused">
+        <name>
+          <text>O_Refused</text>
+        </name>
+      </transition>
+      <transition id="O_Create Offer">
+        <name>
+          <text>O_Create Offer</text>
+        </name>
+      </transition>
+      <transition id="tau_2">
+        <name>
+          <text>tau_2</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="adec331d-09d1-4f9d-b22a-fb89e309c1b1"/>
+      </transition>
+      <transition id="O_Sent (online only)">
+        <name>
+          <text>O_Sent (online only)</text>
+        </name>
+      </transition>
+      <transition id="W_Validate application">
+        <name>
+          <text>W_Validate application</text>
+        </name>
+      </transition>
+      <transition id="A_Incomplete">
+        <name>
+          <text>A_Incomplete</text>
+        </name>
+      </transition>
+      <arc id="14708228608" source="p_20" target="A_Validating"/>
+      <arc id="14688352256" source="O_Create Offer" target="p_10"/>
+      <arc id="14683629056" source="p_16" target="O_Cancelled"/>
+      <arc id="14690390032" source="p_12" target="A_Cancelled"/>
+      <arc id="14701827600" source="A_Submitted" target="p_7"/>
+      <arc id="14711620624" source="p_30" target="tau_1"/>
+      <arc id="14711665680" source="p_20" target="tau_4"/>
+      <arc id="14687822352" source="W_Handle leads" target="p_30"/>
+      <arc id="14686876688" source="p_16" target="tau_14"/>
+      <arc id="14655054352" source="p_18" target="tau_12"/>
+      <arc id="14704857632" source="tau_0" target="p_9"/>
+      <arc id="14657363488" source="W_Call incomplete files" target="p_17"/>
+      <arc id="14656118832" source="p_27" target="A_Pending"/>
+      <arc id="14678760512" source="p_20" target="A_Accepted"/>
+      <arc id="14675123264" source="A_Validating" target="p_19"/>
+      <arc id="14694221392" source="p_7" target="W_Complete application"/>
+      <arc id="14711046224" source="p_17" target="tau_10"/>
+      <arc id="14667275856" source="tau_3" target="p_12"/>
+      <arc id="14654582864" source="p_20" target="W_Personal Loan collection"/>
+      <arc id="14671767136" source="p_20" target="O_Refused"/>
+      <arc id="14674311264" source="O_Accepted" target="p_27"/>
+      <arc id="14650411104" source="tau_14" target="p_31"/>
+      <arc id="14692790880" source="p_16" target="A_Incomplete"/>
+      <arc id="14689470560" source="p_32" target="W_Call after offers"/>
+      <arc id="14643867248" source="A_Accepted" target="p_19"/>
+      <arc id="14698490496" source="p_21" target="O_Sent (online only)"/>
+      <arc id="14645114496" source="tau_6" target="p_24"/>
+      <arc id="14645077120" source="p_16" target="tau_9"/>
+      <arc id="14695580304" source="p_22" target="W_Shortened completion "/>
+      <arc id="14701330064" source="p_25" target="tau_7"/>
+      <arc id="14712107664" source="A_Denied" target="p_19"/>
+      <arc id="14707845280" source="A_Pending" target="p_24"/>
+      <arc id="14667642016" source="W_Validate application" target="p_19"/>
+      <arc id="14652085920" source="p_12" target="tau_5"/>
+      <arc id="14697888944" source="p_23" target="A_Denied"/>
+      <arc id="14701828272" source="p_8" target="A_Complete"/>
+      <arc id="14703329456" source="p_32" target="tau_3"/>
+      <arc id="14689331888" source="p_20" target="A_Concept"/>
+      <arc id="14676519600" source="W_Personal Loan collection" target="p_21"/>
+      <arc id="14700036800" source="p_8" target="tau_0"/>
+      <arc id="14683183808" source="O_Sent (online only)" target="p_19"/>
+      <arc id="14660819648" source="p_20" target="W_Validate application"/>
+      <arc id="14691738320" source="p_9" target="tau_13"/>
+      <arc id="14709075664" source="p_19" target="tau_6"/>
+      <arc id="14672369360" source="p_18" target="W_Call incomplete files"/>
+      <arc id="14651043536" source="A_Cancelled" target="p_34"/>
+      <arc id="14697437408" source="p_15" target="tau_11"/>
+      <arc id="14695569632" source="tau_5" target="sink"/>
+      <arc id="14698707184" source="A_Incomplete" target="p_30"/>
+      <arc id="14649432816" source="p_5" target="A_Submitted"/>
+      <arc id="14711112960" source="O_Refused" target="p_22"/>
+      <arc id="14663274752" source="tau_1" target="p_15"/>
+      <arc id="14690915088" source="W_Complete application" target="p_8"/>
+      <arc id="14687580432" source="p_10" target="O_Created"/>
+      <arc id="14678719760" source="tau_2" target="p_32"/>
+      <arc id="14664995600" source="tau_12" target="p_16"/>
+      <arc id="4961063216" source="tau_11" target="p_17"/>
+      <arc id="14690894144" source="O_Returned" target="p_19"/>
+      <arc id="14653050176" source="O_Sent (mail and online)" target="p_9"/>
+      <arc id="14707615568" source="p_16" target="W_Handle leads"/>
+      <arc id="14698877280" source="O_Cancelled" target="p_30"/>
+      <arc id="14708628832" source="A_Create Application" target="p_5"/>
+      <arc id="14680287584" source="tau_13" target="p_7"/>
+      <arc id="14701977984" source="p_24" target="tau_8"/>
+      <arc id="14642412432" source="p_25" target="O_Accepted"/>
+      <arc id="14710736800" source="O_Created" target="p_11"/>
+      <arc id="14707089312" source="A_Complete" target="p_15"/>
+      <arc id="14658553760" source="W_Assess potential fraud" target="sink"/>
+      <arc id="14697305520" source="tau_8" target="p_25"/>
+      <arc id="14704405936" source="p_11" target="O_Sent (mail and online)"/>
+      <arc id="14665291184" source="tau_4" target="p_19"/>
+      <arc id="14667257264" source="W_Shortened completion " target="p_23"/>
+      <arc id="14662025136" source="p_8" target="O_Create Offer"/>
+      <arc id="14660056512" source="W_Call after offers" target="p_31"/>
+      <arc id="14694979040" source="source" target="A_Create Application"/>
+      <arc id="14709890016" source="p_20" target="O_Returned"/>
+      <arc id="14705890784" source="p_31" target="tau_2"/>
+      <arc id="14707088880" source="tau_10" target="p_20"/>
+      <arc id="14697743856" source="tau_9" target="p_30"/>
+      <arc id="14695553008" source="p_34" target="W_Assess potential fraud"/>
+      <arc id="14674930160" source="tau_7" target="p_18"/>
+      <arc id="14646155248" source="A_Concept" target="p_19"/>
+    </page>
+    <finalmarkings>
+      <marking>
+        <place idref="sink">
+          <text>1</text>
+        </place>
+      </marking>
+    </finalmarkings>
+  </net>
+</pnml>

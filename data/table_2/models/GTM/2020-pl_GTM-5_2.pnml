@@ -1,0 +1,1084 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<pnml>
+  <net id="" type="http://www.pnml.org/version-2009/grammar/pnmlcoremodel">
+    <name>
+      <text></text>
+    </name>
+    <page id="n0">
+      <place id="p_40">
+        <name>
+          <text>p_40</text>
+        </name>
+      </place>
+      <place id="p_55">
+        <name>
+          <text>p_55</text>
+        </name>
+      </place>
+      <place id="p_6">
+        <name>
+          <text>p_6</text>
+        </name>
+      </place>
+      <place id="p_11">
+        <name>
+          <text>p_11</text>
+        </name>
+      </place>
+      <place id="p_17">
+        <name>
+          <text>p_17</text>
+        </name>
+      </place>
+      <place id="sink">
+        <name>
+          <text>sink</text>
+        </name>
+      </place>
+      <place id="p_43">
+        <name>
+          <text>p_43</text>
+        </name>
+      </place>
+      <place id="p_37">
+        <name>
+          <text>p_37</text>
+        </name>
+      </place>
+      <place id="p_47">
+        <name>
+          <text>p_47</text>
+        </name>
+      </place>
+      <place id="p_53">
+        <name>
+          <text>p_53</text>
+        </name>
+      </place>
+      <place id="p_9">
+        <name>
+          <text>p_9</text>
+        </name>
+      </place>
+      <place id="p_5">
+        <name>
+          <text>p_5</text>
+        </name>
+      </place>
+      <place id="p_33">
+        <name>
+          <text>p_33</text>
+        </name>
+      </place>
+      <place id="p_42">
+        <name>
+          <text>p_42</text>
+        </name>
+      </place>
+      <place id="p_46">
+        <name>
+          <text>p_46</text>
+        </name>
+      </place>
+      <place id="p_49">
+        <name>
+          <text>p_49</text>
+        </name>
+      </place>
+      <place id="p_25">
+        <name>
+          <text>p_25</text>
+        </name>
+      </place>
+      <place id="p_24">
+        <name>
+          <text>p_24</text>
+        </name>
+      </place>
+      <place id="p_39">
+        <name>
+          <text>p_39</text>
+        </name>
+      </place>
+      <place id="p_41">
+        <name>
+          <text>p_41</text>
+        </name>
+      </place>
+      <place id="p_36">
+        <name>
+          <text>p_36</text>
+        </name>
+      </place>
+      <place id="p_18">
+        <name>
+          <text>p_18</text>
+        </name>
+      </place>
+      <place id="p_23">
+        <name>
+          <text>p_23</text>
+        </name>
+      </place>
+      <place id="p_27">
+        <name>
+          <text>p_27</text>
+        </name>
+      </place>
+      <place id="p_19">
+        <name>
+          <text>p_19</text>
+        </name>
+      </place>
+      <place id="p_30">
+        <name>
+          <text>p_30</text>
+        </name>
+      </place>
+      <place id="p_16">
+        <name>
+          <text>p_16</text>
+        </name>
+      </place>
+      <place id="p_31">
+        <name>
+          <text>p_31</text>
+        </name>
+      </place>
+      <place id="p_13">
+        <name>
+          <text>p_13</text>
+        </name>
+      </place>
+      <place id="p_35">
+        <name>
+          <text>p_35</text>
+        </name>
+      </place>
+      <place id="p_28">
+        <name>
+          <text>p_28</text>
+        </name>
+      </place>
+      <place id="p_29">
+        <name>
+          <text>p_29</text>
+        </name>
+      </place>
+      <place id="source">
+        <name>
+          <text>source</text>
+        </name>
+        <initialMarking>
+          <text>1</text>
+        </initialMarking>
+      </place>
+      <place id="p_8">
+        <name>
+          <text>p_8</text>
+        </name>
+      </place>
+      <place id="p_21">
+        <name>
+          <text>p_21</text>
+        </name>
+      </place>
+      <place id="p_38">
+        <name>
+          <text>p_38</text>
+        </name>
+      </place>
+      <place id="p_14">
+        <name>
+          <text>p_14</text>
+        </name>
+      </place>
+      <place id="p_15">
+        <name>
+          <text>p_15</text>
+        </name>
+      </place>
+      <place id="p_7">
+        <name>
+          <text>p_7</text>
+        </name>
+      </place>
+      <place id="p_22">
+        <name>
+          <text>p_22</text>
+        </name>
+      </place>
+      <place id="p_12">
+        <name>
+          <text>p_12</text>
+        </name>
+      </place>
+      <place id="p_52">
+        <name>
+          <text>p_52</text>
+        </name>
+      </place>
+      <place id="p_20">
+        <name>
+          <text>p_20</text>
+        </name>
+      </place>
+      <place id="p_44">
+        <name>
+          <text>p_44</text>
+        </name>
+      </place>
+      <place id="p_26">
+        <name>
+          <text>p_26</text>
+        </name>
+      </place>
+      <place id="p_50">
+        <name>
+          <text>p_50</text>
+        </name>
+      </place>
+      <place id="p_32">
+        <name>
+          <text>p_32</text>
+        </name>
+      </place>
+      <transition id="tau_55">
+        <name>
+          <text>tau_55</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="4c1ad768-8fa6-45b9-a94f-0d60b4dad71c"/>
+      </transition>
+      <transition id="Permit APPROVED by ADMINISTRATION">
+        <name>
+          <text>Permit APPROVED by ADMINISTRATION</text>
+        </name>
+      </transition>
+      <transition id="tau_21">
+        <name>
+          <text>tau_21</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="1182581b-5c7f-40a8-bacb-84687ad73b66"/>
+      </transition>
+      <transition id="tau_34">
+        <name>
+          <text>tau_34</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="50770005-3de1-4cbc-9208-1d5502282b27"/>
+      </transition>
+      <transition id="Permit APPROVED by SUPERVISOR">
+        <name>
+          <text>Permit APPROVED by SUPERVISOR</text>
+        </name>
+      </transition>
+      <transition id="Permit REJECTED by BUDGET OWNER">
+        <name>
+          <text>Permit REJECTED by BUDGET OWNER</text>
+        </name>
+      </transition>
+      <transition id="tau_13">
+        <name>
+          <text>tau_13</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="c255f2c7-ce1b-487f-9665-661b94ff3015"/>
+      </transition>
+      <transition id="Request For Payment REJECTED by SUPERVISOR">
+        <name>
+          <text>Request For Payment REJECTED by SUPERVISOR</text>
+        </name>
+      </transition>
+      <transition id="tau_14">
+        <name>
+          <text>tau_14</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="9be90841-de58-4874-bdb5-7f7f72c03c8c"/>
+      </transition>
+      <transition id="tau_22">
+        <name>
+          <text>tau_22</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="0375ddcb-6e3c-458b-aa3e-b2aa6ab4722e"/>
+      </transition>
+      <transition id="Declaration REJECTED by SUPERVISOR">
+        <name>
+          <text>Declaration REJECTED by SUPERVISOR</text>
+        </name>
+      </transition>
+      <transition id="Declaration REJECTED by MISSING">
+        <name>
+          <text>Declaration REJECTED by MISSING</text>
+        </name>
+      </transition>
+      <transition id="Send Reminder">
+        <name>
+          <text>Send Reminder</text>
+        </name>
+      </transition>
+      <transition id="Declaration APPROVED by ADMINISTRATION">
+        <name>
+          <text>Declaration APPROVED by ADMINISTRATION</text>
+        </name>
+      </transition>
+      <transition id="tau_46">
+        <name>
+          <text>tau_46</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="4da1bcc4-3b7f-4906-9ba9-1ed4379852d2"/>
+      </transition>
+      <transition id="Permit FOR_APPROVAL by SUPERVISOR">
+        <name>
+          <text>Permit FOR_APPROVAL by SUPERVISOR</text>
+        </name>
+      </transition>
+      <transition id="Declaration REJECTED by ADMINISTRATION">
+        <name>
+          <text>Declaration REJECTED by ADMINISTRATION</text>
+        </name>
+      </transition>
+      <transition id="Permit REJECTED by ADMINISTRATION">
+        <name>
+          <text>Permit REJECTED by ADMINISTRATION</text>
+        </name>
+      </transition>
+      <transition id="tau_50">
+        <name>
+          <text>tau_50</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="c2715ad4-01d1-4061-959e-20004e09dd55"/>
+      </transition>
+      <transition id="tau_41">
+        <name>
+          <text>tau_41</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="37d1d503-1f17-4c7b-a5cb-762ffa947c31"/>
+      </transition>
+      <transition id="tau_48">
+        <name>
+          <text>tau_48</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="456ca1f9-3359-490e-a620-b42430c7aa99"/>
+      </transition>
+      <transition id="tau_8">
+        <name>
+          <text>tau_8</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="9b51c672-2163-426a-a7ad-5f20ef6d19f6"/>
+      </transition>
+      <transition id="tau_44">
+        <name>
+          <text>tau_44</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="a26d76ba-a59b-424d-8a49-8bb8a1c74a94"/>
+      </transition>
+      <transition id="tau_47">
+        <name>
+          <text>tau_47</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="aaec10e9-1e4e-4092-b793-16a4c3135a88"/>
+      </transition>
+      <transition id="Request For Payment FINAL_APPROVED by DIRECTOR">
+        <name>
+          <text>Request For Payment FINAL_APPROVED by DIRECTOR</text>
+        </name>
+      </transition>
+      <transition id="Permit REJECTED by SUPERVISOR">
+        <name>
+          <text>Permit REJECTED by SUPERVISOR</text>
+        </name>
+      </transition>
+      <transition id="Declaration APPROVED by SUPERVISOR">
+        <name>
+          <text>Declaration APPROVED by SUPERVISOR</text>
+        </name>
+      </transition>
+      <transition id="Declaration FINAL_APPROVED by DIRECTOR">
+        <name>
+          <text>Declaration FINAL_APPROVED by DIRECTOR</text>
+        </name>
+      </transition>
+      <transition id="tau_0">
+        <name>
+          <text>tau_0</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="fbd2370c-50ed-489f-b948-cc0cda17679a"/>
+      </transition>
+      <transition id="tau_12">
+        <name>
+          <text>tau_12</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="d4b8da21-2491-49e8-9fe1-c0e01f6326dc"/>
+      </transition>
+      <transition id="Permit APPROVED by BUDGET OWNER">
+        <name>
+          <text>Permit APPROVED by BUDGET OWNER</text>
+        </name>
+      </transition>
+      <transition id="Permit FOR_APPROVAL by ADMINISTRATION">
+        <name>
+          <text>Permit FOR_APPROVAL by ADMINISTRATION</text>
+        </name>
+      </transition>
+      <transition id="tau_9">
+        <name>
+          <text>tau_9</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="0a81ddde-802c-4e80-9c3e-b7a166f74fe1"/>
+      </transition>
+      <transition id="Request For Payment APPROVED by SUPERVISOR">
+        <name>
+          <text>Request For Payment APPROVED by SUPERVISOR</text>
+        </name>
+      </transition>
+      <transition id="tau_45">
+        <name>
+          <text>tau_45</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="2d908834-420f-4e0d-9f3f-653c575c3cb8"/>
+      </transition>
+      <transition id="Request For Payment APPROVED by ADMINISTRATION">
+        <name>
+          <text>Request For Payment APPROVED by ADMINISTRATION</text>
+        </name>
+      </transition>
+      <transition id="tau_35">
+        <name>
+          <text>tau_35</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="3f20f9e6-a19b-4767-b789-5937e21c25ef"/>
+      </transition>
+      <transition id="tau_42">
+        <name>
+          <text>tau_42</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="eccb1070-7eca-49f0-b0e1-d762e1f288fe"/>
+      </transition>
+      <transition id="tau_56">
+        <name>
+          <text>tau_56</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="25d707fc-2ca4-4346-9595-63c5cca87671"/>
+      </transition>
+      <transition id="Permit REJECTED by EMPLOYEE">
+        <name>
+          <text>Permit REJECTED by EMPLOYEE</text>
+        </name>
+      </transition>
+      <transition id="tau_3">
+        <name>
+          <text>tau_3</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="ef8624bd-29c9-40db-8181-77d3b7b86aac"/>
+      </transition>
+      <transition id="tau_10">
+        <name>
+          <text>tau_10</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="81c7b886-807e-4362-bdd4-871b4f3e5cd7"/>
+      </transition>
+      <transition id="tau_27">
+        <name>
+          <text>tau_27</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="fe0993e7-8d4d-4ef8-9633-fb90a0930485"/>
+      </transition>
+      <transition id="tau_49">
+        <name>
+          <text>tau_49</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="6510be0c-0629-4a72-a69b-5c0686a43bc1"/>
+      </transition>
+      <transition id="Start trip">
+        <name>
+          <text>Start trip</text>
+        </name>
+      </transition>
+      <transition id="tau_5">
+        <name>
+          <text>tau_5</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="861b2d20-18c3-493c-a48a-a8524aa06f62"/>
+      </transition>
+      <transition id="tau_17">
+        <name>
+          <text>tau_17</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="76e666f9-d036-4900-9935-c05c67783b51"/>
+      </transition>
+      <transition id="Permit SUBMITTED by EMPLOYEE">
+        <name>
+          <text>Permit SUBMITTED by EMPLOYEE</text>
+        </name>
+      </transition>
+      <transition id="Request For Payment APPROVED by PRE_APPROVER">
+        <name>
+          <text>Request For Payment APPROVED by PRE_APPROVER</text>
+        </name>
+      </transition>
+      <transition id="tau_19">
+        <name>
+          <text>tau_19</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="dec96724-72d2-4bcb-b6d5-b68e4243d9fd"/>
+      </transition>
+      <transition id="Request For Payment REJECTED by PRE_APPROVER">
+        <name>
+          <text>Request For Payment REJECTED by PRE_APPROVER</text>
+        </name>
+      </transition>
+      <transition id="tau_57">
+        <name>
+          <text>tau_57</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="a04cf19d-0505-4aa6-b482-895f7f829061"/>
+      </transition>
+      <transition id="tau_1">
+        <name>
+          <text>tau_1</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="1797f8c6-ac20-44ec-8f30-c129c4bbc77f"/>
+      </transition>
+      <transition id="Permit REJECTED by MISSING">
+        <name>
+          <text>Permit REJECTED by MISSING</text>
+        </name>
+      </transition>
+      <transition id="Request For Payment REJECTED by BUDGET OWNER">
+        <name>
+          <text>Request For Payment REJECTED by BUDGET OWNER</text>
+        </name>
+      </transition>
+      <transition id="tau_24">
+        <name>
+          <text>tau_24</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="c3a515cb-94b9-4cde-94aa-e359b048504a"/>
+      </transition>
+      <transition id="tau_4">
+        <name>
+          <text>tau_4</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="7532c943-830a-4fb9-a440-6899aad6e906"/>
+      </transition>
+      <transition id="tau_15">
+        <name>
+          <text>tau_15</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="3e1d4ce6-9d2e-4fa2-b2da-17b804b4578e"/>
+      </transition>
+      <transition id="End trip">
+        <name>
+          <text>End trip</text>
+        </name>
+      </transition>
+      <transition id="tau_31">
+        <name>
+          <text>tau_31</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="9d3f2262-0c9f-420b-b532-4ac29254606b"/>
+      </transition>
+      <transition id="tau_32">
+        <name>
+          <text>tau_32</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="604c609c-c5c3-4cef-b686-b74dc044c762"/>
+      </transition>
+      <transition id="tau_7">
+        <name>
+          <text>tau_7</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="becf15da-e3a5-446b-ac75-8b28c53940cc"/>
+      </transition>
+      <transition id="tau_23">
+        <name>
+          <text>tau_23</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="1c678a24-c74b-49b5-a9c0-c19b8857d78d"/>
+      </transition>
+      <transition id="Declaration APPROVED by BUDGET OWNER">
+        <name>
+          <text>Declaration APPROVED by BUDGET OWNER</text>
+        </name>
+      </transition>
+      <transition id="tau_43">
+        <name>
+          <text>tau_43</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="5d4fcf5f-7def-4d0e-ab66-7927dabf08af"/>
+      </transition>
+      <transition id="tau_52">
+        <name>
+          <text>tau_52</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="b4743901-0323-4561-b83a-6ac3a66bd65e"/>
+      </transition>
+      <transition id="Declaration SUBMITTED by EMPLOYEE">
+        <name>
+          <text>Declaration SUBMITTED by EMPLOYEE</text>
+        </name>
+      </transition>
+      <transition id="tau_29">
+        <name>
+          <text>tau_29</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="31a4af83-58ff-4ef3-a2bd-f03f4c5318ab"/>
+      </transition>
+      <transition id="Payment Handled">
+        <name>
+          <text>Payment Handled</text>
+        </name>
+      </transition>
+      <transition id="Declaration REJECTED by DIRECTOR">
+        <name>
+          <text>Declaration REJECTED by DIRECTOR</text>
+        </name>
+      </transition>
+      <transition id="tau_20">
+        <name>
+          <text>tau_20</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="202c9c3e-00d4-44a1-a550-e0dfbe0810b6"/>
+      </transition>
+      <transition id="Request For Payment REJECTED by MISSING">
+        <name>
+          <text>Request For Payment REJECTED by MISSING</text>
+        </name>
+      </transition>
+      <transition id="Request Payment">
+        <name>
+          <text>Request Payment</text>
+        </name>
+      </transition>
+      <transition id="tau_51">
+        <name>
+          <text>tau_51</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="9ef05501-b8cd-4da7-a864-c531fda51e47"/>
+      </transition>
+      <transition id="tau_2">
+        <name>
+          <text>tau_2</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="9bf68449-c118-4fc3-ae1b-20c2a72c239a"/>
+      </transition>
+      <transition id="Declaration REJECTED by EMPLOYEE">
+        <name>
+          <text>Declaration REJECTED by EMPLOYEE</text>
+        </name>
+      </transition>
+      <transition id="Request For Payment SUBMITTED by EMPLOYEE">
+        <name>
+          <text>Request For Payment SUBMITTED by EMPLOYEE</text>
+        </name>
+      </transition>
+      <transition id="tau_40">
+        <name>
+          <text>tau_40</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="37a646a5-025b-445a-b3b6-5babe86db441"/>
+      </transition>
+      <transition id="Request For Payment SAVED by EMPLOYEE">
+        <name>
+          <text>Request For Payment SAVED by EMPLOYEE</text>
+        </name>
+      </transition>
+      <transition id="Declaration FINAL_APPROVED by SUPERVISOR">
+        <name>
+          <text>Declaration FINAL_APPROVED by SUPERVISOR</text>
+        </name>
+      </transition>
+      <transition id="Permit SAVED by EMPLOYEE">
+        <name>
+          <text>Permit SAVED by EMPLOYEE</text>
+        </name>
+      </transition>
+      <transition id="tau_28">
+        <name>
+          <text>tau_28</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="7b915022-fa58-42e4-a3a3-059668aad4ff"/>
+      </transition>
+      <transition id="tau_36">
+        <name>
+          <text>tau_36</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="b65136cd-cc39-4156-ad82-7c29e914b710"/>
+      </transition>
+      <transition id="Permit APPROVED by PRE_APPROVER">
+        <name>
+          <text>Permit APPROVED by PRE_APPROVER</text>
+        </name>
+      </transition>
+      <transition id="tau_33">
+        <name>
+          <text>tau_33</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="b5f6ff5f-d304-444b-85c1-0a68bc582730"/>
+      </transition>
+      <transition id="tau_25">
+        <name>
+          <text>tau_25</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="18787dc3-b2b9-4819-96d2-8eae3345e169"/>
+      </transition>
+      <transition id="Declaration APPROVED by PRE_APPROVER">
+        <name>
+          <text>Declaration APPROVED by PRE_APPROVER</text>
+        </name>
+      </transition>
+      <transition id="Request For Payment APPROVED by BUDGET OWNER">
+        <name>
+          <text>Request For Payment APPROVED by BUDGET OWNER</text>
+        </name>
+      </transition>
+      <transition id="Permit FINAL_APPROVED by SUPERVISOR">
+        <name>
+          <text>Permit FINAL_APPROVED by SUPERVISOR</text>
+        </name>
+      </transition>
+      <transition id="tau_53">
+        <name>
+          <text>tau_53</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="f58dc4e3-cc8f-4a1e-b804-e49b7b87a5a3"/>
+      </transition>
+      <transition id="Request For Payment REJECTED by ADMINISTRATION">
+        <name>
+          <text>Request For Payment REJECTED by ADMINISTRATION</text>
+        </name>
+      </transition>
+      <transition id="tau_6">
+        <name>
+          <text>tau_6</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="abc3606a-4203-49af-ae9e-07288697f9c4"/>
+      </transition>
+      <transition id="tau_16">
+        <name>
+          <text>tau_16</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="fdbca306-c083-4509-a504-335fd66d5a81"/>
+      </transition>
+      <transition id="tau_18">
+        <name>
+          <text>tau_18</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="888874b7-2fb6-4d6d-97d6-0fe6821163d8"/>
+      </transition>
+      <transition id="tau_30">
+        <name>
+          <text>tau_30</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="9b4e4bd3-c3d8-48c1-b514-f583fe1002dc"/>
+      </transition>
+      <transition id="tau_54">
+        <name>
+          <text>tau_54</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="84c80df6-a187-4b49-b4c6-eb03c39cf557"/>
+      </transition>
+      <transition id="Declaration SAVED by EMPLOYEE">
+        <name>
+          <text>Declaration SAVED by EMPLOYEE</text>
+        </name>
+      </transition>
+      <transition id="tau_37">
+        <name>
+          <text>tau_37</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="07601d8f-d274-462d-b602-dc9b1d5462c6"/>
+      </transition>
+      <transition id="Permit REJECTED by DIRECTOR">
+        <name>
+          <text>Permit REJECTED by DIRECTOR</text>
+        </name>
+      </transition>
+      <transition id="tau_26">
+        <name>
+          <text>tau_26</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="3a17267e-b88f-470e-9edc-777e813b6b7b"/>
+      </transition>
+      <transition id="Request For Payment REJECTED by EMPLOYEE">
+        <name>
+          <text>Request For Payment REJECTED by EMPLOYEE</text>
+        </name>
+      </transition>
+      <transition id="Permit FINAL_APPROVED by DIRECTOR">
+        <name>
+          <text>Permit FINAL_APPROVED by DIRECTOR</text>
+        </name>
+      </transition>
+      <transition id="tau_58">
+        <name>
+          <text>tau_58</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="e4222176-a4fc-477e-9794-1ba8cec858ee"/>
+      </transition>
+      <transition id="Request For Payment FINAL_APPROVED by SUPERVISOR">
+        <name>
+          <text>Request For Payment FINAL_APPROVED by SUPERVISOR</text>
+        </name>
+      </transition>
+      <transition id="tau_38">
+        <name>
+          <text>tau_38</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="974ddfba-1656-4064-b67a-4eeef97fcfdb"/>
+      </transition>
+      <transition id="tau_11">
+        <name>
+          <text>tau_11</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="b47f4bda-a806-4c0d-94c6-945f8e871cc3"/>
+      </transition>
+      <transition id="Permit REJECTED by PRE_APPROVER">
+        <name>
+          <text>Permit REJECTED by PRE_APPROVER</text>
+        </name>
+      </transition>
+      <transition id="Declaration REJECTED by BUDGET OWNER">
+        <name>
+          <text>Declaration REJECTED by BUDGET OWNER</text>
+        </name>
+      </transition>
+      <transition id="tau_39">
+        <name>
+          <text>tau_39</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="2f0e9f74-4468-4766-a18f-bc148f642f1f"/>
+      </transition>
+      <transition id="Declaration REJECTED by PRE_APPROVER">
+        <name>
+          <text>Declaration REJECTED by PRE_APPROVER</text>
+        </name>
+      </transition>
+      <arc id="6202098176" source="p_17" target="Permit APPROVED by SUPERVISOR"/>
+      <arc id="5205843968" source="tau_18" target="p_20"/>
+      <arc id="5205836288" source="Permit REJECTED by EMPLOYEE" target="p_13"/>
+      <arc id="6201285120" source="Request For Payment SUBMITTED by EMPLOYEE" target="p_42"/>
+      <arc id="6201289728" source="tau_42" target="p_35"/>
+      <arc id="6201286656" source="Request For Payment FINAL_APPROVED by DIRECTOR" target="p_47"/>
+      <arc id="6201292800" source="Declaration SUBMITTED by EMPLOYEE" target="p_31"/>
+      <arc id="5206081024" source="Declaration REJECTED by ADMINISTRATION" target="p_28"/>
+      <arc id="5206067200" source="tau_13" target="p_11"/>
+      <arc id="6202101776" source="tau_39" target="p_24"/>
+      <arc id="6201282576" source="Declaration REJECTED by SUPERVISOR" target="p_35"/>
+      <arc id="6201285648" source="p_33" target="Declaration REJECTED by ADMINISTRATION"/>
+      <arc id="6201281040" source="p_31" target="Declaration APPROVED by SUPERVISOR"/>
+      <arc id="6201287184" source="p_26" target="Declaration APPROVED by BUDGET OWNER"/>
+      <arc id="6201288720" source="p_39" target="Request For Payment REJECTED by SUPERVISOR"/>
+      <arc id="6201291792" source="tau_1" target="p_30"/>
+      <arc id="5206080016" source="Request For Payment APPROVED by PRE_APPROVER" target="p_46"/>
+      <arc id="6201771552" source="p_12" target="tau_5"/>
+      <arc id="6201283104" source="Permit APPROVED by BUDGET OWNER" target="p_8"/>
+      <arc id="6201284640" source="p_32" target="tau_41"/>
+      <arc id="6201286176" source="p_53" target="tau_9"/>
+      <arc id="6201289248" source="p_39" target="tau_57"/>
+      <arc id="6201290784" source="p_21" target="tau_36"/>
+      <arc id="5206080544" source="tau_0" target="p_17"/>
+      <arc id="6201283632" source="p_27" target="Declaration REJECTED by BUDGET OWNER"/>
+      <arc id="6201474608" source="Request For Payment REJECTED by BUDGET OWNER" target="p_38"/>
+      <arc id="6202112048" source="p_25" target="tau_27"/>
+      <arc id="5205942320" source="p_29" target="Request For Payment REJECTED by MISSING"/>
+      <arc id="6201282096" source="tau_27" target="p_23"/>
+      <arc id="6201289776" source="p_19" target="tau_43"/>
+      <arc id="5206081072" source="tau_34" target="p_38"/>
+      <arc id="6201473600" source="tau_37" target="p_28"/>
+      <arc id="6201282624" source="tau_21" target="p_8"/>
+      <arc id="6201284160" source="p_37" target="tau_49"/>
+      <arc id="6201287232" source="Request For Payment REJECTED by SUPERVISOR" target="p_38"/>
+      <arc id="6201290304" source="p_9" target="tau_12"/>
+      <arc id="5206067776" source="tau_14" target="p_27"/>
+      <arc id="6201474128" source="p_25" target="tau_2"/>
+      <arc id="6202108496" source="Request For Payment REJECTED by MISSING" target="p_39"/>
+      <arc id="6201287760" source="Declaration FINAL_APPROVED by DIRECTOR" target="p_46"/>
+      <arc id="6201290832" source="Request For Payment REJECTED by EMPLOYEE" target="p_38"/>
+      <arc id="6201292368" source="Request For Payment APPROVED by SUPERVISOR" target="p_8"/>
+      <arc id="6201289824" source="p_9" target="Request For Payment APPROVED by SUPERVISOR"/>
+      <arc id="6201291360" source="tau_10" target="p_36"/>
+      <arc id="6201280608" source="tau_52" target="p_8"/>
+      <arc id="6201288288" source="tau_45" target="p_28"/>
+      <arc id="5206081120" source="p_11" target="tau_31"/>
+      <arc id="6201281136" source="p_27" target="tau_25"/>
+      <arc id="6201279600" source="p_55" target="Declaration SAVED by EMPLOYEE"/>
+      <arc id="6201288816" source="p_14" target="tau_33"/>
+      <arc id="6201290352" source="p_30" target="Declaration SUBMITTED by EMPLOYEE"/>
+      <arc id="6201291888" source="p_39" target="Request For Payment REJECTED by BUDGET OWNER"/>
+      <arc id="5206066288" source="source" target="Permit SAVED by EMPLOYEE"/>
+      <arc id="6201785472" source="p_13" target="Permit SUBMITTED by EMPLOYEE"/>
+      <arc id="6201281664" source="Permit SUBMITTED by EMPLOYEE" target="p_16"/>
+      <arc id="6201286272" source="tau_17" target="p_28"/>
+      <arc id="6201287808" source="p_44" target="tau_45"/>
+      <arc id="6201474704" source="tau_46" target="p_32"/>
+      <arc id="5205742736" source="p_15" target="Permit APPROVED by ADMINISTRATION"/>
+      <arc id="6201283728" source="p_46" target="tau_39"/>
+      <arc id="6201286800" source="p_44" target="Request For Payment FINAL_APPROVED by SUPERVISOR"/>
+      <arc id="6201289872" source="p_5" target="tau_19"/>
+      <arc id="6201280656" source="p_12" target="Permit REJECTED by EMPLOYEE"/>
+      <arc id="6202006160" source="Send Reminder" target="p_42"/>
+      <arc id="6201473696" source="Permit REJECTED by PRE_APPROVER" target="p_15"/>
+      <arc id="6202106528" source="Request For Payment FINAL_APPROVED by SUPERVISOR" target="p_43"/>
+      <arc id="6201281184" source="p_18" target="tau_29"/>
+      <arc id="6201285792" source="Permit APPROVED by ADMINISTRATION" target="p_17"/>
+      <arc id="6201290400" source="tau_40" target="p_50"/>
+      <arc id="6201288864" source="Declaration REJECTED by MISSING" target="p_32"/>
+      <arc id="5206066336" source="tau_48" target="p_26"/>
+      <arc id="5206080160" source="p_43" target="tau_20"/>
+      <arc id="6202011296" source="Permit REJECTED by DIRECTOR" target="p_14"/>
+      <arc id="6201283248" source="p_9" target="Permit FOR_APPROVAL by ADMINISTRATION"/>
+      <arc id="6201284784" source="p_41" target="tau_26"/>
+      <arc id="6201286320" source="Declaration REJECTED by EMPLOYEE" target="p_29"/>
+      <arc id="6201289392" source="tau_8" target="p_55"/>
+      <arc id="6201999536" source="p_50" target="tau_53"/>
+      <arc id="6201776832" source="p_22" target="tau_18"/>
+      <arc id="5205739712" source="p_7" target="tau_35"/>
+      <arc id="6201283776" source="p_33" target="tau_17"/>
+      <arc id="6201282240" source="p_29" target="tau_10"/>
+      <arc id="6201289920" source="Declaration APPROVED by PRE_APPROVER" target="p_27"/>
+      <arc id="6201288384" source="p_8" target="tau_56"/>
+      <arc id="6201291456" source="p_17" target="Permit REJECTED by SUPERVISOR"/>
+      <arc id="4800064704" source="p_11" target="tau_52"/>
+      <arc id="5206081216" source="Declaration APPROVED by ADMINISTRATION" target="p_38"/>
+      <arc id="6202000064" source="tau_26" target="p_39"/>
+      <arc id="5205505232" source="tau_2" target="p_46"/>
+      <arc id="6201281232" source="p_37" target="tau_16"/>
+      <arc id="6201282768" source="tau_30" target="p_26"/>
+      <arc id="6201284304" source="Start trip" target="p_8"/>
+      <arc id="6201285840" source="p_13" target="tau_13"/>
+      <arc id="6201287376" source="p_49" target="tau_40"/>
+      <arc id="5206080208" source="p_7" target="tau_3"/>
+      <arc id="6201474272" source="p_31" target="Declaration REJECTED by MISSING"/>
+      <arc id="5205737696" source="Declaration APPROVED by SUPERVISOR" target="p_32"/>
+      <arc id="6201283296" source="tau_7" target="p_23"/>
+      <arc id="6201281760" source="p_29" target="tau_34"/>
+      <arc id="6201287904" source="tau_53" target="p_52"/>
+      <arc id="6201282288" source="tau_47" target="p_33"/>
+      <arc id="18861869296" source="p_18" target="Permit REJECTED by DIRECTOR"/>
+      <arc id="5205948656" source="Declaration REJECTED by DIRECTOR" target="p_32"/>
+      <arc id="6201291504" source="Request For Payment REJECTED by ADMINISTRATION" target="p_39"/>
+      <arc id="6201279216" source="p_17" target="tau_6"/>
+      <arc id="6202006256" source="p_41" target="Send Reminder"/>
+      <arc id="6201281280" source="tau_3" target="p_9"/>
+      <arc id="6201285888" source="tau_31" target="p_19"/>
+      <arc id="6201288960" source="tau_54" target="p_15"/>
+      <arc id="6201292032" source="tau_44" target="p_37"/>
+      <arc id="5206067968" source="p_42" target="tau_4"/>
+      <arc id="6202003712" source="tau_51" target="p_38"/>
+      <arc id="6201284880" source="tau_35" target="p_5"/>
+      <arc id="6201286416" source="p_47" target="tau_28"/>
+      <arc id="6201287952" source="tau_5" target="p_13"/>
+      <arc id="6201291024" source="p_17" target="Permit REJECTED by BUDGET OWNER"/>
+      <arc id="6201282336" source="p_25" target="Declaration FINAL_APPROVED by SUPERVISOR"/>
+      <arc id="6201473312" source="p_15" target="tau_23"/>
+      <arc id="6201474848" source="tau_29" target="p_14"/>
+      <arc id="6201784608" source="tau_49" target="p_28"/>
+      <arc id="6201285408" source="p_5" target="Permit REJECTED by MISSING"/>
+      <arc id="6201291552" source="Request For Payment APPROVED by BUDGET OWNER" target="p_37"/>
+      <arc id="5206067488" source="tau_4" target="p_40"/>
+      <arc id="5205408032" source="tau_36" target="p_24"/>
+      <arc id="5205404960" source="p_27" target="Declaration REJECTED by EMPLOYEE"/>
+      <arc id="6201473840" source="tau_56" target="p_6"/>
+      <arc id="6202105136" source="p_31" target="Declaration REJECTED by DIRECTOR"/>
+      <arc id="5205844784" source="tau_9" target="p_22"/>
+      <arc id="5206080304" source="Request For Payment APPROVED by ADMINISTRATION" target="p_23"/>
+      <arc id="6201460544" source="tau_16" target="p_43"/>
+      <arc id="6201474368" source="p_29" target="Request For Payment REJECTED by PRE_APPROVER"/>
+      <arc id="5205747008" source="p_23" target="Permit FINAL_APPROVED by SUPERVISOR"/>
+      <arc id="6201281856" source="Permit FINAL_APPROVED by SUPERVISOR" target="p_22"/>
+      <arc id="6201288000" source="tau_33" target="p_12"/>
+      <arc id="6201286464" source="p_26" target="Declaration APPROVED by PRE_APPROVER"/>
+      <arc id="6201292608" source="Permit REJECTED by ADMINISTRATION" target="p_14"/>
+      <arc id="6201283392" source="tau_28" target="p_49"/>
+      <arc id="6201284928" source="tau_11" target="p_53"/>
+      <arc id="6201999680" source="p_39" target="tau_51"/>
+      <arc id="6201283920" source="p_36" target="Declaration REJECTED by SUPERVISOR"/>
+      <arc id="6201285456" source="Declaration FINAL_APPROVED by SUPERVISOR" target="p_46"/>
+      <arc id="6201288528" source="Permit APPROVED by SUPERVISOR" target="p_18"/>
+      <arc id="5206081360" source="Declaration APPROVED by BUDGET OWNER" target="p_27"/>
+      <arc id="5206079824" source="p_15" target="tau_0"/>
+      <arc id="6201292128" source="p_15" target="Permit REJECTED by ADMINISTRATION"/>
+      <arc id="6201289056" source="p_52" target="tau_11"/>
+      <arc id="5206066528" source="p_9" target="Permit APPROVED by BUDGET OWNER"/>
+      <arc id="5206077280" source="p_31" target="tau_15"/>
+      <arc id="6202000736" source="p_36" target="tau_42"/>
+      <arc id="6201474416" source="p_38" target="tau_44"/>
+      <arc id="6202107248" source="tau_22" target="p_41"/>
+      <arc id="6202111856" source="tau_20" target="p_44"/>
+      <arc id="5205846896" source="p_28" target="tau_48"/>
+      <arc id="6201284976" source="tau_23" target="p_14"/>
+      <arc id="6201286512" source="tau_24" target="p_12"/>
+      <arc id="6201280368" source="tau_12" target="p_8"/>
+      <arc id="5206067056" source="p_26" target="tau_14"/>
+      <arc id="5205395312" source="p_31" target="tau_46"/>
+      <arc id="6201999728" source="p_39" target="Declaration APPROVED by ADMINISTRATION"/>
+      <arc id="6201474944" source="p_21" target="tau_21"/>
+      <arc id="6201473408" source="p_11" target="Request For Payment SAVED by EMPLOYEE"/>
+      <arc id="6202109312" source="p_50" target="Payment Handled"/>
+      <arc id="6201282432" source="p_6" target="End trip"/>
+      <arc id="6201283968" source="Permit REJECTED by BUDGET OWNER" target="p_14"/>
+      <arc id="6201285504" source="p_16" target="Permit REJECTED by PRE_APPROVER"/>
+      <arc id="6201290112" source="Request For Payment SAVED by EMPLOYEE" target="p_19"/>
+      <arc id="5206081408" source="tau_50" target="p_21"/>
+      <arc id="6202102160" source="p_5" target="tau_8"/>
+      <arc id="6201282960" source="Request For Payment REJECTED by PRE_APPROVER" target="p_39"/>
+      <arc id="6201281424" source="Permit SAVED by EMPLOYEE" target="p_6"/>
+      <arc id="6201286032" source="tau_58" target="p_25"/>
+      <arc id="6201287568" source="p_27" target="tau_1"/>
+      <arc id="6201289104" source="p_11" target="Permit FINAL_APPROVED by DIRECTOR"/>
+      <arc id="6201290640" source="p_41" target="Request For Payment SUBMITTED by EMPLOYEE"/>
+      <arc id="5206080400" source="tau_32" target="p_47"/>
+      <arc id="6202000784" source="tau_38" target="sink"/>
+      <arc id="6202099616" source="Permit FINAL_APPROVED by DIRECTOR" target="p_19"/>
+      <arc id="6202111904" source="p_23" target="Request For Payment FINAL_APPROVED by DIRECTOR"/>
+      <arc id="5205949856" source="p_25" target="Declaration FINAL_APPROVED by DIRECTOR"/>
+      <arc id="6201280416" source="p_21" target="Request For Payment APPROVED by ADMINISTRATION"/>
+      <arc id="6201283488" source="Payment Handled" target="p_49"/>
+      <arc id="6201285024" source="p_29" target="tau_55"/>
+      <arc id="6201289632" source="Permit FOR_APPROVAL by SUPERVISOR" target="p_55"/>
+      <arc id="6201292704" source="Permit APPROVED by PRE_APPROVER" target="p_19"/>
+      <arc id="5205856176" source="tau_55" target="p_40"/>
+      <arc id="6201783216" source="End trip" target="p_7"/>
+      <arc id="6201284016" source="p_29" target="Request For Payment REJECTED by EMPLOYEE"/>
+      <arc id="6201288624" source="Declaration SAVED by EMPLOYEE" target="sink"/>
+      <arc id="6201290160" source="Permit REJECTED by MISSING" target="sink"/>
+      <arc id="6201291696" source="p_16" target="tau_54"/>
+      <arc id="5206081456" source="p_21" target="tau_7"/>
+      <arc id="5206067632" source="tau_15" target="p_29"/>
+      <arc id="6202111424" source="tau_19" target="sink"/>
+      <arc id="5205743552" source="p_9" target="tau_24"/>
+      <arc id="6201283008" source="p_40" target="tau_22"/>
+      <arc id="6201287616" source="Permit FOR_APPROVAL by ADMINISTRATION" target="p_8"/>
+      <arc id="6201290688" source="tau_6" target="p_14"/>
+      <arc id="6201279936" source="p_53" target="Request Payment"/>
+      <arc id="5206080448" source="tau_43" target="p_20"/>
+      <arc id="6202111952" source="tau_41" target="p_30"/>
+      <arc id="6201288144" source="p_38" target="Request For Payment APPROVED by BUDGET OWNER"/>
+      <arc id="6201286608" source="p_7" target="Start trip"/>
+      <arc id="6201292752" source="p_24" target="tau_30"/>
+      <arc id="6201280464" source="p_55" target="tau_38"/>
+      <arc id="6201475040" source="p_27" target="tau_58"/>
+      <arc id="6202100192" source="Declaration REJECTED by PRE_APPROVER" target="p_28"/>
+      <arc id="5205838304" source="p_25" target="Request For Payment APPROVED by PRE_APPROVER"/>
+      <arc id="6201280992" source="p_11" target="Permit APPROVED by PRE_APPROVER"/>
+      <arc id="6201285600" source="p_5" target="Permit FOR_APPROVAL by SUPERVISOR"/>
+      <arc id="6201291744" source="Request Payment" target="p_52"/>
+      <arc id="6201279456" source="p_20" target="tau_50"/>
+      <arc id="5205408224" source="tau_25" target="p_29"/>
+      <arc id="6201281520" source="p_23" target="tau_32"/>
+      <arc id="6201279984" source="p_33" target="Declaration REJECTED by PRE_APPROVER"/>
+      <arc id="6202100720" source="Declaration REJECTED by BUDGET OWNER" target="p_28"/>
+      <arc id="6202099184" source="Permit REJECTED by SUPERVISOR" target="p_14"/>
+      <arc id="5205844976" source="p_35" target="tau_47"/>
+      <arc id="6201284592" source="tau_57" target="p_38"/>
+      <arc id="6201290736" source="p_29" target="tau_37"/>
+      <arc id="6201292272" source="p_29" target="Request For Payment REJECTED by ADMINISTRATION"/>
+    </page>
+    <finalmarkings>
+      <marking>
+        <place idref="sink">
+          <text>1</text>
+        </place>
+      </marking>
+    </finalmarkings>
+  </net>
+</pnml>
