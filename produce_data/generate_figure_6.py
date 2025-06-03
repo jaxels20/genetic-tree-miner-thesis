@@ -9,7 +9,7 @@ from src.utils import load_hyperparameters_from_csv
 DATASET_DIR = "./logs"
 OUTPUT_DIR = "./data/figure_6/"
 BEST_PARAMS = "./best_parameters.csv"
-MAX_GENERATIONS = 200
+MAX_GENERATIONS = 300
 PERCENTAGE_OF_LOG = 0.05
 OBJECTIVE = {
     "simplicity": 10,

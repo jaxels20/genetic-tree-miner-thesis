@@ -11,24 +11,25 @@ OUTPUT_FILE = "./figures/figure_9.pdf"
 
 
 def plot_data(df):
-    # speeds are in seconds per generation
+    # speeds are in generations per second
     speeds = {
-        '2012': 11, 
-        '2013-cp': 0.1, 
-        '2013-i': 1.1, 
-        '2013-op': 0.1, 
-        '2017': 90, 
-        '2019': 70, 
-        '2020-dd': 0.2, 
-        '2020-id': 1.5, 
-        '2020-pl': 6.5, 
-        '2020-ptc': 0.3, 
-        '2020-rfp':5, 
-        'RTF': 1.6, 
-        'Sepsis': 0.6,
-        }
+        '2012': round(180 / 300, 1), 
+        '2013-cp': round(55 / 2, 1), 
+        '2013-i': round(65 / 25, 1), 
+        '2013-op': round(69 / 1.8, 1), 
+        '2017': round(204 / 106, 1), 
+        '2019': round(313 / 271, 1), 
+        '2020-dd': round(295 / 16, 1), 
+        '2020-id': round(238 / 160, 1), 
+        '2020-pl': round(141 / 300, 1), 
+        '2020-ptc': round(271 / 48, 1), 
+        '2020-rfp': round(169 / 11, 1), 
+        'RTF': round(72 / 3, 1), 
+        'Sepsis': round(156 / 53, 1),
+    }
+    
     df['Speed'] = df['Dataset'].map(speeds)
-    df['Time'] = df['Generation'] * df['Speed']
+    df['Time'] = df['Generation'] * (1 / df['Speed'])
     
     # convert Time to minutes
     df['Time'] = df['Time'] / 60.0

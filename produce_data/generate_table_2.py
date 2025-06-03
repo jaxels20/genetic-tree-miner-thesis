@@ -12,7 +12,7 @@ from src.FileLoader import FileLoader
 DATASET_DIR = "./logs/"
 
 # Genetic Miner Configuration
-GENETIC_MINER_NAME = "GTM-5_test"
+GENETIC_MINER_NAME = "GTM-5"
 BEST_PARAMS = "./best_parameters.csv"
 TIME_LIMIT = 60*5
 STAGNATION_LIMIT = 50
@@ -24,7 +24,7 @@ OBJECTIVE = {
     "ftr_fitness": 50,
 }
 
-NUM_DATA_POINTS = 1
+NUM_DATA_POINTS = 5
 OUTPUT_DIR = "./data/table_2"
 
 def generate_data(method: callable, runs: int):    
