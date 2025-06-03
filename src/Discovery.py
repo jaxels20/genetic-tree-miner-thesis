@@ -4,11 +4,12 @@ from src.GeneticAlgorithm import GeneticAlgorithm
 from pm4py.algo.discovery.inductive.algorithm import apply as pm4py_inductive_miner
 from pm4py.objects.conversion.process_tree import converter as pt_converter
 from src.PetriNet import PetriNet
+from src.ProcessTree import ProcessTree
 import numpy as np
 
 class Discovery:
     @staticmethod
-    def genetic_algorithm(event_log: EventLog, **kwargs) -> PetriNet:
+    def genetic_algorithm(event_log: EventLog, **kwargs) -> tuple[PetriNet, ProcessTree]:
         """
         A wrapper for the genetic algorithm.
         """
@@ -49,7 +50,7 @@ class Discovery:
             # Return the monitor as well
             return PetriNet.from_pm4py(pm4py_net, init, end), ga.monitor
         
-        return PetriNet.from_pm4py(pm4py_net, init, end)
+        return PetriNet.from_pm4py(pm4py_net, init, end), our_pt
 
     @staticmethod
     def inductive_miner(event_log: EventLog, **kwargs) -> PetriNet:

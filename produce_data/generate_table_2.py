@@ -12,9 +12,9 @@ from src.FileLoader import FileLoader
 DATASET_DIR = "./logs/"
 
 # Genetic Miner Configuration
-GENETIC_MINER_NAME = "GTM"
+GENETIC_MINER_NAME = "GTM-5_test"
 BEST_PARAMS = "./best_parameters.csv"
-TIME_LIMIT = 60
+TIME_LIMIT = 60*5
 STAGNATION_LIMIT = 50
 PERCENTAGE_OF_LOG = 0.05
 OBJECTIVE = {
@@ -24,9 +24,8 @@ OBJECTIVE = {
     "ftr_fitness": 50,
 }
 
-NUM_DATA_POINTS = 5
+NUM_DATA_POINTS = 1
 OUTPUT_DIR = "./data/table_2"
-
 
 def generate_data(method: callable, runs: int):    
     datasets = [f for f in os.listdir(DATASET_DIR) if f.endswith(".xes")]
@@ -39,15 +38,16 @@ def generate_data(method: callable, runs: int):
         for i in range(runs):
             print(f"Running discovery on dataset: {dataset_name} iteration: {i}")
             start = time.time()
-            discovered_net = method(eventlog)
+            discovered_net, discovered_pt = method(eventlog)
             time_taken = time.time() - start
             
             os.makedirs(f"{OUTPUT_DIR}/models/GTM", exist_ok=True)
             discovered_net.to_pnml(f"{OUTPUT_DIR}/models/GTM/{dataset_name}_{GENETIC_MINER_NAME}_{i}")
             
             evaluator = SingleEvaluator(
-                discovered_net,
-                eventlog
+                pn=discovered_net,
+                eventlog=eventlog,
+                pt=discovered_pt
             )
             
             # Get the evaluation metrics

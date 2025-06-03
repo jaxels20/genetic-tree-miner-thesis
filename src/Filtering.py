@@ -27,40 +27,36 @@ class Filtering:
         if percentage > 1:
             percentage = percentage / 100.0
 
-        # Dictionary to count frequency of each trace signature
-        # Here, the signature is defined as the tuple of event activities.
-        signature_freq = {}
+        # Dictionary to count frequency of each trace variant
+        trace_freq = {}
+        trace_map = {}
         for trace in eventlog.traces:
-            signature = tuple(event.activity for event in trace.events)
-            signature_freq[signature] = signature_freq.get(signature, 0) + 1
+            trace_str = tuple(event.activity for event in trace.events)
+            trace_freq[trace_str] = trace_freq.get(trace_str, 0) + 1
+            if trace_freq[trace_str] == 1:
+                trace_map[trace_str] = trace
 
         # Sort the signatures by frequency in descending order.
-        sorted_signatures = sorted(signature_freq.items(), key=lambda x: x[1], reverse=True)
-
-        # Determine how many unique signatures to keep.
-        total_unique = len(sorted_signatures)
+        sorted_traces = sorted(trace_freq.keys(), key=lambda k: trace_freq[k], reverse=True)
+        total_unique = len(sorted_traces)
         num_to_keep = max(1, int(round(percentage * total_unique)))
-
-        # Extract the set of top signatures.
-        top_signatures = {signature for signature, _ in sorted_signatures[:num_to_keep]}
         
         # Build the filtered event log by including traces with a signature in top_signatures.
         filtered_log = EventLog()
-        for trace in eventlog.traces:
-            signature = tuple(event.activity for event in trace.events)
-            if signature in top_signatures:
-                filtered_log.traces.append(trace)
-                
+        top_n_traces = sorted_traces[:num_to_keep]
+        for trace_str in top_n_traces:
+            filtered_log.traces.append(trace_map[trace_str])
+        
         # If include_all_activities is True, add all activities to the filtered log.
         if include_all_activities:
             all_activities = eventlog.unique_activities()
             filtered_log_activities = filtered_log.unique_activities()
-            for activity in all_activities:
-                if activity not in filtered_log_activities:
-                    for trace in eventlog.traces:
-                        if activity in [event.activity for event in trace.events]:
-                            filtered_log.traces.append(trace)
-                            break
+            missing_activities = all_activities - filtered_log_activities
+            for activity in missing_activities:
+                for trace_str in sorted_traces[num_to_keep:]:
+                    if activity in trace_str:
+                        filtered_log.traces.append(trace_map[trace_str])
+                        break
         
         filtered_log.set_unique_activities(filtered_log.unique_activities())
         filtered_log.set_eventlog_name(eventlog.name)
@@ -92,7 +88,7 @@ class Filtering:
             filtered_log_activities = filtered_log.unique_activities()
             missing_activities = all_activities - filtered_log_activities
             for activity in missing_activities:
-                for trace_str in sorted_traces:
+                for trace_str in sorted_traces[top_n:]:
                     if activity in trace_str:
                         filtered_log.traces.append(trace_map[trace_str])
                         break

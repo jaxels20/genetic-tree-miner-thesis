@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<pnml>
+  <net id="" type="http://www.pnml.org/version-2009/grammar/pnmlcoremodel">
+    <name>
+      <text></text>
+    </name>
+    <page id="n0">
+      <place id="exi_node4">
+        <name>
+          <text>exi_node4</text>
+        </name>
+      </place>
+      <place id="sink">
+        <name>
+          <text>sink</text>
+        </name>
+      </place>
+      <place id="ent_node6">
+        <name>
+          <text>ent_node6</text>
+        </name>
+      </place>
+      <place id="source">
+        <name>
+          <text>source</text>
+        </name>
+        <initialMarking>
+          <text>1</text>
+        </initialMarking>
+      </place>
+      <place id="ent_node0">
+        <name>
+          <text>ent_node0</text>
+        </name>
+      </place>
+      <transition id="Accepted">
+        <name>
+          <text>Accepted</text>
+        </name>
+      </transition>
+      <transition id="Queued">
+        <name>
+          <text>Queued</text>
+        </name>
+      </transition>
+      <transition id="Unmatched">
+        <name>
+          <text>Unmatched</text>
+        </name>
+      </transition>
+      <transition id="Completed">
+        <name>
+          <text>Completed</text>
+        </name>
+      </transition>
+      <transition id="tau_0">
+        <name>
+          <text>tau_0</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="a9eec6a0-0996-4312-9d94-dcd4891bc3ae"/>
+      </transition>
+      <arc id="4790896544" source="ent_node6" target="Accepted"/>
+      <arc id="4790896928" source="tau_0" target="ent_node6"/>
+      <arc id="4790897120" source="ent_node0" target="Completed"/>
+      <arc id="4790896736" source="source" target="tau_0"/>
+      <arc id="4790897312" source="exi_node4" target="Unmatched"/>
+      <arc id="4790897504" source="exi_node4" target="Queued"/>
+      <arc id="4790895200" source="Queued" target="ent_node6"/>
+      <arc id="4790895488" source="Accepted" target="exi_node4"/>
+      <arc id="4790897984" source="Completed" target="sink"/>
+      <arc id="4790898464" source="Unmatched" target="ent_node0"/>
+    </page>
+    <finalmarkings>
+      <marking>
+        <place idref="sink">
+          <text>1</text>
+        </place>
+      </marking>
+    </finalmarkings>
+  </net>
+</pnml>

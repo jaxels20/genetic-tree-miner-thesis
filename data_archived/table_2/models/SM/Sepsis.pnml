@@ -1,0 +1,205 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<pnml>
+  <net id="" type="http://www.pnml.org/version-2009/grammar/pnmlcoremodel">
+    <name>
+      <text></text>
+    </name>
+    <page id="n0">
+      <place id="ent_node3">
+        <name>
+          <text>ent_node3</text>
+        </name>
+      </place>
+      <place id="ent_node21">
+        <name>
+          <text>ent_node21</text>
+        </name>
+      </place>
+      <place id="ent_node9">
+        <name>
+          <text>ent_node9</text>
+        </name>
+      </place>
+      <place id="ent_node14">
+        <name>
+          <text>ent_node14</text>
+        </name>
+      </place>
+      <place id="ent_node13">
+        <name>
+          <text>ent_node13</text>
+        </name>
+      </place>
+      <place id="exi_node18">
+        <name>
+          <text>exi_node18</text>
+        </name>
+      </place>
+      <place id="sink">
+        <name>
+          <text>sink</text>
+        </name>
+      </place>
+      <place id="ent_node20">
+        <name>
+          <text>ent_node20</text>
+        </name>
+      </place>
+      <place id="ent_node2">
+        <name>
+          <text>ent_node2</text>
+        </name>
+      </place>
+      <place id="ent_node4">
+        <name>
+          <text>ent_node4</text>
+        </name>
+      </place>
+      <place id="source">
+        <name>
+          <text>source</text>
+        </name>
+        <initialMarking>
+          <text>1</text>
+        </initialMarking>
+      </place>
+      <place id="exi_node15">
+        <name>
+          <text>exi_node15</text>
+        </name>
+      </place>
+      <place id="ent_node10">
+        <name>
+          <text>ent_node10</text>
+        </name>
+      </place>
+      <transition id="Release A">
+        <name>
+          <text>Release A</text>
+        </name>
+      </transition>
+      <transition id="ER Sepsis Triage">
+        <name>
+          <text>ER Sepsis Triage</text>
+        </name>
+      </transition>
+      <transition id="Release E">
+        <name>
+          <text>Release E</text>
+        </name>
+      </transition>
+      <transition id="Release B">
+        <name>
+          <text>Release B</text>
+        </name>
+      </transition>
+      <transition id="Admission IC">
+        <name>
+          <text>Admission IC</text>
+        </name>
+      </transition>
+      <transition id="IV Antibiotics">
+        <name>
+          <text>IV Antibiotics</text>
+        </name>
+      </transition>
+      <transition id="Leucocytes">
+        <name>
+          <text>Leucocytes</text>
+        </name>
+      </transition>
+      <transition id="Return ER">
+        <name>
+          <text>Return ER</text>
+        </name>
+      </transition>
+      <transition id="LacticAcid">
+        <name>
+          <text>LacticAcid</text>
+        </name>
+      </transition>
+      <transition id="ER Registration">
+        <name>
+          <text>ER Registration</text>
+        </name>
+      </transition>
+      <transition id="ER Triage">
+        <name>
+          <text>ER Triage</text>
+        </name>
+      </transition>
+      <transition id="CRP">
+        <name>
+          <text>CRP</text>
+        </name>
+      </transition>
+      <transition id="Admission NC">
+        <name>
+          <text>Admission NC</text>
+        </name>
+      </transition>
+      <transition id="IV Liquid">
+        <name>
+          <text>IV Liquid</text>
+        </name>
+      </transition>
+      <transition id="Release D">
+        <name>
+          <text>Release D</text>
+        </name>
+      </transition>
+      <transition id="Release C">
+        <name>
+          <text>Release C</text>
+        </name>
+      </transition>
+      <transition id="tau_0">
+        <name>
+          <text>tau_0</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="2e6d2785-3a90-4446-9f1c-4bd6912b9cf4"/>
+      </transition>
+      <arc id="4783978496" source="ent_node3" target="ER Sepsis Triage"/>
+      <arc id="4783971968" source="ER Registration" target="ent_node13"/>
+      <arc id="4783977872" source="exi_node18" target="Admission NC"/>
+      <arc id="4783970576" source="Release D" target="ent_node2"/>
+      <arc id="4783970192" source="ent_node13" target="ER Triage"/>
+      <arc id="4783969424" source="ER Triage" target="ent_node3"/>
+      <arc id="4783969040" source="exi_node15" target="Release C"/>
+      <arc id="4783968656" source="exi_node15" target="Release B"/>
+      <arc id="4783968272" source="Release C" target="ent_node2"/>
+      <arc id="4783978400" source="exi_node18" target="Admission IC"/>
+      <arc id="4783978784" source="IV Antibiotics" target="exi_node18"/>
+      <arc id="4783970336" source="Release E" target="ent_node2"/>
+      <arc id="4783977776" source="LacticAcid" target="ent_node10"/>
+      <arc id="4783970096" source="ent_node14" target="Return ER"/>
+      <arc id="4783969712" source="ER Sepsis Triage" target="ent_node21"/>
+      <arc id="4783972016" source="tau_0" target="sink"/>
+      <arc id="4783968944" source="Release B" target="ent_node2"/>
+      <arc id="4783968560" source="IV Liquid" target="ent_node9"/>
+      <arc id="4783978688" source="Return ER" target="ent_node2"/>
+      <arc id="4783972544" source="exi_node15" target="Release E"/>
+      <arc id="4783974848" source="ent_node2" target="tau_0"/>
+      <arc id="4783977680" source="ent_node4" target="LacticAcid"/>
+      <arc id="4783970384" source="Release A" target="ent_node14"/>
+      <arc id="4783970000" source="Leucocytes" target="ent_node20"/>
+      <arc id="4783969616" source="ent_node9" target="IV Antibiotics"/>
+      <arc id="4783968464" source="exi_node15" target="Release A"/>
+      <arc id="4783978592" source="ent_node10" target="Leucocytes"/>
+      <arc id="4783972448" source="ent_node21" target="IV Liquid"/>
+      <arc id="4783969376" source="Admission NC" target="ent_node10"/>
+      <arc id="4783969904" source="exi_node15" target="Release D"/>
+      <arc id="4783977968" source="ent_node20" target="CRP"/>
+      <arc id="4783969520" source="CRP" target="exi_node15"/>
+      <arc id="4783969136" source="source" target="ER Registration"/>
+      <arc id="4783968752" source="Admission IC" target="ent_node4"/>
+    </page>
+    <finalmarkings>
+      <marking>
+        <place idref="sink">
+          <text>1</text>
+        </place>
+      </marking>
+    </finalmarkings>
+  </net>
+</pnml>

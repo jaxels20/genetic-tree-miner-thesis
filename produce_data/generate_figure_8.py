@@ -13,6 +13,7 @@ INPUT_DIR = "./logs/"
 OUTPUT_DIR = "./data/figure_8/"
 
 TIME_LIMIT = 60*5
+STAGNATION_LIMIT = 50
 BEST_PARAMS = "./best_parameters.csv"
 OBJECTIVE_WEIGHTS = {
     "simplicity": 10,
@@ -20,7 +21,7 @@ OBJECTIVE_WEIGHTS = {
     "ftr_fitness": 50,
     "ftr_precision": 30
 }
-percentage_of_logs = [0.01, 0.05, 0.1, 0.3, 0.5]
+percentage_of_logs = [0.01, 0.05, 0.1, 0.3, 0.5, 1.0]
 
 def produce_data():
     datasets = os.listdir(INPUT_DIR)
@@ -40,6 +41,7 @@ def produce_data():
                 eventlog,
                 percentage_of_log=percentage_of_log,
                 time_limit=TIME_LIMIT,
+                stagnation_limit=STAGNATION_LIMIT,
                 **best_hyper_parameters,
             )
             

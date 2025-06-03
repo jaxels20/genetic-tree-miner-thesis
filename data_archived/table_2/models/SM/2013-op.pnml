@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<pnml>
+  <net id="" type="http://www.pnml.org/version-2009/grammar/pnmlcoremodel">
+    <name>
+      <text></text>
+    </name>
+    <page id="n0">
+      <place id="exi_node5">
+        <name>
+          <text>exi_node5</text>
+        </name>
+      </place>
+      <place id="ent_node0">
+        <name>
+          <text>ent_node0</text>
+        </name>
+      </place>
+      <place id="source">
+        <name>
+          <text>source</text>
+        </name>
+        <initialMarking>
+          <text>1</text>
+        </initialMarking>
+      </place>
+      <place id="sink">
+        <name>
+          <text>sink</text>
+        </name>
+      </place>
+      <transition id="Completed">
+        <name>
+          <text>Completed</text>
+        </name>
+      </transition>
+      <transition id="Accepted">
+        <name>
+          <text>Accepted</text>
+        </name>
+      </transition>
+      <transition id="Queued">
+        <name>
+          <text>Queued</text>
+        </name>
+      </transition>
+      <transition id="tau_0">
+        <name>
+          <text>tau_0</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="fee88728-ce3b-47f5-9719-da514d33e82d"/>
+      </transition>
+      <arc id="4783876352" source="tau_0" target="ent_node0"/>
+      <arc id="4783877600" source="exi_node5" target="Completed"/>
+      <arc id="4783875488" source="Accepted" target="exi_node5"/>
+      <arc id="4783881872" source="Completed" target="sink"/>
+      <arc id="4783879472" source="exi_node5" target="Queued"/>
+      <arc id="4783878992" source="ent_node0" target="Accepted"/>
+      <arc id="4783877264" source="Queued" target="ent_node0"/>
+      <arc id="4783877552" source="source" target="tau_0"/>
+    </page>
+    <finalmarkings>
+      <marking>
+        <place idref="sink">
+          <text>1</text>
+        </place>
+      </marking>
+    </finalmarkings>
+  </net>
+</pnml>

@@ -3,25 +3,22 @@ import pickle
 import plotly.graph_objects as go
 import pandas as pd
 
-INPUT_DIR = './data/figure_5d/'
+INPUT_DIR_RANDOM = './data/figure_5d'
+INPUT_DIR_INDUCTIVE = './data/figure_5c/'
 OUTPUT_FILE = "./figures/figure_5d.pdf"
 
 def visualize_paper_figure():
-    experiments = [f.path for f in os.scandir(INPUT_DIR) if f.is_dir()]
     data = []
+    input_dirs = {'Random Tree Generator': INPUT_DIR_RANDOM, 'IM Tree Generator': INPUT_DIR_INDUCTIVE}
     
-    for d in experiments:
-        # Extract the folder name of d without the full path
-        folder_name = os.path.basename(d)
-        
-        subfolders = [f.path for f in os.scandir(d) if f.is_dir()]
-    
-        for subfolder in subfolders:
-            pkl_files = [f for f in os.listdir(subfolder + "/monitors") if f.endswith('.pkl')]
-        
-            for pkl_file in pkl_files:
-                with open(os.path.join(subfolder, "monitors", pkl_file), 'rb') as f:
-                    dataset_name, method_name, result_dict = pickle.load(f)                
+    for name_dir, input_dir in input_dirs.items():
+        for root, subdirs, files in os.walk(input_dir):
+            for pkl_file in files:
+                if not pkl_file.endswith('.pkl'):
+                    continue
+                
+                with open(os.path.join(root, pkl_file), 'rb') as f:
+                    dataset_name, method_name, result_dict = pickle.load(f)
                 
                 generations = list(result_dict.keys())
                 fitness_values = list(result_dict.values())
@@ -35,19 +32,15 @@ def visualize_paper_figure():
                             "Generation": generations[i],
                             "Fitness": fitness_values[i],
                             "Dataset": dataset_name,
-                            "Line Type": folder_name
+                            "Line Type": name_dir
                         }
                     )
 
     df = pd.DataFrame(data)
-    df.replace({"Line Type": {"inductive_tree_generator": "IM Tree Generator", "random_tree_generator": "Random Tree Generator"}}, inplace=True)
     
     # Aggregate 
     aggregated = df.groupby(["Line Type", "Generation"], as_index=False).mean(numeric_only=True)
     aggregated["Dataset"] = "Aggregated"
-    
-    include_datasets = ["2019", "2017", "2020-pl"]
-    df = df[df["Dataset"].isin(include_datasets)]
 
     # 1) build a color‐map for each Line Type
     line_types = df["Line Type"].unique()

@@ -6,6 +6,7 @@ from src.Mutator import Mutator, TournamentMutator
 from src.Population import Population
 from src.Monitor import Monitor
 from src.Filtering import Filtering
+from src.utils import calculate_percentage_of_log
 import tqdm
 import time
 from typing import Union
@@ -26,7 +27,7 @@ class GeneticAlgorithm:
         
     def _check_stopping_criteria(self, generation: int, population: Population, stagnation_limit: int, time_limit: int, min_fitness: float) -> bool:
         # Update the best tree
-        epsilon = 0.05
+        epsilon = 0.01
         best_tree_b_update = self.best_tree.get_fitness() if self.best_tree is not None else None
         self._update_best_tree(population)
         
@@ -80,7 +81,8 @@ class GeneticAlgorithm:
         self.start_time = time.time()
         
         # Filter the log
-        filtered_eventlog = Filtering.filter_eventlog_by_top_percentage_unique(eventlog, percentage_of_log, True)
+        percentage_of_log_var = calculate_percentage_of_log(eventlog.get_num_unique_traces())
+        filtered_eventlog = Filtering.filter_eventlog_by_top_percentage_unique(eventlog, percentage_of_log_var, True)
         
         objective.set_event_log(filtered_eventlog)
         mutator.set_event_log(filtered_eventlog)

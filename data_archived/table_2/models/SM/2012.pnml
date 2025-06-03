@@ -1,0 +1,297 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<pnml>
+  <net id="" type="http://www.pnml.org/version-2009/grammar/pnmlcoremodel">
+    <name>
+      <text></text>
+    </name>
+    <page id="n0">
+      <place id="ent_node24">
+        <name>
+          <text>ent_node24</text>
+        </name>
+      </place>
+      <place id="sink">
+        <name>
+          <text>sink</text>
+        </name>
+      </place>
+      <place id="ent_node30">
+        <name>
+          <text>ent_node30</text>
+        </name>
+      </place>
+      <place id="ent_node1">
+        <name>
+          <text>ent_node1</text>
+        </name>
+      </place>
+      <place id="source">
+        <name>
+          <text>source</text>
+        </name>
+        <initialMarking>
+          <text>1</text>
+        </initialMarking>
+      </place>
+      <place id="ent_node12">
+        <name>
+          <text>ent_node12</text>
+        </name>
+      </place>
+      <place id="exi_node19">
+        <name>
+          <text>exi_node19</text>
+        </name>
+      </place>
+      <place id="exi_node0">
+        <name>
+          <text>exi_node0</text>
+        </name>
+      </place>
+      <place id="ent_node17">
+        <name>
+          <text>ent_node17</text>
+        </name>
+      </place>
+      <place id="ent_node28">
+        <name>
+          <text>ent_node28</text>
+        </name>
+      </place>
+      <place id="ent_node15">
+        <name>
+          <text>ent_node15</text>
+        </name>
+      </place>
+      <place id="exi_node22">
+        <name>
+          <text>exi_node22</text>
+        </name>
+      </place>
+      <place id="ent_node16">
+        <name>
+          <text>ent_node16</text>
+        </name>
+      </place>
+      <place id="ent_node14">
+        <name>
+          <text>ent_node14</text>
+        </name>
+      </place>
+      <place id="exi_node8">
+        <name>
+          <text>exi_node8</text>
+        </name>
+      </place>
+      <place id="exi_node7">
+        <name>
+          <text>exi_node7</text>
+        </name>
+      </place>
+      <place id="ent_node35">
+        <name>
+          <text>ent_node35</text>
+        </name>
+      </place>
+      <place id="ent_node33">
+        <name>
+          <text>ent_node33</text>
+        </name>
+      </place>
+      <place id="ent_node11">
+        <name>
+          <text>ent_node11</text>
+        </name>
+      </place>
+      <place id="exi_node27">
+        <name>
+          <text>exi_node27</text>
+        </name>
+      </place>
+      <transition id="W_Nabellen offertes">
+        <name>
+          <text>W_Nabellen offertes</text>
+        </name>
+      </transition>
+      <transition id="W_Afhandelen leads">
+        <name>
+          <text>W_Afhandelen leads</text>
+        </name>
+      </transition>
+      <transition id="O_DECLINED">
+        <name>
+          <text>O_DECLINED</text>
+        </name>
+      </transition>
+      <transition id="O_CANCELLED">
+        <name>
+          <text>O_CANCELLED</text>
+        </name>
+      </transition>
+      <transition id="A_CANCELLED">
+        <name>
+          <text>A_CANCELLED</text>
+        </name>
+      </transition>
+      <transition id="A_ACTIVATED">
+        <name>
+          <text>A_ACTIVATED</text>
+        </name>
+      </transition>
+      <transition id="O_CREATED">
+        <name>
+          <text>O_CREATED</text>
+        </name>
+      </transition>
+      <transition id="O_SENT_BACK">
+        <name>
+          <text>O_SENT_BACK</text>
+        </name>
+      </transition>
+      <transition id="W_Valideren aanvraag">
+        <name>
+          <text>W_Valideren aanvraag</text>
+        </name>
+      </transition>
+      <transition id="tau_0">
+        <name>
+          <text>tau_0</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="31a3c756-01ce-4d40-aa4c-0e0506e8a6aa"/>
+      </transition>
+      <transition id="A_PARTLYSUBMITTED">
+        <name>
+          <text>A_PARTLYSUBMITTED</text>
+        </name>
+      </transition>
+      <transition id="A_ACCEPTED">
+        <name>
+          <text>A_ACCEPTED</text>
+        </name>
+      </transition>
+      <transition id="A_FINALIZED">
+        <name>
+          <text>A_FINALIZED</text>
+        </name>
+      </transition>
+      <transition id="O_SENT">
+        <name>
+          <text>O_SENT</text>
+        </name>
+      </transition>
+      <transition id="A_APPROVED">
+        <name>
+          <text>A_APPROVED</text>
+        </name>
+      </transition>
+      <transition id="O_ACCEPTED">
+        <name>
+          <text>O_ACCEPTED</text>
+        </name>
+      </transition>
+      <transition id="A_DECLINED">
+        <name>
+          <text>A_DECLINED</text>
+        </name>
+      </transition>
+      <transition id="O_SELECTED">
+        <name>
+          <text>O_SELECTED</text>
+        </name>
+      </transition>
+      <transition id="W_Completeren aanvraag">
+        <name>
+          <text>W_Completeren aanvraag</text>
+        </name>
+      </transition>
+      <transition id="A_REGISTERED">
+        <name>
+          <text>A_REGISTERED</text>
+        </name>
+      </transition>
+      <transition id="W_Nabellen incomplete dossiers">
+        <name>
+          <text>W_Nabellen incomplete dossiers</text>
+        </name>
+      </transition>
+      <transition id="A_PREACCEPTED">
+        <name>
+          <text>A_PREACCEPTED</text>
+        </name>
+      </transition>
+      <transition id="tau_1">
+        <name>
+          <text>tau_1</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="5ae7470c-8dc9-4964-9781-91222864f334"/>
+      </transition>
+      <transition id="A_SUBMITTED">
+        <name>
+          <text>A_SUBMITTED</text>
+        </name>
+      </transition>
+      <transition id="W_Beoordelen fraude">
+        <name>
+          <text>W_Beoordelen fraude</text>
+        </name>
+      </transition>
+      <arc id="4786568704" source="ent_node14" target="tau_1"/>
+      <arc id="4786568320" source="ent_node17" target="A_FINALIZED"/>
+      <arc id="4786564480" source="exi_node22" target="tau_0"/>
+      <arc id="4786564864" source="tau_1" target="sink"/>
+      <arc id="4786563328" source="ent_node15" target="O_SELECTED"/>
+      <arc id="4786561408" source="O_SELECTED" target="ent_node17"/>
+      <arc id="4786560256" source="W_Valideren aanvraag" target="exi_node7"/>
+      <arc id="4786559872" source="A_ACTIVATED" target="ent_node14"/>
+      <arc id="4786565776" source="O_SENT" target="ent_node11"/>
+      <arc id="4786564240" source="exi_node8" target="A_CANCELLED"/>
+      <arc id="4786562704" source="A_REGISTERED" target="ent_node16"/>
+      <arc id="4786561552" source="W_Completeren aanvraag" target="exi_node8"/>
+      <arc id="4786566688" source="ent_node12" target="O_CREATED"/>
+      <arc id="4786565152" source="W_Afhandelen leads" target="ent_node1"/>
+      <arc id="4786563616" source="O_ACCEPTED" target="exi_node19"/>
+      <arc id="4786560544" source="A_CANCELLED" target="ent_node14"/>
+      <arc id="4786560160" source="ent_node28" target="W_Valideren aanvraag"/>
+      <arc id="4786557856" source="O_SENT_BACK" target="ent_node28"/>
+      <arc id="4786566064" source="A_ACCEPTED" target="ent_node15"/>
+      <arc id="4786563376" source="O_CANCELLED" target="ent_node15"/>
+      <arc id="4786562608" source="A_PARTLYSUBMITTED" target="exi_node27"/>
+      <arc id="4786561456" source="A_APPROVED" target="ent_node16"/>
+      <arc id="4786559920" source="tau_0" target="ent_node14"/>
+      <arc id="4786558384" source="exi_node8" target="A_ACCEPTED"/>
+      <arc id="4786557616" source="ent_node1" target="A_PREACCEPTED"/>
+      <arc id="4786566976" source="exi_node19" target="A_REGISTERED"/>
+      <arc id="4786563904" source="W_Nabellen offertes" target="exi_node0"/>
+      <arc id="4786562368" source="source" target="A_SUBMITTED"/>
+      <arc id="4786559296" source="exi_node19" target="A_APPROVED"/>
+      <arc id="4786558912" source="ent_node30" target="A_PARTLYSUBMITTED"/>
+      <arc id="4786558144" source="W_Nabellen incomplete dossiers" target="ent_node28"/>
+      <arc id="4786556992" source="A_PREACCEPTED" target="ent_node33"/>
+      <arc id="4786567504" source="ent_node11" target="W_Nabellen offertes"/>
+      <arc id="4786565968" source="exi_node22" target="O_DECLINED"/>
+      <arc id="4786565200" source="W_Beoordelen fraude" target="ent_node35"/>
+      <arc id="4786562512" source="exi_node0" target="O_CANCELLED"/>
+      <arc id="4786561744" source="ent_node24" target="O_SENT"/>
+      <arc id="4786568416" source="ent_node33" target="W_Completeren aanvraag"/>
+      <arc id="4786568032" source="O_CREATED" target="ent_node24"/>
+      <arc id="4786567264" source="A_FINALIZED" target="ent_node12"/>
+      <arc id="4786566880" source="A_DECLINED" target="exi_node22"/>
+      <arc id="4786564576" source="ent_node16" target="A_ACTIVATED"/>
+      <arc id="4786564192" source="exi_node27" target="W_Afhandelen leads"/>
+      <arc id="4786559584" source="exi_node0" target="O_SENT_BACK"/>
+      <arc id="4786559200" source="O_DECLINED" target="ent_node35"/>
+      <arc id="4786565872" source="exi_node7" target="W_Nabellen incomplete dossiers"/>
+      <arc id="4786562416" source="exi_node7" target="O_ACCEPTED"/>
+      <arc id="4786561648" source="exi_node27" target="W_Beoordelen fraude"/>
+      <arc id="4786560880" source="A_SUBMITTED" target="ent_node30"/>
+      <arc id="4786557040" source="ent_node35" target="A_DECLINED"/>
+    </page>
+    <finalmarkings>
+      <marking>
+        <place idref="sink">
+          <text>1</text>
+        </place>
+      </marking>
+    </finalmarkings>
+  </net>
+</pnml>
