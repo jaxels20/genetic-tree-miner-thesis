@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<pnml>
+  <net id="" type="http://www.pnml.org/version-2009/grammar/pnmlcoremodel">
+    <name>
+      <text></text>
+    </name>
+    <page id="n0">
+      <place id="p_8">
+        <name>
+          <text>p_8</text>
+        </name>
+      </place>
+      <place id="p_6">
+        <name>
+          <text>p_6</text>
+        </name>
+      </place>
+      <place id="p_9">
+        <name>
+          <text>p_9</text>
+        </name>
+      </place>
+      <place id="sink">
+        <name>
+          <text>sink</text>
+        </name>
+      </place>
+      <place id="source">
+        <name>
+          <text>source</text>
+        </name>
+        <initialMarking>
+          <text>1</text>
+        </initialMarking>
+      </place>
+      <place id="p_7">
+        <name>
+          <text>p_7</text>
+        </name>
+      </place>
+      <transition id="Unmatched">
+        <name>
+          <text>Unmatched</text>
+        </name>
+      </transition>
+      <transition id="tau_1">
+        <name>
+          <text>tau_1</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="c5bcdcca-44e2-4e12-97e5-afdcef3226f0"/>
+      </transition>
+      <transition id="Queued">
+        <name>
+          <text>Queued</text>
+        </name>
+      </transition>
+      <transition id="tau_0">
+        <name>
+          <text>tau_0</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="bf68f50b-deef-424b-99fe-6cfa7ac5f8a1"/>
+      </transition>
+      <transition id="Completed">
+        <name>
+          <text>Completed</text>
+        </name>
+      </transition>
+      <transition id="Accepted">
+        <name>
+          <text>Accepted</text>
+        </name>
+      </transition>
+      <transition id="tau_2">
+        <name>
+          <text>tau_2</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="9d3c436e-6f18-417f-bf1a-b1643e1d3313"/>
+      </transition>
+      <arc id="4789666016" source="Completed" target="sink"/>
+      <arc id="13955564128" source="tau_0" target="p_8"/>
+      <arc id="4799995520" source="Unmatched" target="p_6"/>
+      <arc id="4781912000" source="source" target="Unmatched"/>
+      <arc id="15585213568" source="p_7" target="Completed"/>
+      <arc id="15300755136" source="p_8" target="tau_1"/>
+      <arc id="4832144000" source="Queued" target="p_8"/>
+      <arc id="15237153424" source="p_9" target="tau_2"/>
+      <arc id="4777206576" source="tau_1" target="p_9"/>
+      <arc id="15585400240" source="p_6" target="tau_0"/>
+      <arc id="6296691024" source="tau_2" target="p_7"/>
+      <arc id="4304677648" source="Accepted" target="p_6"/>
+      <arc id="15300750960" source="p_7" target="Accepted"/>
+      <arc id="4769108560" source="p_9" target="Queued"/>
+    </page>
+    <finalmarkings>
+      <marking>
+        <place idref="sink">
+          <text>1</text>
+        </place>
+      </marking>
+    </finalmarkings>
+  </net>
+</pnml>
