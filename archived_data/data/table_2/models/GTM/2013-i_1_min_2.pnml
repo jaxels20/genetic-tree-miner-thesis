@@ -1,0 +1,123 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<pnml>
+  <net id="" type="http://www.pnml.org/version-2009/grammar/pnmlcoremodel">
+    <name>
+      <text></text>
+    </name>
+    <page id="n0">
+      <place id="source">
+        <name>
+          <text>source</text>
+        </name>
+        <initialMarking>
+          <text>1</text>
+        </initialMarking>
+      </place>
+      <place id="p_10">
+        <name>
+          <text>p_10</text>
+        </name>
+      </place>
+      <place id="sink">
+        <name>
+          <text>sink</text>
+        </name>
+      </place>
+      <place id="p_11">
+        <name>
+          <text>p_11</text>
+        </name>
+      </place>
+      <place id="p_6">
+        <name>
+          <text>p_6</text>
+        </name>
+      </place>
+      <place id="p_7">
+        <name>
+          <text>p_7</text>
+        </name>
+      </place>
+      <place id="p_12">
+        <name>
+          <text>p_12</text>
+        </name>
+      </place>
+      <transition id="Completed">
+        <name>
+          <text>Completed</text>
+        </name>
+      </transition>
+      <transition id="tau_1">
+        <name>
+          <text>tau_1</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="14c5c4aa-2cde-4e2b-82b4-2b30b627e8b8"/>
+      </transition>
+      <transition id="tau_3">
+        <name>
+          <text>tau_3</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="dfc5f545-3b7c-4249-b373-b781626878d9"/>
+      </transition>
+      <transition id="tau_2">
+        <name>
+          <text>tau_2</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="c58ca8de-f833-4cde-af85-20afebf958db"/>
+      </transition>
+      <transition id="Unmatched">
+        <name>
+          <text>Unmatched</text>
+        </name>
+      </transition>
+      <transition id="tau_4">
+        <name>
+          <text>tau_4</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="0f02d2f7-5e8c-4bd1-9f84-9fbf2c51e9f6"/>
+      </transition>
+      <transition id="Accepted">
+        <name>
+          <text>Accepted</text>
+        </name>
+      </transition>
+      <transition id="tau_0">
+        <name>
+          <text>tau_0</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="b6948ef8-3d8d-4f6e-8737-5eb4c75d9e4f"/>
+      </transition>
+      <transition id="Queued">
+        <name>
+          <text>Queued</text>
+        </name>
+      </transition>
+      <arc id="13758030880" source="p_11" target="Accepted"/>
+      <arc id="13758297056" source="source" target="tau_0"/>
+      <arc id="13245782240" source="Completed" target="p_7"/>
+      <arc id="13939003648" source="p_7" target="Unmatched"/>
+      <arc id="6122044736" source="p_10" target="tau_2"/>
+      <arc id="6127697696" source="Accepted" target="p_12"/>
+      <arc id="6127688960" source="p_11" target="Queued"/>
+      <arc id="6127684256" source="Queued" target="p_12"/>
+      <arc id="6127695680" source="Unmatched" target="p_10"/>
+      <arc id="6127692320" source="tau_0" target="p_6"/>
+      <arc id="19607774864" source="tau_2" target="p_11"/>
+      <arc id="6059299408" source="p_7" target="tau_1"/>
+      <arc id="6059353840" source="p_6" target="Completed"/>
+      <arc id="6127696208" source="tau_4" target="p_10"/>
+      <arc id="6127696784" source="tau_1" target="p_6"/>
+      <arc id="6127683056" source="p_11" target="tau_3"/>
+      <arc id="6127691984" source="p_12" target="tau_4"/>
+      <arc id="6127684448" source="tau_3" target="sink"/>
+    </page>
+    <finalmarkings>
+      <marking>
+        <place idref="sink">
+          <text>1</text>
+        </place>
+      </marking>
+    </finalmarkings>
+  </net>
+</pnml>

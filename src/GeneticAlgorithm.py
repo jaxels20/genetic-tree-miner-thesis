@@ -12,6 +12,7 @@ import time
 from typing import Union
 import os
 import time
+from src.utils import calculate_percentage_of_log
 class GeneticAlgorithm:
     def __init__(self, method_name):
         """

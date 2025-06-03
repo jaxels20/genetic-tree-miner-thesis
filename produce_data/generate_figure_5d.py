@@ -7,9 +7,10 @@ from src.Discovery import Discovery
 from src.FileLoader import FileLoader
 from src.utils import load_hyperparameters_from_csv
 import os
+from src.RandomTreeGenerator import BottomUpRandomBinaryGenerator
 
 DATASETS_DIR = "./logs/"
-OUTPUT_DIR = "./data/figure_5c/"
+OUTPUT_DIR = "./data/figure_5d/"
 NUM_RUNS = 1
 BEST_PARAMS = "./best_parameters.csv"
 PERCENTAGE_OF_LOG = 0.05
@@ -27,7 +28,7 @@ def generate_monitors(method: callable):
 
 if __name__ == "__main__":
     hyper_parameters = load_hyperparameters_from_csv(BEST_PARAMS)
-
+    hyper_parameters['generator'] = BottomUpRandomBinaryGenerator()
     # Define model
     genetic_miner = lambda log: Discovery.genetic_algorithm(
         log,
