@@ -15,12 +15,8 @@ if __name__ == "__main__":
     
     # rename the dataset values
     df['Dataset'] = df['Dataset'].replace({
-        '2019': '*2019',
-        '2017': '*2017',
-        '2020-id': '*2020-id',
         "2020-pl": "*2020-pl",
-        "RTF": "*RTF",
-        "2012": "*2012",
+        "2012": "*2012"
     })
     
     df.to_csv(OUTPUT_FILE, index=False)
