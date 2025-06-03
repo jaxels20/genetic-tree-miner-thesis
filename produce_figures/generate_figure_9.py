@@ -32,7 +32,7 @@ def plot_data(df):
     df['Time'] = df['Generation'] * (1 / df['Speed'])
     
     # convert Time to minutes
-    df['Time'] = df['Time'] / 60.0
+    df['Time'] = df['Time']
     
     # Plotting the data
     colorblind_colors = [
@@ -91,23 +91,18 @@ def plot_data(df):
         ),
     )
     
-    # set the x-axis to be logarithmic
-    fig.update_xaxes(
-        type="log",
-        title_text="Time (minutes)",
-        dtick=1
-    )
     # remove the minor ticks from the x-axis
     
     fig.update_yaxes(
         range=[45, 100],
     )
     
-    
-    # fig.update_xaxes(
-    #     range=[0,15]
-    # )
-    
+    # set the x-axis to be logarithmic
+    fig.update_xaxes(
+        type="log",
+        title_text="Time (seconds)",
+        dtick=1
+    )
     
     
     fig.write_image(OUTPUT_FILE, format='pdf')

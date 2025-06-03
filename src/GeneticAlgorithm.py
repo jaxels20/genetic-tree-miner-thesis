@@ -130,7 +130,7 @@ class GeneticAlgorithm:
             self.monitor.save_objective_results(export_monitor_path, filtered_eventlog.name, self.method_name)
             
         if export_decomposed_objective_function_path is not None:
-            self.monitor.save_decomposed_objective_fitness(export_decomposed_objective_function_path, eventlog)
+            self.monitor.save_decomposed_objective_fitness(export_decomposed_objective_function_path, filtered_eventlog)
         
         return self.best_tree
     
