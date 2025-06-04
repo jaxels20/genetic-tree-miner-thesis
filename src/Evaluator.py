@@ -78,7 +78,7 @@ class SingleEvaluator:
         if precision is None:
             precision = self.get_precision()
         if fitness is None:
-            fitness = self.get_replay_fitness()
+            fitness = self.get_replay_fitness()['log_fitness']
         try:
             f1_score = 2 * (precision * fitness) / (precision + fitness)
         except ZeroDivisionError:
