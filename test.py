@@ -7,25 +7,22 @@ from src.Evaluator import SingleEvaluator
 from src.Filtering import Filtering
 import json
 import os
+import pandas as pd
 
 def main():
-    # datasets = os.listdir("./logs/")
+    df = pd.read_csv("./figures/table_2.csv")
     
-    # for dataset in datasets:
-
-    #     el = EventLog.load_xes(f"./logs/{dataset}")
-    #     num_unique_traces = el.get_num_unique_traces()
-    #     print(f"Event log {dataset} has {num_unique_traces} unique traces")
-        
-    #     filtered_el = Filtering.filter_eventlog_by_top_percentage_unique(el, 0.05, include_all_activities=True)
-    #     filtered_el.get_num_unique_traces()
-    #     print(f"Filtered event log {dataset} has {filtered_el.get_num_unique_traces()} unique traces")
+    # cast time column to float
+    df['Time (s)'].replace('-', '0', inplace=True)
+    df['Time (s)'] = df['Time (s)'].astype(float)
     
-    traces = ["ABC", "ABC", "ABC", "ABC", "AB", "AB", "AB", "A", "A", "B", "B"]
-    manuel_el = EventLog.from_trace_list(traces)
-    filtered_manuel_el = Filtering.filter_eventlog_by_top_percentage_unique(manuel_el, 0.5, include_all_activities=True)
-    print(f"Manual event log has {filtered_manuel_el} unique traces")
+    df = df[df['Dataset'] != 'Aggregated']
     
+    # aggregate acroos datasets
+    df = df.groupby(['Discovery Method']).mean(numeric_only=True).reset_index()
+    df['Time (s)'].replace(0, '-', inplace=True)
+    
+    df.to_latex('./figures/table_2_aggregated.tex', index=False, float_format="%.2f")
     
 if __name__ == "__main__":
     main()
