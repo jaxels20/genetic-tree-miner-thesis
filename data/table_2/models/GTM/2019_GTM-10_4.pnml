@@ -1,0 +1,1201 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<pnml>
+  <net id="" type="http://www.pnml.org/version-2009/grammar/pnmlcoremodel">
+    <name>
+      <text></text>
+    </name>
+    <page id="n0">
+      <place id="p_10">
+        <name>
+          <text>p_10</text>
+        </name>
+      </place>
+      <place id="p_33">
+        <name>
+          <text>p_33</text>
+        </name>
+      </place>
+      <place id="p_4">
+        <name>
+          <text>p_4</text>
+        </name>
+      </place>
+      <place id="source">
+        <name>
+          <text>source</text>
+        </name>
+        <initialMarking>
+          <text>1</text>
+        </initialMarking>
+      </place>
+      <place id="p_15">
+        <name>
+          <text>p_15</text>
+        </name>
+      </place>
+      <place id="p_66">
+        <name>
+          <text>p_66</text>
+        </name>
+      </place>
+      <place id="p_29">
+        <name>
+          <text>p_29</text>
+        </name>
+      </place>
+      <place id="p_60">
+        <name>
+          <text>p_60</text>
+        </name>
+      </place>
+      <place id="p_48">
+        <name>
+          <text>p_48</text>
+        </name>
+      </place>
+      <place id="p_36">
+        <name>
+          <text>p_36</text>
+        </name>
+      </place>
+      <place id="p_35">
+        <name>
+          <text>p_35</text>
+        </name>
+      </place>
+      <place id="p_9">
+        <name>
+          <text>p_9</text>
+        </name>
+      </place>
+      <place id="p_28">
+        <name>
+          <text>p_28</text>
+        </name>
+      </place>
+      <place id="p_40">
+        <name>
+          <text>p_40</text>
+        </name>
+      </place>
+      <place id="p_8">
+        <name>
+          <text>p_8</text>
+        </name>
+      </place>
+      <place id="p_71">
+        <name>
+          <text>p_71</text>
+        </name>
+      </place>
+      <place id="p_72">
+        <name>
+          <text>p_72</text>
+        </name>
+      </place>
+      <place id="p_75">
+        <name>
+          <text>p_75</text>
+        </name>
+      </place>
+      <place id="p_30">
+        <name>
+          <text>p_30</text>
+        </name>
+      </place>
+      <place id="p_7">
+        <name>
+          <text>p_7</text>
+        </name>
+      </place>
+      <place id="p_27">
+        <name>
+          <text>p_27</text>
+        </name>
+      </place>
+      <place id="p_11">
+        <name>
+          <text>p_11</text>
+        </name>
+      </place>
+      <place id="p_16">
+        <name>
+          <text>p_16</text>
+        </name>
+      </place>
+      <place id="p_63">
+        <name>
+          <text>p_63</text>
+        </name>
+      </place>
+      <place id="p_61">
+        <name>
+          <text>p_61</text>
+        </name>
+      </place>
+      <place id="p_25">
+        <name>
+          <text>p_25</text>
+        </name>
+      </place>
+      <place id="p_44">
+        <name>
+          <text>p_44</text>
+        </name>
+      </place>
+      <place id="p_49">
+        <name>
+          <text>p_49</text>
+        </name>
+      </place>
+      <place id="p_69">
+        <name>
+          <text>p_69</text>
+        </name>
+      </place>
+      <place id="p_23">
+        <name>
+          <text>p_23</text>
+        </name>
+      </place>
+      <place id="p_57">
+        <name>
+          <text>p_57</text>
+        </name>
+      </place>
+      <place id="p_73">
+        <name>
+          <text>p_73</text>
+        </name>
+      </place>
+      <place id="p_6">
+        <name>
+          <text>p_6</text>
+        </name>
+      </place>
+      <place id="p_21">
+        <name>
+          <text>p_21</text>
+        </name>
+      </place>
+      <place id="p_5">
+        <name>
+          <text>p_5</text>
+        </name>
+      </place>
+      <place id="p_14">
+        <name>
+          <text>p_14</text>
+        </name>
+      </place>
+      <place id="p_56">
+        <name>
+          <text>p_56</text>
+        </name>
+      </place>
+      <place id="p_59">
+        <name>
+          <text>p_59</text>
+        </name>
+      </place>
+      <place id="p_39">
+        <name>
+          <text>p_39</text>
+        </name>
+      </place>
+      <place id="p_47">
+        <name>
+          <text>p_47</text>
+        </name>
+      </place>
+      <place id="p_68">
+        <name>
+          <text>p_68</text>
+        </name>
+      </place>
+      <place id="p_12">
+        <name>
+          <text>p_12</text>
+        </name>
+      </place>
+      <place id="p_55">
+        <name>
+          <text>p_55</text>
+        </name>
+      </place>
+      <place id="p_37">
+        <name>
+          <text>p_37</text>
+        </name>
+      </place>
+      <place id="p_65">
+        <name>
+          <text>p_65</text>
+        </name>
+      </place>
+      <place id="p_20">
+        <name>
+          <text>p_20</text>
+        </name>
+      </place>
+      <place id="p_3">
+        <name>
+          <text>p_3</text>
+        </name>
+      </place>
+      <place id="p_62">
+        <name>
+          <text>p_62</text>
+        </name>
+      </place>
+      <place id="sink">
+        <name>
+          <text>sink</text>
+        </name>
+      </place>
+      <place id="p_13">
+        <name>
+          <text>p_13</text>
+        </name>
+      </place>
+      <place id="p_50">
+        <name>
+          <text>p_50</text>
+        </name>
+      </place>
+      <place id="p_53">
+        <name>
+          <text>p_53</text>
+        </name>
+      </place>
+      <place id="p_67">
+        <name>
+          <text>p_67</text>
+        </name>
+      </place>
+      <place id="p_34">
+        <name>
+          <text>p_34</text>
+        </name>
+      </place>
+      <place id="p_41">
+        <name>
+          <text>p_41</text>
+        </name>
+      </place>
+      <place id="p_58">
+        <name>
+          <text>p_58</text>
+        </name>
+      </place>
+      <place id="p_19">
+        <name>
+          <text>p_19</text>
+        </name>
+      </place>
+      <place id="p_38">
+        <name>
+          <text>p_38</text>
+        </name>
+      </place>
+      <place id="p_17">
+        <name>
+          <text>p_17</text>
+        </name>
+      </place>
+      <place id="p_26">
+        <name>
+          <text>p_26</text>
+        </name>
+      </place>
+      <place id="p_46">
+        <name>
+          <text>p_46</text>
+        </name>
+      </place>
+      <place id="p_51">
+        <name>
+          <text>p_51</text>
+        </name>
+      </place>
+      <place id="p_42">
+        <name>
+          <text>p_42</text>
+        </name>
+      </place>
+      <place id="p_52">
+        <name>
+          <text>p_52</text>
+        </name>
+      </place>
+      <place id="p_70">
+        <name>
+          <text>p_70</text>
+        </name>
+      </place>
+      <place id="p_22">
+        <name>
+          <text>p_22</text>
+        </name>
+      </place>
+      <place id="p_31">
+        <name>
+          <text>p_31</text>
+        </name>
+      </place>
+      <transition id="tau_44">
+        <name>
+          <text>tau_44</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="e1da6800-da8f-4dca-991e-2fa37f7f0009"/>
+      </transition>
+      <transition id="tau_52">
+        <name>
+          <text>tau_52</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="686081ca-9c1f-49a7-99aa-5c0ae7eb785b"/>
+      </transition>
+      <transition id="tau_64">
+        <name>
+          <text>tau_64</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="a58fbf4e-b5ea-48a6-8a6a-04e33af41a6e"/>
+      </transition>
+      <transition id="SRM_ In Transfer to Execution Syst.">
+        <name>
+          <text>SRM_ In Transfer to Execution Syst.</text>
+        </name>
+      </transition>
+      <transition id="tau_56">
+        <name>
+          <text>tau_56</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="1ee2dedd-e96d-46d2-9d91-ba7a5e622844"/>
+      </transition>
+      <transition id="tau_11">
+        <name>
+          <text>tau_11</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="a1a5ab59-b382-418a-b8c2-7142ff0c98ce"/>
+      </transition>
+      <transition id="tau_36">
+        <name>
+          <text>tau_36</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="42c30aeb-6698-4420-b8b9-5b55480354e9"/>
+      </transition>
+      <transition id="tau_51">
+        <name>
+          <text>tau_51</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="892ce6f5-d3b6-4c62-83d9-a58287222bff"/>
+      </transition>
+      <transition id="tau_66">
+        <name>
+          <text>tau_66</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="61f833d3-4856-4947-a87b-7864c7398b51"/>
+      </transition>
+      <transition id="tau_17">
+        <name>
+          <text>tau_17</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="54256764-a844-4e0b-bef6-6db1e8c98b47"/>
+      </transition>
+      <transition id="tau_28">
+        <name>
+          <text>tau_28</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="7c7ca77b-e56a-4273-bb77-d46a5190ad81"/>
+      </transition>
+      <transition id="tau_29">
+        <name>
+          <text>tau_29</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="7ad1dcd2-5f1e-4715-9376-f7e7ba52d357"/>
+      </transition>
+      <transition id="tau_39">
+        <name>
+          <text>tau_39</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="ec874b47-98f4-4b60-b212-c2dbec0bb14a"/>
+      </transition>
+      <transition id="tau_34">
+        <name>
+          <text>tau_34</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="fa243f40-673e-4b11-8299-43d66b2797b5"/>
+      </transition>
+      <transition id="SRM_ Created">
+        <name>
+          <text>SRM_ Created</text>
+        </name>
+      </transition>
+      <transition id="tau_35">
+        <name>
+          <text>tau_35</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="cad069d2-5543-48d5-a6ab-6f5d71787a58"/>
+      </transition>
+      <transition id="Record Goods Receipt">
+        <name>
+          <text>Record Goods Receipt</text>
+        </name>
+      </transition>
+      <transition id="Block Purchase Order Item">
+        <name>
+          <text>Block Purchase Order Item</text>
+        </name>
+      </transition>
+      <transition id="SRM_ Held">
+        <name>
+          <text>SRM_ Held</text>
+        </name>
+      </transition>
+      <transition id="Change Final Invoice Indicator">
+        <name>
+          <text>Change Final Invoice Indicator</text>
+        </name>
+      </transition>
+      <transition id="tau_33">
+        <name>
+          <text>tau_33</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="dac7082d-18a3-47b8-b485-221254b7d19a"/>
+      </transition>
+      <transition id="Create Purchase Order Item">
+        <name>
+          <text>Create Purchase Order Item</text>
+        </name>
+      </transition>
+      <transition id="Change Price">
+        <name>
+          <text>Change Price</text>
+        </name>
+      </transition>
+      <transition id="Delete Purchase Order Item">
+        <name>
+          <text>Delete Purchase Order Item</text>
+        </name>
+      </transition>
+      <transition id="tau_16">
+        <name>
+          <text>tau_16</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="d99a67c3-3163-4008-a119-c68493480d7d"/>
+      </transition>
+      <transition id="SRM_ Transfer Failed (E.Sys.)">
+        <name>
+          <text>SRM_ Transfer Failed (E.Sys.)</text>
+        </name>
+      </transition>
+      <transition id="tau_19">
+        <name>
+          <text>tau_19</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="e05ead91-ef26-46e9-9d15-a0119590ad6b"/>
+      </transition>
+      <transition id="Receive Order Confirmation">
+        <name>
+          <text>Receive Order Confirmation</text>
+        </name>
+      </transition>
+      <transition id="Cancel Invoice Receipt">
+        <name>
+          <text>Cancel Invoice Receipt</text>
+        </name>
+      </transition>
+      <transition id="tau_49">
+        <name>
+          <text>tau_49</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="34b8804e-5d1f-4782-a1b1-1004b395fd04"/>
+      </transition>
+      <transition id="tau_63">
+        <name>
+          <text>tau_63</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="3c823b56-658b-40d8-87cc-c74fd3b19631"/>
+      </transition>
+      <transition id="Record Service Entry Sheet">
+        <name>
+          <text>Record Service Entry Sheet</text>
+        </name>
+      </transition>
+      <transition id="tau_27">
+        <name>
+          <text>tau_27</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="9d5b5394-e85a-4184-a86f-bcf93f7add95"/>
+      </transition>
+      <transition id="tau_30">
+        <name>
+          <text>tau_30</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="e6181104-e0d2-4464-aa18-685531fb7046"/>
+      </transition>
+      <transition id="Change Approval for Purchase Order">
+        <name>
+          <text>Change Approval for Purchase Order</text>
+        </name>
+      </transition>
+      <transition id="tau_40">
+        <name>
+          <text>tau_40</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="c0871c22-d6a7-4db5-ae3a-cf170a5b903c"/>
+      </transition>
+      <transition id="Change Quantity">
+        <name>
+          <text>Change Quantity</text>
+        </name>
+      </transition>
+      <transition id="tau_50">
+        <name>
+          <text>tau_50</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="1c7ceed7-05e3-4f79-bf6c-9a6893b1c23b"/>
+      </transition>
+      <transition id="tau_60">
+        <name>
+          <text>tau_60</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="51343a10-07c8-4d70-808c-f99f55f30974"/>
+      </transition>
+      <transition id="tau_3">
+        <name>
+          <text>tau_3</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="e0bb6a2e-959a-49f9-b567-ccc4574d5ac2"/>
+      </transition>
+      <transition id="tau_12">
+        <name>
+          <text>tau_12</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="90f82a78-d4cd-49b0-a58f-4fcc087695b1"/>
+      </transition>
+      <transition id="Reactivate Purchase Order Item">
+        <name>
+          <text>Reactivate Purchase Order Item</text>
+        </name>
+      </transition>
+      <transition id="tau_8">
+        <name>
+          <text>tau_8</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="05ee7620-acaa-40a1-acd7-b33e37dfdba5"/>
+      </transition>
+      <transition id="Cancel Goods Receipt">
+        <name>
+          <text>Cancel Goods Receipt</text>
+        </name>
+      </transition>
+      <transition id="tau_32">
+        <name>
+          <text>tau_32</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="e81166f5-4fc8-49d1-8383-2eee5a2e1b9a"/>
+      </transition>
+      <transition id="Release Purchase Order">
+        <name>
+          <text>Release Purchase Order</text>
+        </name>
+      </transition>
+      <transition id="tau_42">
+        <name>
+          <text>tau_42</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="912b3de8-84df-4161-abb2-e06eeee358a0"/>
+      </transition>
+      <transition id="tau_7">
+        <name>
+          <text>tau_7</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="c8c67be1-ec54-4cf1-a9f6-bf91a37f3844"/>
+      </transition>
+      <transition id="tau_10">
+        <name>
+          <text>tau_10</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="c7db229e-6688-42f8-92be-1f6f9ab731b8"/>
+      </transition>
+      <transition id="Record Invoice Receipt">
+        <name>
+          <text>Record Invoice Receipt</text>
+        </name>
+      </transition>
+      <transition id="SRM_ Change was Transmitted">
+        <name>
+          <text>SRM_ Change was Transmitted</text>
+        </name>
+      </transition>
+      <transition id="tau_57">
+        <name>
+          <text>tau_57</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="3a3baee0-fb7d-432e-9ca6-47ad17b60e4a"/>
+      </transition>
+      <transition id="tau_58">
+        <name>
+          <text>tau_58</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="0e83cf9f-1557-4c40-9e09-2837676dc985"/>
+      </transition>
+      <transition id="tau_45">
+        <name>
+          <text>tau_45</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="b3cdcb49-74d3-4433-9c85-4ca03bc80e2f"/>
+      </transition>
+      <transition id="tau_20">
+        <name>
+          <text>tau_20</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="67088754-3b90-49e8-b582-8656235d8d93"/>
+      </transition>
+      <transition id="tau_37">
+        <name>
+          <text>tau_37</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="61858267-27a3-4245-9c58-0d0d94cc2428"/>
+      </transition>
+      <transition id="tau_38">
+        <name>
+          <text>tau_38</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="964d9566-1503-4469-949f-1d6814e50e68"/>
+      </transition>
+      <transition id="tau_48">
+        <name>
+          <text>tau_48</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="c9a7dea1-c8be-4951-915f-13195ff57fbe"/>
+      </transition>
+      <transition id="SRM_ Transaction Completed">
+        <name>
+          <text>SRM_ Transaction Completed</text>
+        </name>
+      </transition>
+      <transition id="SRM_ Deleted">
+        <name>
+          <text>SRM_ Deleted</text>
+        </name>
+      </transition>
+      <transition id="tau_43">
+        <name>
+          <text>tau_43</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="4bbfa75c-b96f-429f-8bf2-2d16d010d9f9"/>
+      </transition>
+      <transition id="tau_55">
+        <name>
+          <text>tau_55</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="33923d05-3788-4647-90c2-94f8939f495a"/>
+      </transition>
+      <transition id="tau_62">
+        <name>
+          <text>tau_62</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="4347915c-7814-4cf7-a21c-ba4fca1f57e7"/>
+      </transition>
+      <transition id="tau_5">
+        <name>
+          <text>tau_5</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="7bdeab97-1649-431f-9116-c415752296a7"/>
+      </transition>
+      <transition id="tau_22">
+        <name>
+          <text>tau_22</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="d5af7ffb-ea84-4030-a7d5-114edf4633a5"/>
+      </transition>
+      <transition id="tau_46">
+        <name>
+          <text>tau_46</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="1aa2f228-b962-4835-915d-d303ab85ce93"/>
+      </transition>
+      <transition id="tau_59">
+        <name>
+          <text>tau_59</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="8df62076-2079-4c62-9286-9a5b91d34a70"/>
+      </transition>
+      <transition id="Remove Payment Block">
+        <name>
+          <text>Remove Payment Block</text>
+        </name>
+      </transition>
+      <transition id="Change Rejection Indicator">
+        <name>
+          <text>Change Rejection Indicator</text>
+        </name>
+      </transition>
+      <transition id="Cancel Subsequent Invoice">
+        <name>
+          <text>Cancel Subsequent Invoice</text>
+        </name>
+      </transition>
+      <transition id="SRM_ Complete">
+        <name>
+          <text>SRM_ Complete</text>
+        </name>
+      </transition>
+      <transition id="tau_61">
+        <name>
+          <text>tau_61</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="861a13f7-9c3d-4ca5-9757-243d4a021434"/>
+      </transition>
+      <transition id="tau_65">
+        <name>
+          <text>tau_65</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="6598f15c-862b-4096-8395-f07e7a77942a"/>
+      </transition>
+      <transition id="tau_47">
+        <name>
+          <text>tau_47</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="fe2966da-2fc5-4fed-bb6c-42908a7d3c49"/>
+      </transition>
+      <transition id="tau_6">
+        <name>
+          <text>tau_6</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="6baf5dac-162b-4894-9eee-7f97afdae32f"/>
+      </transition>
+      <transition id="tau_54">
+        <name>
+          <text>tau_54</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="884d81c7-3f51-4635-85ee-92b23f2ae6ef"/>
+      </transition>
+      <transition id="Set Payment Block">
+        <name>
+          <text>Set Payment Block</text>
+        </name>
+      </transition>
+      <transition id="Update Order Confirmation">
+        <name>
+          <text>Update Order Confirmation</text>
+        </name>
+      </transition>
+      <transition id="Record Subsequent Invoice">
+        <name>
+          <text>Record Subsequent Invoice</text>
+        </name>
+      </transition>
+      <transition id="tau_24">
+        <name>
+          <text>tau_24</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="dd87617a-e96b-408f-9ff9-8dfb5cf9d139"/>
+      </transition>
+      <transition id="tau_14">
+        <name>
+          <text>tau_14</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="bfd8e8f7-1b79-4272-a6d4-74ccfc791a27"/>
+      </transition>
+      <transition id="SRM_ Ordered">
+        <name>
+          <text>SRM_ Ordered</text>
+        </name>
+      </transition>
+      <transition id="SRM_ Awaiting Approval">
+        <name>
+          <text>SRM_ Awaiting Approval</text>
+        </name>
+      </transition>
+      <transition id="tau_9">
+        <name>
+          <text>tau_9</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="6935fb96-41ac-449f-9120-74c0e70560d4"/>
+      </transition>
+      <transition id="SRM_ Incomplete">
+        <name>
+          <text>SRM_ Incomplete</text>
+        </name>
+      </transition>
+      <transition id="tau_1">
+        <name>
+          <text>tau_1</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="f3aed626-ef8b-45c2-b6a8-61ef569549b1"/>
+      </transition>
+      <transition id="tau_2">
+        <name>
+          <text>tau_2</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="adcc0a15-c509-4a76-aef9-603546dafc42"/>
+      </transition>
+      <transition id="tau_23">
+        <name>
+          <text>tau_23</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="f57653e4-9d01-4bbb-b935-663fe7321bc2"/>
+      </transition>
+      <transition id="tau_25">
+        <name>
+          <text>tau_25</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="db8f4a6b-51c8-458a-ab76-9e818850e1f4"/>
+      </transition>
+      <transition id="Release Purchase Requisition">
+        <name>
+          <text>Release Purchase Requisition</text>
+        </name>
+      </transition>
+      <transition id="tau_53">
+        <name>
+          <text>tau_53</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="532b1dfb-fc40-41d3-b2e5-e8893130e4e2"/>
+      </transition>
+      <transition id="tau_26">
+        <name>
+          <text>tau_26</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="abfcdad5-22ce-421c-8f6b-7d8e24868bf7"/>
+      </transition>
+      <transition id="tau_0">
+        <name>
+          <text>tau_0</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="29c320ba-1ab9-42c5-98cc-51b5cf210cec"/>
+      </transition>
+      <transition id="SRM_ Document Completed">
+        <name>
+          <text>SRM_ Document Completed</text>
+        </name>
+      </transition>
+      <transition id="tau_15">
+        <name>
+          <text>tau_15</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="151435b4-4a7b-437d-bc11-d66160e91dbf"/>
+      </transition>
+      <transition id="Change payment term">
+        <name>
+          <text>Change payment term</text>
+        </name>
+      </transition>
+      <transition id="Create Purchase Requisition Item">
+        <name>
+          <text>Create Purchase Requisition Item</text>
+        </name>
+      </transition>
+      <transition id="Change Currency">
+        <name>
+          <text>Change Currency</text>
+        </name>
+      </transition>
+      <transition id="tau_4">
+        <name>
+          <text>tau_4</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="77aec815-2e31-452f-bdb4-b65cd6008b74"/>
+      </transition>
+      <transition id="tau_18">
+        <name>
+          <text>tau_18</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="a07e91c9-369b-4786-b965-c1018717290d"/>
+      </transition>
+      <transition id="tau_31">
+        <name>
+          <text>tau_31</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="2426d81f-836c-4e9d-8bfc-f74ef6dc84e0"/>
+      </transition>
+      <transition id="Clear Invoice">
+        <name>
+          <text>Clear Invoice</text>
+        </name>
+      </transition>
+      <transition id="tau_13">
+        <name>
+          <text>tau_13</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="2f9d46ea-9fea-4bc7-8ab6-38edb595dea4"/>
+      </transition>
+      <transition id="tau_41">
+        <name>
+          <text>tau_41</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="90424100-9295-41c2-900a-ed4722b2b261"/>
+      </transition>
+      <transition id="Change Delivery Indicator">
+        <name>
+          <text>Change Delivery Indicator</text>
+        </name>
+      </transition>
+      <transition id="Vendor creates invoice">
+        <name>
+          <text>Vendor creates invoice</text>
+        </name>
+      </transition>
+      <transition id="tau_21">
+        <name>
+          <text>tau_21</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="6ec27b46-fb09-454f-82d3-6afbb4d1c1ba"/>
+      </transition>
+      <transition id="Vendor creates debit memo">
+        <name>
+          <text>Vendor creates debit memo</text>
+        </name>
+      </transition>
+      <transition id="Change Storage Location">
+        <name>
+          <text>Change Storage Location</text>
+        </name>
+      </transition>
+      <arc id="14742349312" source="p_8" target="tau_5"/>
+      <arc id="14741461504" source="tau_0" target="p_26"/>
+      <arc id="14741470720" source="p_69" target="tau_60"/>
+      <arc id="14741232128" source="Update Order Confirmation" target="p_10"/>
+      <arc id="14741227520" source="SRM_ Held" target="p_46"/>
+      <arc id="14740110848" source="p_14" target="tau_58"/>
+      <arc id="14742351376" source="p_39" target="tau_55"/>
+      <arc id="14742340624" source="Block Purchase Order Item" target="p_10"/>
+      <arc id="14741455888" source="p_40" target="tau_37"/>
+      <arc id="14741468176" source="tau_47" target="p_59"/>
+      <arc id="14741465104" source="tau_7" target="p_21"/>
+      <arc id="14741228048" source="tau_23" target="p_3"/>
+      <arc id="14740106768" source="p_31" target="tau_59"/>
+      <arc id="14742590992" source="p_53" target="tau_56"/>
+      <arc id="14742597136" source="p_67" target="tau_60"/>
+      <arc id="14740288528" source="tau_25" target="p_48"/>
+      <arc id="14742345760" source="Record Subsequent Invoice" target="p_26"/>
+      <arc id="14741470240" source="tau_15" target="p_30"/>
+      <arc id="14741240864" source="p_26" target="tau_29"/>
+      <arc id="14741236256" source="p_57" target="tau_14"/>
+      <arc id="14741239328" source="tau_30" target="p_28"/>
+      <arc id="14741991984" source="tau_11" target="p_15"/>
+      <arc id="14741466160" source="tau_18" target="p_52"/>
+      <arc id="14741463088" source="Vendor creates invoice" target="p_73"/>
+      <arc id="14741469232" source="SRM_ Change was Transmitted" target="p_59"/>
+      <arc id="14741460016" source="Change payment term" target="p_11"/>
+      <arc id="14741233712" source="tau_24" target="p_10"/>
+      <arc id="14741241392" source="p_22" target="Clear Invoice"/>
+      <arc id="14742596656" source="tau_54" target="p_9"/>
+      <arc id="14740288048" source="tau_40" target="p_57"/>
+      <arc id="14740289584" source="p_52" target="SRM_ In Transfer to Execution Syst."/>
+      <arc id="14741469760" source="Set Payment Block" target="p_26"/>
+      <arc id="14742348352" source="p_4" target="Release Purchase Requisition"/>
+      <arc id="14742346816" source="p_37" target="tau_63"/>
+      <arc id="14741466688" source="p_31" target="tau_31"/>
+      <arc id="14740662336" source="tau_36" target="p_55"/>
+      <arc id="14741232704" source="Vendor creates debit memo" target="p_75"/>
+      <arc id="14741462608" source="p_29" target="Reactivate Purchase Order Item"/>
+      <arc id="14741333072" source="p_35" target="tau_63"/>
+      <arc id="14741994576" source="SRM_ Deleted" target="p_27"/>
+      <arc id="14741454928" source="Change Approval for Purchase Order" target="p_12"/>
+      <arc id="14741464144" source="p_38" target="Vendor creates debit memo"/>
+      <arc id="14741237840" source="source" target="Create Purchase Requisition Item"/>
+      <arc id="14741240912" source="p_68" target="tau_52"/>
+      <arc id="14740108880" source="tau_34" target="p_29"/>
+      <arc id="14740099664" source="tau_46" target="p_46"/>
+      <arc id="14740287568" source="p_5" target="Change Delivery Indicator"/>
+      <arc id="14742350944" source="tau_8" target="p_41"/>
+      <arc id="14742341728" source="tau_42" target="p_37"/>
+      <arc id="13703633504" source="tau_6" target="p_25"/>
+      <arc id="14741461600" source="tau_62" target="p_16"/>
+      <arc id="14741470816" source="p_49" target="tau_65"/>
+      <arc id="14740288144" source="tau_38" target="p_22"/>
+      <arc id="14742342256" source="Create Purchase Order Item" target="p_7"/>
+      <arc id="14742351472" source="tau_50" target="p_6"/>
+      <arc id="14741981808" source="tau_56" target="p_52"/>
+      <arc id="14845841520" source="tau_14" target="p_66"/>
+      <arc id="14741460592" source="p_33" target="tau_41"/>
+      <arc id="14741232752" source="source" target="tau_2"/>
+      <arc id="14740108400" source="p_28" target="tau_45"/>
+      <arc id="14740288624" source="p_9" target="tau_43"/>
+      <arc id="14742347392" source="p_44" target="SRM_ Incomplete"/>
+      <arc id="14741461120" source="Change Rejection Indicator" target="p_31"/>
+      <arc id="14741465728" source="p_25" target="tau_34"/>
+      <arc id="14741464192" source="p_60" target="SRM_ Awaiting Approval"/>
+      <arc id="14741470336" source="Receive Order Confirmation" target="p_14"/>
+      <arc id="14741233280" source="p_8" target="Release Purchase Order"/>
+      <arc id="14742354064" source="p_59" target="tau_49"/>
+      <arc id="5335087248" source="tau_6" target="p_20"/>
+      <arc id="14741338256" source="SRM_ Incomplete" target="p_47"/>
+      <arc id="14741984400" source="tau_55" target="p_40"/>
+      <arc id="14741460112" source="tau_3" target="p_12"/>
+      <arc id="14741464720" source="p_46" target="tau_25"/>
+      <arc id="14741463184" source="tau_50" target="p_8"/>
+      <arc id="14741233808" source="p_65" target="tau_53"/>
+      <arc id="14741232272" source="tau_59" target="p_30"/>
+      <arc id="14741239952" source="tau_32" target="p_35"/>
+      <arc id="14740289680" source="p_59" target="tau_40"/>
+      <arc id="14742349984" source="p_23" target="tau_7"/>
+      <arc id="14741992608" source="p_8" target="Change Quantity"/>
+      <arc id="14741462176" source="p_39" target="tau_8"/>
+      <arc id="14741469856" source="tau_17" target="p_44"/>
+      <arc id="14741232800" source="p_20" target="tau_44"/>
+      <arc id="14742355120" source="Cancel Goods Receipt" target="p_10"/>
+      <arc id="14741462704" source="p_17" target="tau_21"/>
+      <arc id="14741468848" source="tau_41" target="p_27"/>
+      <arc id="14741465776" source="p_56" target="tau_4"/>
+      <arc id="14741467312" source="p_75" target="tau_42"/>
+      <arc id="14740662960" source="p_30" target="Change Rejection Indicator"/>
+      <arc id="14741231792" source="p_70" target="Record Service Entry Sheet"/>
+      <arc id="14740287664" source="p_15" target="tau_62"/>
+      <arc id="14740289200" source="p_8" target="tau_3"/>
+      <arc id="14742355648" source="p_34" target="Remove Payment Block"/>
+      <arc id="14741981376" source="p_62" target="SRM_ Ordered"/>
+      <arc id="14741461696" source="p_8" target="tau_24"/>
+      <arc id="14741469376" source="p_58" target="SRM_ Complete"/>
+      <arc id="14741460688" source="tau_22" target="p_67"/>
+      <arc id="14742353104" source="Cancel Invoice Receipt" target="sink"/>
+      <arc id="14742350032" source="p_4" target="tau_23"/>
+      <arc id="14741334224" source="tau_12" target="p_40"/>
+      <arc id="14741980368" source="tau_33" target="p_41"/>
+      <arc id="14741466832" source="p_34" target="tau_32"/>
+      <arc id="14741463760" source="tau_14" target="p_68"/>
+      <arc id="14741232848" source="p_33" target="SRM_ Deleted"/>
+      <arc id="14740288720" source="p_44" target="tau_46"/>
+      <arc id="14742345952" source="tau_10" target="p_69"/>
+      <arc id="14741470432" source="SRM_ Transaction Completed" target="sink"/>
+      <arc id="14741461216" source="tau_21" target="p_19"/>
+      <arc id="14740664544" source="tau_45" target="p_36"/>
+      <arc id="14741236448" source="p_21" target="tau_29"/>
+      <arc id="14742585568" source="Release Purchase Order" target="p_13"/>
+      <arc id="4989288672" source="p_66" target="tau_22"/>
+      <arc id="14742344944" source="Release Purchase Requisition" target="p_3"/>
+      <arc id="14741467888" source="tau_5" target="p_13"/>
+      <arc id="14741470960" source="SRM_ Ordered" target="p_63"/>
+      <arc id="14741241584" source="tau_66" target="p_37"/>
+      <arc id="14741236976" source="Change Price" target="p_16"/>
+      <arc id="14741238512" source="tau_64" target="p_56"/>
+      <arc id="14742593776" source="p_49" target="tau_37"/>
+      <arc id="14740288240" source="p_72" target="Vendor creates invoice"/>
+      <arc id="14740289776" source="Record Service Entry Sheet" target="p_71"/>
+      <arc id="14741985024" source="tau_52" target="p_70"/>
+      <arc id="14741980416" source="p_5" target="tau_57"/>
+      <arc id="14741462272" source="p_8" target="tau_20"/>
+      <arc id="14741460736" source="p_5" target="Cancel Invoice Receipt"/>
+      <arc id="14741469952" source="p_55" target="tau_39"/>
+      <arc id="14741232896" source="tau_37" target="p_38"/>
+      <arc id="14741239040" source="SRM_ Complete" target="p_60"/>
+      <arc id="14741240576" source="tau_43" target="p_5"/>
+      <arc id="14740110080" source="p_68" target="tau_9"/>
+      <arc id="14741459728" source="p_25" target="tau_28"/>
+      <arc id="14741465872" source="p_36" target="tau_17"/>
+      <arc id="14741455120" source="tau_1" target="p_51"/>
+      <arc id="14741468944" source="tau_20" target="p_9"/>
+      <arc id="14741231888" source="tau_60" target="p_65"/>
+      <arc id="14741238032" source="tau_49" target="p_58"/>
+      <arc id="14740101392" source="Cancel Subsequent Invoice" target="p_37"/>
+      <arc id="14740287760" source="p_17" target="Change Currency"/>
+      <arc id="14740289296" source="tau_44" target="p_22"/>
+      <arc id="14741984544" source="p_8" target="Cancel Goods Receipt"/>
+      <arc id="14741460256" source="p_25" target="tau_27"/>
+      <arc id="14741466400" source="SRM_ Document Completed" target="p_62"/>
+      <arc id="14741471008" source="p_7" target="tau_43"/>
+      <arc id="14741469472" source="tau_29" target="p_9"/>
+      <arc id="14741235488" source="tau_45" target="p_34"/>
+      <arc id="14741241632" source="p_47" target="SRM_ Held"/>
+      <arc id="14740095776" source="p_5" target="SRM_ Transfer Failed (E.Sys.)"/>
+      <arc id="14742595360" source="tau_4" target="p_49"/>
+      <arc id="14741983536" source="SRM_ Created" target="p_42"/>
+      <arc id="14741462320" source="tau_17" target="p_39"/>
+      <arc id="14741226800" source="p_11" target="Change Storage Location"/>
+      <arc id="14740102448" source="p_73" target="tau_10"/>
+      <arc id="14740288816" source="p_48" target="tau_36"/>
+      <arc id="14742341440" source="tau_65" target="p_48"/>
+      <arc id="14742350656" source="Change Quantity" target="p_10"/>
+      <arc id="14741982528" source="tau_51" target="p_11"/>
+      <arc id="14741461312" source="p_19" target="tau_6"/>
+      <arc id="14741470528" source="p_50" target="tau_18"/>
+      <arc id="14741467456" source="p_10" target="tau_54"/>
+      <arc id="14741233472" source="Change Delivery Indicator" target="sink"/>
+      <arc id="14741231936" source="tau_39" target="p_58"/>
+      <arc id="14741239616" source="p_50" target="tau_16"/>
+      <arc id="14740289104" source="Change Storage Location" target="p_10"/>
+      <arc id="14741460304" source="Create Purchase Requisition Item" target="p_4"/>
+      <arc id="14742345040" source="p_72" target="tau_35"/>
+      <arc id="14741339984" source="tau_48" target="p_38"/>
+      <arc id="14741464912" source="p_65" target="Record Invoice Receipt"/>
+      <arc id="14741240144" source="tau_31" target="p_29"/>
+      <arc id="14742593872" source="p_63" target="tau_47"/>
+      <arc id="14740288336" source="p_8" target="Block Purchase Order Item"/>
+      <arc id="14740289872" source="tau_52" target="p_72"/>
+      <arc id="14741460832" source="p_10" target="tau_11"/>
+      <arc id="14742340960" source="Change Currency" target="p_19"/>
+      <arc id="14742342496" source="tau_13" target="p_57"/>
+      <arc id="14741989728" source="tau_58" target="p_10"/>
+      <arc id="14845840224" source="p_70" target="tau_19"/>
+      <arc id="14741463904" source="SRM_ Awaiting Approval" target="p_61"/>
+      <arc id="14741470048" source="SRM_ In Transfer to Execution Syst." target="p_53"/>
+      <arc id="14741240672" source="tau_36" target="p_50"/>
+      <arc id="14741237600" source="tau_9" target="p_69"/>
+      <arc id="4989292896" source="tau_57" target="sink"/>
+      <arc id="14742344560" source="p_13" target="Change Approval for Purchase Order"/>
+      <arc id="14742339952" source="tau_11" target="p_17"/>
+      <arc id="14741459824" source="p_25" target="tau_15"/>
+      <arc id="14741469040" source="p_16" target="tau_29"/>
+      <arc id="4989296496" source="p_57" target="tau_64"/>
+      <arc id="14740287856" source="p_55" target="tau_13"/>
+      <arc id="14740289392" source="p_25" target="Delete Purchase Order Item"/>
+      <arc id="14741981568" source="p_63" target="SRM_ Change was Transmitted"/>
+      <arc id="14741461888" source="p_66" target="Record Goods Receipt"/>
+      <arc id="14741468032" source="p_71" target="tau_10"/>
+      <arc id="14741469568" source="p_15" target="Change Price"/>
+      <arc id="14741462416" source="tau_61" target="p_21"/>
+      <arc id="14741468560" source="tau_53" target="p_56"/>
+      <arc id="14741236112" source="tau_2" target="p_3"/>
+      <arc id="14740288912" source="p_51" target="tau_4"/>
+      <arc id="14741984160" source="Delete Purchase Order Item" target="p_27"/>
+      <arc id="14741459872" source="tau_35" target="p_73"/>
+      <arc id="14741464480" source="Reactivate Purchase Order Item" target="p_28"/>
+      <arc id="14741470624" source="p_23" target="tau_38"/>
+      <arc id="14741462944" source="p_14" target="Update Order Confirmation"/>
+      <arc id="14741232032" source="tau_27" target="p_27"/>
+      <arc id="14741239712" source="p_8" target="tau_51"/>
+      <arc id="4989293472" source="p_38" target="tau_66"/>
+      <arc id="14741980080" source="Record Goods Receipt" target="p_67"/>
+      <arc id="14741460400" source="p_3" target="tau_50"/>
+      <arc id="14741471152" source="tau_16" target="p_51"/>
+      <arc id="14741241776" source="p_12" target="tau_26"/>
+      <arc id="14740288432" source="Clear Invoice" target="p_23"/>
+      <arc id="14740289968" source="SRM_ Transfer Failed (E.Sys.)" target="sink"/>
+      <arc id="14741460928" source="p_75" target="Cancel Subsequent Invoice"/>
+      <arc id="14741470144" source="p_42" target="tau_12"/>
+      <arc id="14741226944" source="p_27" target="Change Final Invoice Indicator"/>
+      <arc id="14741239232" source="p_36" target="tau_48"/>
+      <arc id="14742347728" source="Record Invoice Receipt" target="p_56"/>
+      <arc id="14741459920" source="p_12" target="Receive Order Confirmation"/>
+      <arc id="14741469136" source="tau_19" target="p_71"/>
+      <arc id="14741236688" source="tau_28" target="p_27"/>
+      <arc id="14740098512" source="p_6" target="Create Purchase Order Item"/>
+      <arc id="14740287952" source="p_61" target="SRM_ Document Completed"/>
+      <arc id="14740289488" source="p_42" target="tau_33"/>
+      <arc id="14741461984" source="p_41" target="SRM_ Created"/>
+      <arc id="14741468128" source="Change Final Invoice Indicator" target="p_26"/>
+      <arc id="14741463520" source="p_27" target="tau_0"/>
+      <arc id="14741469664" source="p_5" target="SRM_ Transaction Completed"/>
+      <arc id="14740659168" source="p_53" target="tau_1"/>
+      <arc id="4989297120" source="p_27" target="Set Payment Block"/>
+      <arc id="14742351856" source="tau_63" target="p_33"/>
+      <arc id="14741462512" source="Remove Payment Block" target="p_35"/>
+      <arc id="14741467120" source="p_25" target="tau_30"/>
+      <arc id="14741465584" source="p_8" target="Change payment term"/>
+      <arc id="14741226992" source="tau_26" target="p_10"/>
+      <arc id="14742593008" source="p_20" target="tau_61"/>
+      <arc id="14740289008" source="p_27" target="Record Subsequent Invoice"/>
+    </page>
+    <finalmarkings>
+      <marking>
+        <place idref="sink">
+          <text>1</text>
+        </place>
+      </marking>
+    </finalmarkings>
+  </net>
+</pnml>

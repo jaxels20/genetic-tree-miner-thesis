@@ -55,7 +55,7 @@ def visualize_figure():
             line=dict(color=colors[i], width=2),
             showlegend=False
         ))
-        step = 5
+        step = 10
         marker_df = df.iloc[::step] 
         fig.add_trace(go.Scatter(
             mode='markers',
@@ -94,7 +94,7 @@ def visualize_figure():
         margin=dict(l=0, r=0, t=0, b=120),  # Increase top margin to make room for the legend
     )
     
-    fig.update_xaxes(range=[0, 100])
+    fig.update_xaxes(range=[0, 300])
     fig.update_yaxes(range=[50, 100])
     fig.write_image(f"{OUTPUT_DIR}/figure_6.pdf")
     

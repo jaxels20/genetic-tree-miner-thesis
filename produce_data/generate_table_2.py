@@ -12,11 +12,9 @@ from src.FileLoader import FileLoader
 DATASET_DIR = "./logs/"
 
 # Genetic Miner Configuration
-GENETIC_MINER_NAME = "GTM-5"
 BEST_PARAMS = "./best_parameters.csv"
 TIME_LIMIT = 60*5
 STAGNATION_LIMIT = 50
-PERCENTAGE_OF_LOG = 0.05
 OBJECTIVE = {
     "simplicity": 10,
     "refined_simplicity": 10,
@@ -27,7 +25,7 @@ OBJECTIVE = {
 NUM_DATA_POINTS = 5
 OUTPUT_DIR = "./data/table_2"
 
-def generate_data(method: callable, runs: int):    
+def generate_data(method: callable, gtm_name, runs: int):    
     datasets = [f for f in os.listdir(DATASET_DIR) if f.endswith(".xes")]
     
     data = []
@@ -42,7 +40,7 @@ def generate_data(method: callable, runs: int):
             time_taken = time.time() - start
             
             os.makedirs(f"{OUTPUT_DIR}/models/GTM", exist_ok=True)
-            discovered_net.to_pnml(f"{OUTPUT_DIR}/models/GTM/{dataset_name}_{GENETIC_MINER_NAME}_{i}")
+            discovered_net.to_pnml(f"{OUTPUT_DIR}/models/GTM/{dataset_name}_{gtm_name}_{i}")
             
             evaluator = SingleEvaluator(
                 pn=discovered_net,
@@ -56,7 +54,7 @@ def generate_data(method: callable, runs: int):
             
             metrics = {}
             metrics['Dataset'] = dataset.split(".")[0]
-            metrics['Discovery Method'] = GENETIC_MINER_NAME
+            metrics['Discovery Method'] = gtm_name
             metrics['Model'] = i
             metrics['Log Fitness'] = fitness
             metrics['Precision'] = precision
@@ -68,24 +66,46 @@ def generate_data(method: callable, runs: int):
             data.append(metrics)
             
     df = pd.DataFrame(data)
-    df.to_csv(f"{OUTPUT_DIR}/evaluation_results/results_{GENETIC_MINER_NAME}.csv", index=False)
+    df.to_csv(f"{OUTPUT_DIR}/evaluation_results/results_{gtm_name}.csv", index=False)
     
 if __name__ == "__main__":
     # convert the hyper parameters to a normalize
     hyper_parameters = load_hyperparameters_from_csv(BEST_PARAMS)
     
     # Define model
-    genetic_miner = lambda log: Discovery.genetic_algorithm(
+    genetic_miner_1 = lambda log: Discovery.genetic_algorithm(
         log,
-        method_name=GENETIC_MINER_NAME,
-        time_limit=TIME_LIMIT,
+        time_limit=10,
         stagnation_limit=STAGNATION_LIMIT,
-        percentage_of_log=PERCENTAGE_OF_LOG,
         **hyper_parameters,
     )
-    # Generate df with results over runs and write to csv
     generate_data(
-        method = genetic_miner,
+        method = genetic_miner_1,
+        gtm_name="GTM-10",
+        runs=NUM_DATA_POINTS,
+    )
+    
+    genetic_miner_2 = lambda log: Discovery.genetic_algorithm(
+        log,
+        time_limit=60,
+        stagnation_limit=STAGNATION_LIMIT,
+        **hyper_parameters,
+    )
+    generate_data(
+        method = genetic_miner_2,
+        gtm_name="GTM-60",
+        runs=NUM_DATA_POINTS,
+    )
+    
+    genetic_miner_3 = lambda log: Discovery.genetic_algorithm(
+        log,
+        time_limit=60,
+        stagnation_limit=STAGNATION_LIMIT,
+        **hyper_parameters,
+    )
+    generate_data(
+        method = genetic_miner_3,
+        gtm_name="GTM-300",
         runs=NUM_DATA_POINTS,
     )
 
