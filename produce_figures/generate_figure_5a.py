@@ -121,10 +121,10 @@ def plot_data(df):
 
     # Layout adjustments
     fig.update_layout(
-        font=dict(family='Courier New', size=14),
-        margin=dict(l=60, r=80, t=50, b=90),
+        font=dict(family='Courier New', size=18, color='black'),
+        margin=dict(l=75, r=90, t=50, b=90),
         template='simple_white',
-        height=400,
+        height=600,
         width=850
     )
     # Save the figure
