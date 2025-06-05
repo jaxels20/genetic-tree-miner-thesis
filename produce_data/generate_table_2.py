@@ -99,7 +99,7 @@ if __name__ == "__main__":
     
     genetic_miner_3 = lambda log: Discovery.genetic_algorithm(
         log,
-        time_limit=60,
+        time_limit=300,
         stagnation_limit=STAGNATION_LIMIT,
         **hyper_parameters,
     )
