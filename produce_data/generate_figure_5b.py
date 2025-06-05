@@ -1,7 +1,7 @@
 
 import pandas as pd
 
-INPUT_FILE = "./data/table_2/evaluation_results/results_GTM-5.csv"
+INPUT_FILE = "./data/table_2/evaluation_results/results_GTM-60.csv"
 OUTPUT_FILE = "./data/figure_5b/data.csv"
 
 if __name__ == "__main__":
