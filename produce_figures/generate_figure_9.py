@@ -101,7 +101,8 @@ def plot_data(df):
     fig.update_xaxes(
         type="log",
         title_text="Time (seconds)",
-        dtick=1
+        dtick=1,
+        range=[0, 3]
     )
     
     

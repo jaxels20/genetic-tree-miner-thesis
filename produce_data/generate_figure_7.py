@@ -2,20 +2,16 @@
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 import pandas as pd
 import numpy as np
+import random
 import os
 from src.FileLoader import FileLoader
 from src.Discovery import Discovery
-from src.EventLog import EventLog 
 from src.Evaluator import SingleEvaluator
-from src.Objective import Objective
-import plotly.graph_objects as go
-import plotly.express as px
 from src.utils import load_hyperparameters_from_csv
 
-INPUT_DIR = "./logs/"
+DATASET_DIR = "./logs/"
 OUTPUT_DIR = "./data/figure_7/"
 
 TIME_LIMT = 5*60
@@ -31,6 +27,9 @@ OBJECTIVE_WEIGHTS = {
 
 
 def sample_hyperparameters(hyper_parameters, num_samples):
+    def sample_hyperparameter(lower_bound, upper_bound):
+        return random.uniform(lower_bound, upper_bound)
+    
     limits = {
         'random_creation_rate': 0.1,
         'elite_rate': 0.1,
@@ -42,54 +41,48 @@ def sample_hyperparameters(hyper_parameters, num_samples):
     }
     sampled_hyperparameters = {}
     for key, value in hyper_parameters.items():
-        if isinstance(value, (int)):
-            random = np.random.default_rng()
-            samples = random.uniform(max(value - limits[key], 0), value + limits[key], num_samples)
-            sampled_hyperparameters[key] = [int(sample) for sample in samples]
+        if isinstance(value, int):
+            lower_bound = max(value - limits[key], 0)
+            upper_bound = value + limits[key]
+            sampled_hyperparameters[key] = [int(sample_hyperparameter(lower_bound, upper_bound)) for i in range(num_samples)]
         elif isinstance(value, float):
-            random = np.random.default_rng()
-            samples = random.uniform(max(value - limits[key], 0), value + limits[key], num_samples)
-            sampled_hyperparameters[key] = [round(sample, 2) for sample in samples]
+            lower_bound = max(value - limits[key], 0)
+            upper_bound = value + limits[key]
+            sampled_hyperparameters[key] = [float(sample_hyperparameter(lower_bound, upper_bound)) for i in range(num_samples)]
+        else:
+            sampled_hyperparameters[key] = [value] * num_samples
     return sampled_hyperparameters
 
 def produce_data():
-    datasets = os.listdir(INPUT_DIR)
-    loader = FileLoader()
-    eventlogs = []
-    
     best_hyper_parameters = load_hyperparameters_from_csv(BEST_PARAMS)
     sampled_hyper_parameters = sample_hyperparameters(best_hyper_parameters, NUM_SAMPLES)
     data = []
-
-    for dataset in datasets:
-        loaded_log = loader.load_eventlog(f"{INPUT_DIR}/{dataset}")
-        eventlogs.append(loaded_log)
     
-    for eventlog in eventlogs:
+    datasets = os.listdir(DATASET_DIR)
+    for dataset in datasets:
+        print(f'Processing {dataset}')
+        eventlog = FileLoader.load_eventlog(f"{DATASET_DIR}/{dataset}")
+    
         for i in range(NUM_SAMPLES):
-            cur_hyper_parameters = {key: value[i] for key, value in sampled_hyper_parameters.items()}
-            discovered_net = Discovery.genetic_algorithm(
+            hyperparameters_instance = {key: value[i] for key, value in sampled_hyper_parameters.items()}
+            discovered_net, discovered_pt = Discovery.genetic_algorithm(
                 eventlog,
-                mutator=best_hyper_parameters['mutator'],
-                generator=best_hyper_parameters['generator'],
-                objective=Objective(OBJECTIVE_WEIGHTS),
                 time_limit=TIME_LIMT,
-                **cur_hyper_parameters,
                 stagnation_limit=STAGNATION_LIMIT,
-                percentage_of_log=0.05,
+                **hyperparameters_instance
             )
             
             evaluator = SingleEvaluator(
-                discovered_net,
-                eventlog
-            )   
-            try:
-                cur_hyper_parameters['objective_fitness'] = evaluator.get_objective_fitness(OBJECTIVE_WEIGHTS) / 100
-            except Exception as e:
-                print(f"Error evaluating objective fitness for {eventlog.name}: {e} in run {i}")
-                continue
-            cur_hyper_parameters['dataset'] = eventlog.name
-            data.append(cur_hyper_parameters)
+                pn=discovered_net,
+                eventlog=eventlog,
+                pt=discovered_pt,
+            )
+            
+            for key in ['mutator', 'objective', 'generator']:
+                del hyperparameters_instance[key]
+            hyperparameters_instance['objective_fitness'] = evaluator.get_objective_fitness(OBJECTIVE_WEIGHTS) / 100
+            hyperparameters_instance['dataset'] = eventlog.name
+            data.append(hyperparameters_instance)
         
     df = pd.DataFrame(data)
     os.makedirs(OUTPUT_DIR, exist_ok=True)
