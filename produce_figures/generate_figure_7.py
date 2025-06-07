@@ -110,7 +110,7 @@ def create_plot(df, baseline):
         x=df['dataset'],
         y=df['objective_fitness'],
         mode='markers',
-        name='Objective Fitness',
+        name='Sampled',
         marker=dict(color=color, size=6, line=dict(width=1, color='black'))
     ))
     
@@ -119,7 +119,7 @@ def create_plot(df, baseline):
         x=baseline['Dataset'],
         y=baseline['Objective Fitness'] * 100,
         mode='markers',
-        name='Baseline',
+        name='Default',
         marker=dict(color='red', size=6, line=dict(width=1, color='black')),
     ))
 
