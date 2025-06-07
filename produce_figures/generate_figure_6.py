@@ -43,7 +43,7 @@ def visualize_figure():
             
         df = concat_df.groupby('generation').mean().reset_index()
         
-        #Multiply the values by 100 to convert to percentage
+        #Multiply the values by 100
         df[col] = df[col] * 100
         
         # dataset_name = dataset.split('.')[0]

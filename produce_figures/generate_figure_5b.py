@@ -49,7 +49,7 @@ def plot_df(df):
         template='simple_white',
     )
     # set the y axisto 0 to 1
-    fig.update_yaxes(range=[60, 100], dtick=10)
+    fig.update_yaxes(range=[80, 100], dtick=5)
     
     # Rotate x-axis labels
     fig.update_xaxes(tickangle=45, tickmode='array', tickvals=sorted_datasets)

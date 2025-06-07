@@ -136,7 +136,7 @@ def create_plot(df, baseline):
             orientation='h',
             yanchor='bottom',
             xanchor='center',
-            y=1.05,        # slightly above the top of the plot
+            y=0.95,        # slightly above the top of the plot
             x=0.5
         ),
         xaxis_title='Dataset',
@@ -147,6 +147,7 @@ def create_plot(df, baseline):
     
     # Rotate x-axis labels
     fig.update_xaxes(tickangle=45, tickmode='array', tickvals=sorted_datasets)
+    fig.update_yaxes(range=[80, 100])
     
     # save the plot
     fig.write_image(f"{OUTPUT_DIR}/figure_7.pdf")   
