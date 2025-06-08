@@ -1,10 +1,13 @@
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.Discovery import Discovery
 from src.FileLoader import FileLoader
 from src.Objective import Objective
 from src.Evaluator import SingleEvaluator
 from src.utils import load_hyperparameters_from_csv
 import pandas as pd
-import os
+
 
 LOGS = "./logs/"
 OUTPUT_PATH = "./data/figure_10"
@@ -32,7 +35,8 @@ if __name__ == "__main__":
         hyperparameters = load_hyperparameters_from_csv("./best_parameters.csv")
         del hyperparameters["objective"]
         
-        weight_shares = [0.25, 0.4, 0.55, 0.7, 0.85]
+        # weight_shares = [0.25, 0.4, 0.55, 0.7, 0.85]
+        weight_shares = [1.0]
         metrics = ["ftr_precision", "ftr_fitness", "simplicity", "refined_simplicity"]
         metric_functions = {
             "ftr_precision": calc_ftr_precision,

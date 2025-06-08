@@ -72,7 +72,6 @@ class SingleEvaluator:
         objective = Objective(objective_metric_weights)
         objective.set_event_log(self.eventlog)
         return objective.fitness(self.pt)
-
     
     def get_f1_score(self, precision=None, fitness=None):
         if precision is None:
@@ -85,13 +84,13 @@ class SingleEvaluator:
             f1_score = 0.0
         return f1_score
 
-    def get_ftr_fitness(self, objective_metric_weights: dict[str, float]={"simplicity": 10, "refined_simplicity": 10, "ftr_fitness": 50, "ftr_precision": 30}):
-        objective = Objective(objective_metric_weights)
+    def get_ftr_fitness(self):
+        objective = Objective(None)
         objective.set_event_log(self.eventlog)
         return objective.ftr_fitness(self.pn.to_fast_token_based_replay())
     
-    def get_ftr_precision(self, objective_metric_weights: dict[str, float]={"simplicity": 10, "refined_simplicity": 10, "ftr_fitness": 50, "ftr_precision": 30}):
-        objective = Objective(objective_metric_weights)
+    def get_ftr_precision(self):
+        objective = Objective(None)
         objective.set_event_log(self.eventlog)
         return objective.ftr_precision(self.pn.to_fast_token_based_replay())
 

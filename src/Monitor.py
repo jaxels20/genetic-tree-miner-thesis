@@ -39,23 +39,20 @@ class Monitor:
         with open(os.path.join(save_dir, dataset_name, "monitors", method_name + "_" +  str(time.time())) + ".pkl", "wb") as f:
             pickle.dump((dataset_name, method_name, result_dict), f)
             
-    def save_decomposed_objective_fitness(self, save_dir, eventlog):
+    def save_decomposed_objective_fitness(self, save_dir, file_name, objective) -> None:
         results_list = []
         for generation in self.generations:
             our_pt = self.best_trees[generation]
-            weights = {"simplicity": 10, "refined_simplicity": 10, "ftr_fitness": 50, "ftr_precision": 30}
-            obj = Objective(weights)
-            obj.set_event_log(eventlog)
             
             results_list.append(
                 {
-                    **obj.get_decomposed_objective_fitness(our_pt),
+                    **objective.get_decomposed_objective_fitness(our_pt),
                     "generation": generation,
-                    "objective_fitness": obj.fitness(our_pt),
+                    "objective_fitness": objective.fitness(our_pt),
                 })
         
         results_df = pd.DataFrame(results_list)
-        results_df.to_csv(f"{save_dir}/{eventlog.name}.csv", index=False)
+        results_df.to_csv(f"{save_dir}/{file_name}.csv", index=False)
    
     
     def plot_fitness(self) -> None:
