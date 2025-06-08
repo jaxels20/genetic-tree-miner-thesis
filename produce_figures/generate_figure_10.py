@@ -59,7 +59,7 @@ def generate_plot(df):
             size=20,
             family="Times New Roman"
         ),
-        margin=dict(l=0, r=0, t=0, b=100),
+        margin=dict(l=0, r=0, t=0, b=120),
         legend=dict(
             font=dict(size=20, family="Time New Roman"),
             orientation="v",
@@ -69,7 +69,9 @@ def generate_plot(df):
             x=0.99
         ),
     )
-
+    fig.update_yaxes(
+        range=[80, 100],
+    )
     # Save one combined figure
     fig.write_image(OUTPUT)
     

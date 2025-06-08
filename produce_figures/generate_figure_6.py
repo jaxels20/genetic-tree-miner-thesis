@@ -91,7 +91,7 @@ def visualize_figure():
             xanchor="right",
             x=0.99
         ),
-        margin=dict(l=0, r=0, t=0, b=120),  # Increase top margin to make room for the legend
+        margin=dict(l=0, r=0, t=0, b=120),
     )
     
     fig.update_xaxes(range=[0, 300])
