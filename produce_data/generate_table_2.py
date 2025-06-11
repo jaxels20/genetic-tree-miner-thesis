@@ -72,40 +72,19 @@ if __name__ == "__main__":
     # convert the hyper parameters to a normalize
     hyper_parameters = load_hyperparameters_from_csv(BEST_PARAMS)
     
-    # Define model
-    genetic_miner_1 = lambda log: Discovery.genetic_algorithm(
-        log,
-        time_limit=10,
-        stagnation_limit=STAGNATION_LIMIT,
-        **hyper_parameters,
-    )
-    generate_data(
-        method = genetic_miner_1,
-        gtm_name="GTM-10",
-        runs=NUM_DATA_POINTS,
-    )
+    # Configurations
+    names = ["GTM-10", "GTM-60", "GTM-300"]
+    time_limits = [10, 60, 300]
     
-    genetic_miner_2 = lambda log: Discovery.genetic_algorithm(
-        log,
-        time_limit=60,
-        stagnation_limit=STAGNATION_LIMIT,
-        **hyper_parameters,
-    )
-    generate_data(
-        method = genetic_miner_2,
-        gtm_name="GTM-60",
-        runs=NUM_DATA_POINTS,
-    )
-    
-    genetic_miner_3 = lambda log: Discovery.genetic_algorithm(
-        log,
-        time_limit=300,
-        stagnation_limit=STAGNATION_LIMIT,
-        **hyper_parameters,
-    )
-    generate_data(
-        method = genetic_miner_3,
-        gtm_name="GTM-300",
-        runs=NUM_DATA_POINTS,
-    )
-
+    for name, time_limit in zip(names, time_limits):
+        model = lambda log: Discovery.genetic_algorithm(
+            log,
+            time_limit=time_limit,
+            stagnation_limit=STAGNATION_LIMIT,
+            **hyper_parameters,
+        )
+        generate_data(
+            method=model,
+            gtm_name=name,
+            runs=NUM_DATA_POINTS,
+        )
