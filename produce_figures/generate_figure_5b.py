@@ -44,7 +44,7 @@ def plot_df(df):
             x=0.5
         ),
         xaxis_title='Dataset',
-        yaxis_title='Objective Fitness',
+        yaxis_title='Objective Score',
         margin=dict(l=0, r=0, t=0, b=150),
         template='simple_white',
     )

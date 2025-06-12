@@ -12,7 +12,7 @@ def generate_plot(df):
     fig = go.Figure()
     colors = {
         "Precision": "#332288",
-        "Replay Fitness": "#56B4E9",
+        "Fitness": "#56B4E9",
         "Simplicity": "#E69F00",
         "Refined Simplicity": "#009E73"
         
@@ -20,19 +20,19 @@ def generate_plot(df):
         
     symbols = {
         'Precision': 'circle',
-        'Replay Fitness': 'square',
+        'Fitness': 'square',
         'Simplicity': 'diamond',
         'Refined Simplicity': 'x'
     }
     
     df.replace({'metric': {
-        'ftr_fitness': 'Replay Fitness', 
+        'ftr_fitness': 'Fitness', 
         'ftr_precision': 'Precision', 
         'simplicity': 'Simplicity', 
         'refined_simplicity': 'Refined Simplicity',}
     }, inplace=True)
     
-    metric_list = ["Precision", "Replay Fitness", "Simplicity", "Refined Simplicity"]
+    metric_list = ["Precision", "Fitness", "Simplicity", "Refined Simplicity"]
 
     for i, metric in enumerate(metric_list):
         metric_df = df[df["metric"] == metric]

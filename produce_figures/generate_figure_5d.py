@@ -95,7 +95,7 @@ def visualize_paper_figure():
     fig.update_layout(
         title=None,
         xaxis_title="Generation",
-        yaxis_title="Objective Fitness",
+        yaxis_title="Objective Score",
         font=dict(family='Times New Roman', size=20),
         margin=dict(l=0, r=0, t=0, b=120),
         template='simple_white',

@@ -28,7 +28,7 @@ def visualize_figure():
     
     rename_dict = {
         'ftr_precision': 'Precision',
-        'ftr_fitness': 'Replay Fitness',
+        'ftr_fitness': 'Fitness',
         'simplicity': 'Simplicity',
         'refined_simplicity': 'Refined Simplicity'
     }
