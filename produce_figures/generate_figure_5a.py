@@ -100,11 +100,11 @@ def plot_data(df):
             dim['range'] = custom_ylim[col_label]
             dim['tickvals'] = y_tick_vals[col_label]
 
-        dim['label'] = col_label.upper().replace(" ", "_")
+        # dim['label'] = col_label.upper().replace(" ", "_")
         if col_label == "Mutation Rate":
-            dim['label'] = "MUTATION_PROBABILITY"
+            dim['label'] = "Mutation Probability"
         if col_label == "Log Filtering":
-            dim['label'] = "INITAL_SAMPLING_RATE"
+            dim['label'] = "Initial Sampling Rate"
         
     # Create the parcoords plot
     fig = go.Figure()
@@ -121,10 +121,10 @@ def plot_data(df):
 
     # Layout adjustments
     fig.update_layout(
-        font=dict(family='Courier New', size=18, color='black'),
-        margin=dict(l=75, r=90, t=50, b=90),
+        font=dict(family='Times New Roman', size=18, color='black'),
+        margin=dict(l=75, r=100, t=50, b=90),
         template='simple_white',
-        height=600,
+        height=400,
         width=850
     )
     # Save the figure
