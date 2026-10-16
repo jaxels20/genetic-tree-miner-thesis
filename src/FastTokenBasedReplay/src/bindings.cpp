@@ -6,7 +6,7 @@
 #include "precision.cpp"  // Include your precision function
 namespace py = pybind11;
 
-PYBIND11_MODULE(FastTokenBasedReplay, m) {
+PYBIND11_MODULE(_core, m) {
     py::class_<Place>(m, "Place")
         .def(py::init<std::string, int>(), py::arg("name"), py::arg("tokens") = 0)
         .def("add_tokens", &Place::add_tokens)
@@ -50,6 +50,7 @@ PYBIND11_MODULE(FastTokenBasedReplay, m) {
         .def("add_place", &Marking::add_place)
         .def("number_of_tokens", &Marking::number_of_tokens);
 
-    m.def("calculate_fitness", &calculate_fitness);
-    m.def("calculate_precision", &calculate_precision);
+    m.def("calculate_fitness", &calculate_fitness,
+          py::arg("log"), py::arg("net"), py::arg("prefix_caching") = false, py::arg("suffix_caching") = false);
+    m.def("calculate_precision", &calculate_precision, py::arg("log"), py::arg("net"));
 }

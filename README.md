@@ -46,13 +46,9 @@ This repository accompanies our research on process discovery, introducing an en
    source .venv/bin/activate
    pip install -r requirements.txt
    ```
-4. Build FastTokenBasedReplay (make sure cmake, pybind11, and gtest are installed)
+3. Build and install FastTokenBasedReplay (needs a C++17 compiler; see [its README](src/FastTokenBasedReplay/README.md))
    ```bash
-   cd src/FastTokenBasedReplay/
-   mkdir build && cd build
-   cmake -DCMAKE_BUILD_TYPE=Release ..
-   make
-   cd ../../..
+   pip install ./src/FastTokenBasedReplay
    ```
    
 ## ▶️ Usage

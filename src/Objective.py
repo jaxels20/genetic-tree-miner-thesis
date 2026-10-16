@@ -3,7 +3,7 @@ from src.EventLog import EventLog
 from src.SupressPrints import SuppressPrints
 from src.Population import Population
 from src.PetriNet import PetriNet
-import src.FastTokenBasedReplay as FastTokenBasedReplay
+import FastTokenBasedReplay
 import time
 from typing import Union
 from pm4py.algo.evaluation.replay_fitness.variants.token_replay import apply as replay_fitness

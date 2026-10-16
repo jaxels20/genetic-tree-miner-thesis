@@ -645,6 +645,11 @@ replay_trace_with_suffix(
 // }
 
 double calculate_fitness(const EventLog& log, const PetriNet& net, bool prefix_caching, bool suffix_caching){
+    // Combined prefix and suffix caching is not implemented (see the commented-out branch below)
+    if (prefix_caching && suffix_caching) {
+        throw std::invalid_argument("prefix_caching and suffix_caching cannot both be enabled");
+    }
+
     int total_missing = 0;
     int total_remaining = 0;
     int total_produced = 0;

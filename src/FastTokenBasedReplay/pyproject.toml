@@ -1,0 +1,47 @@
+[build-system]
+requires = ["scikit-build-core>=0.11", "pybind11>=2.13"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "FastTokenBasedReplay"
+version = "0.1.0"
+description = "Fast token-based replay fitness and precision for Petri nets, implemented in C++"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.9"
+authors = [
+    { name = "Jeppe Axelsen" },
+]
+keywords = ["process mining", "token-based replay", "conformance checking", "petri net"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: C++",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering",
+]
+dependencies = []
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[project.urls]
+Repository = "https://github.com/jaxels20/genetic-tree-miner-thesis"
+
+[tool.scikit-build]
+minimum-version = "build-system.requires"
+wheel.packages = ["python/FastTokenBasedReplay"]
+sdist.exclude = ["googletest", "pybind11", ".vscode", "analysis.txt", ".DS_Store", "build"]
+
+[tool.scikit-build.cmake.define]
+FTR_BUILD_PYTHON = "ON"
+FTR_BUILD_TESTS = "OFF"
+
+[tool.cibuildwheel]
+test-requires = ["pytest"]
+test-command = "pytest {package}/tests/python"
+
+[tool.cibuildwheel.macos.environment]
+MACOSX_DEPLOYMENT_TARGET = "10.15"

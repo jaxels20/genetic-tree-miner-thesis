@@ -1,6 +1,6 @@
 import lxml.etree as ET
 from pm4py.objects.log.obj import EventLog as PM4PyEventLog, Trace as PM4PyTrace, Event as PM4PyEvent
-import src.FastTokenBasedReplay as FastTokenBasedReplay
+import FastTokenBasedReplay
 from datetime import datetime, timedelta
 
 class Event:

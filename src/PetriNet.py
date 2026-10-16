@@ -1,6 +1,6 @@
 import random
 import pm4py.write as pm4py_write
-import src.FastTokenBasedReplay as FastTokenBasedReplay
+import FastTokenBasedReplay
 
 from graphviz import Digraph
 from pm4py.objects.petri_net.obj import PetriNet as PM4PyPetriNet, Marking as PM4PyMarking
